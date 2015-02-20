@@ -1,0 +1,29 @@
+{
+  "name": "marc-record-merge",
+  "version": "0.0.1",
+  "main": "lib/marc-record-merge.js",
+  "authors": [
+    "Pasi Tuominen <pasi.tuominen@gmail.com>"
+  ],
+  "description": "a library for merging 2 marc records",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "MARC",
+    "deduplication",
+    "merge"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "Gruntfile.js",
+    "package.json"
+  ]
+}
