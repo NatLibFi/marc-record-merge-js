@@ -23,19 +23,18 @@ describe('Merger', function() {
 
 		var testFiles = fs.readdirSync(p)
 			.filter(function(filename) {
-				return filename.indexOf("rec_a") === 0;
+				return filename.indexOf("test") === 0;
 			});
 
 		var tests = testFiles.map(function(file) {
-			var ra = file;
-			var rb = file.replace("rec_a", "rec_b");
-			var rto = file.replace("rec_a", "rec_to");
+
+			var data = readAndTrim(path.resolve(p,file)).split("\n\n");
 
 			return {
-				description: "should merge (" + ra + "," + rb + ") => " + rto,
-				record_a: readAndTrim(path.resolve(p,ra)),
-				record_b: readAndTrim(path.resolve(p,rb)),
-				expected_merged_record: readAndTrim(path.resolve(p,rto))
+				description: data[0],
+				record_a: data[1],
+				record_b: data[2],
+				expected_merged_record: data[3]
 			};
 
 		});

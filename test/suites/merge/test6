@@ -1,0 +1,8 @@
+it should normalize for comparison but preserve diacritics in copy action
+
+500 #_ ‡aCafe
+
+500 #_ ‡aCafé
+
+LDR    
+500 #_ ‡aCafé

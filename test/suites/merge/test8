@@ -1,0 +1,8 @@
+it should normalize case for comparison but preserve it in copy action
+
+500 #_ ‡acaFE
+
+500 #_ ‡aCafe
+
+LDR    
+500 #_ ‡aCafe
