@@ -1,0 +1,9 @@
+should move fields matching regexp
+
+610 #_ ‡aNote
+
+400 #_ ‡aNote‡bSecond subfield
+
+LDR    
+400 #_ ‡aNote‡bSecond subfield
+610 #_ ‡aNote

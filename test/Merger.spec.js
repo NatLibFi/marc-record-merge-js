@@ -15,45 +15,51 @@ describe('Merger', function() {
 					
 	suites.forEach(function(suite) {
 
-		var p = path.resolve(suitesPath, suite);
+		describe(suite, function() {
 
-		var config = require(path.resolve(p, 'config.js'));
 
-		var merger = new Merger(config);
+			var p = path.resolve(suitesPath, suite);
 
-		var testFiles = fs.readdirSync(p)
-			.filter(function(filename) {
-				return filename.indexOf("test") === 0;
-			});
+			var config = require(path.resolve(p, 'config.js'));
 
-		var tests = testFiles.map(function(file) {
+			var merger = new Merger(config);
 
-			var data = readAndTrim(path.resolve(p,file)).split("\n\n");
+			var testFiles = fs.readdirSync(p)
+				.filter(function(filename) {
+					return filename.indexOf("test") === 0;
+				});
 
-			return {
-				description: data[0],
-				record_a: data[1],
-				record_b: data[2],
-				expected_merged_record: data[3]
-			};
+			var tests = testFiles.map(function(file) {
 
-		});
+				var data = readAndTrim(path.resolve(p,file)).split("\n\n");
 
-		tests.forEach(function(test) {
-
-			it(test.description, function(done) {
-
-				merger.merge(Record.fromString(test.record_a), Record.fromString(test.record_b))
-				.then(function(merged) {
-
-					var mergedRecord = new Record(merged);
-
-					expect(mergedRecord.toString()).to.equal(test.expected_merged_record);
-					done();
-
-				}).done();
+				return {
+					description: data[0],
+					record_a: data[1],
+					record_b: data[2],
+					expected_merged_record: data[3]
+				};
 
 			});
+
+			tests.forEach(function(test) {
+
+				it(test.description, function(done) {
+
+					merger.merge(Record.fromString(test.record_a), Record.fromString(test.record_b))
+					.then(function(merged) {
+
+						var mergedRecord = new Record(merged);
+
+						expect(mergedRecord.toString()).to.equal(test.expected_merged_record);
+						done();
+
+					}).done();
+
+				});
+			});
+
+		
 		});
 
 	});

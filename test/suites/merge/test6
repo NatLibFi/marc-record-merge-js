@@ -1,4 +1,4 @@
-it should normalize for comparison but preserve diacritics in copy action
+should normalize for comparison but preserve diacritics in copy action
 
 500 #_ ‡aCafe
 

@@ -1,4 +1,4 @@
-Only keep one copy of identical fields in the merged record
+should keep only one copy of identical fields in the merged record
 
 500 #_ ‡aNote‡bSecond subfield
 

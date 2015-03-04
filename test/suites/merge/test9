@@ -1,4 +1,4 @@
-it should normalize punctuation for comparison but preserve it in move subfields action
+should normalize punctuation for comparison but preserve it in move subfields action
 
 490 #_ ‡aCafe$%^&*;:
 
