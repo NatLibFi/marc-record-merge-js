@@ -1,6 +1,6 @@
 {
   "name": "marc-record-merge",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "main": "lib/marc-record-merge.js",
   "authors": [
     "Pasi Tuominen <pasi.tuominen@gmail.com>"
