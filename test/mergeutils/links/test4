@@ -1,0 +1,15 @@
+should move SID fields if there is LOW tag and create proper linking
+
+001    1
+LOW __ ‡aOULA
+
+001    2
+SID __ ‡c34893‡bfenni
+LOW __ ‡aFENNI
+
+LDR    
+001    2
+SID __ ‡c34893‡bfenni
+LOW __ ‡aFENNI
+LOW __ ‡aOULA
+SID __ ‡cFCC1‡boula

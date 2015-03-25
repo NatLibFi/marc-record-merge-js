@@ -1,0 +1,14 @@
+should move LOW fields and make proper SID links
+
+001    1
+LOW #_ ‡aFENNI
+
+001    2
+LOW #_ ‡aOULA
+
+LDR    
+001    2
+LOW #_ ‡aOULA
+LOW #_ ‡aFENNI
+SID __ ‡cFCC1‡bfenni
+SID __ ‡cFCC2‡boula
