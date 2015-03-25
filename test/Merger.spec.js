@@ -39,14 +39,21 @@ describe('Merger', function() {
 					record_b: data[2],
 					expected_merged_record: data[3]
 				};
-
 			});
+
+			var runOnly = tests.filter(function(test) {
+				return test.description.charAt(0) == '!';
+			});
+
+			if (runOnly.length > 0) {
+				tests = runOnly;
+			}
 
 			tests.forEach(function(test) {
 
 				it(test.description, function(done) {
 
-					merger.merge(Record.fromString(test.record_a), Record.fromString(test.record_b))
+					merger.merge(Record.fromString(test.record_b), Record.fromString(test.record_a))
 					.then(function(merged) {
 
 						var mergedRecord = new Record(merged);

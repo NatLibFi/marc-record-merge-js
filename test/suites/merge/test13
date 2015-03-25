@@ -1,0 +1,8 @@
+should select better field from other record, making comparison without 'compareWithout' subfields.
+
+700 1_ ‡aRouhiainen, Veikko,‡d1952-‡9OULA<KEEP>
+
+700 1_ ‡aRouhiainen, Veikko.‡9FENNI<KEEP>
+
+LDR    
+700 1_ ‡aRouhiainen, Veikko,‡d1952-‡9FENNI<KEEP>‡9OULA<KEEP>
