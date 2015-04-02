@@ -19,8 +19,7 @@ describe('Merger', function() {
 
 			var p = path.resolve(suitesPath, suite);
 
-			var config = require(path.resolve(p, 'config.js'));
-
+			
 			var testFiles = fs.readdirSync(p)
 				.filter(function(filename) {
 					return filename.indexOf("test") === 0;
@@ -58,6 +57,9 @@ describe('Merger', function() {
 						postMergeModifiedRecord
 					);
 
+					removeField(postMergeModifiedRecord, '583');
+					
+
 					expect(postMergeModifiedRecord.toString()).to.equal(test.expected_post_modified_merged_record);
 
 					done();
@@ -72,7 +74,35 @@ describe('Merger', function() {
 
 });
 
+function removeField(record, tag) {
+	record.fields = record.fields.filter(function(field) {
+		return field.tag !== tag;
+	});
+}
+
 function readAndTrim(filename) {
 	var contents = fs.readFileSync(filename, 'utf8');
 	return contents.trim();
+}
+
+function formatDate(date) {
+    var tzo = -date.getTimezoneOffset();
+    var dif = tzo >= 0 ? '+' : '-';
+
+    return date.getFullYear() +
+        '-' + pad(date.getMonth()+1) +
+        '-' + pad(date.getDate()) +
+        'T' + pad(date.getHours()) +
+        ':' + pad(date.getMinutes()) +
+        ':' + pad(date.getSeconds()) +
+        dif + pad(tzo / 60) +
+        ':' + pad(tzo % 60);
+
+    function pad(num) {
+		var str = num.toString();
+		while(str.length < 2) {
+			str = "0" + str;
+		}
+		return str;
+    }
 }

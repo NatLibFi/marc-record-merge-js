@@ -1,0 +1,11 @@
+should merge multiple different q-subfields to the same field. 
+
+020 __ ‡a951-563-055-X‡qnid.
+
+020 __ ‡a951-563-055-X‡qOtava
+
+LDR    
+020 __ ‡a951-563-055-X‡qOtava‡qnid.
+
+
+

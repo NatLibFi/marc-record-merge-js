@@ -1,0 +1,9 @@
+should compare ISBN field equality without q-subfield.
+
+020 __ ‡a951-563-055-X
+
+020 __ ‡a951-563-055-X‡qnid.
+
+LDR    
+020 __ ‡a951-563-055-X‡qnid.
+

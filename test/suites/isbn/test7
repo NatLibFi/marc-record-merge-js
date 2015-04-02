@@ -1,0 +1,11 @@
+should not make multiple isbn fields from similar items
+
+020 __ ‡a951-563-123-5‡qKustantaja A
+
+020 __ ‡a1234-951-563-055-X‡qKustantaja B
+
+LDR    
+020 __ ‡a951-563-123-5‡qKustantaja A
+020 __ ‡a1234-951-563-055-X‡qKustantaja B
+
+

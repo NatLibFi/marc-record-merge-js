@@ -1,0 +1,9 @@
+!should use aliases for known different patterns (inb. -> nid.).
+
+020 __ ‡a951-563-055-X‡qnid.
+
+020 __ ‡a951-563-055-X‡qinb.
+
+LDR    
+020 __ ‡a951-563-055-X‡qnid.
+

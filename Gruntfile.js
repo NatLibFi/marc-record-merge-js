@@ -2,7 +2,6 @@
 
 module.exports = function(grunt) {
 
-	// Project configuration.
 	grunt.initConfig({
 		jshint: {
 			options: {
@@ -41,7 +40,6 @@ module.exports = function(grunt) {
                 }
             }
         },
-
 
 	});
 
