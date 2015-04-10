@@ -1,10 +1,10 @@
-should not make multiple isbn fields from similar items
+should keep all of the subfields
 
 020 __ ‡a951-563-123-5‡qnid.
 
 020 __ ‡a1234-951-563-055-X‡qnid.
 
 LDR    
-020 __ ‡a951-563-123-5‡qnid.
 020 __ ‡a1234-951-563-055-X‡qnid.
+020 __ ‡a951-563-123-5‡qnid.
 
