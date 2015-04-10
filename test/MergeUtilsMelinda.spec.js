@@ -10,6 +10,8 @@ var fs = require('fs');
 
 describe('Merger', function() {
 
+	var DEBUG = process.env.NODE_ENV === "DEBUG";
+	
 	var suitesPath = path.resolve(__dirname, "mergeutils");
 	var suites = fs.readdirSync(suitesPath);
 					
@@ -19,7 +21,6 @@ describe('Merger', function() {
 
 			var p = path.resolve(suitesPath, suite);
 
-			
 			var testFiles = fs.readdirSync(p)
 				.filter(function(filename) {
 					return filename.indexOf("test") === 0;
@@ -30,7 +31,7 @@ describe('Merger', function() {
 				var data = readAndTrim(path.resolve(p,file)).split("\n\n");
 
 				return {
-					description: data[0],
+					description: data[0] + (DEBUG ? " (" + path.resolve(p,file) + ")" : ''),
 					record_other: data[1],
 					record_preferred: data[2],
 					expected_post_modified_merged_record: data[3]
@@ -51,7 +52,7 @@ describe('Merger', function() {
 
 					var postMergeModifiedRecord = Record.fromString(test.record_preferred);
 
-					MergeUtilsMelinda.postMerge(
+					MergeUtilsMelinda.applyPostMergeModifications(
 						Record.fromString(test.record_other), 
 						Record.fromString(test.record_preferred),
 						postMergeModifiedRecord

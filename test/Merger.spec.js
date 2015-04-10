@@ -10,13 +10,14 @@ var fs = require('fs');
 
 describe('Merger', function() {
 
+	var DEBUG = process.env.NODE_ENV === "DEBUG";
+
 	var suitesPath = path.resolve(__dirname, "suites");
 	var suites = fs.readdirSync(suitesPath);
 					
 	suites.forEach(function(suite) {
 
 		describe(suite, function() {
-
 
 			var p = path.resolve(suitesPath, suite);
 
@@ -34,7 +35,7 @@ describe('Merger', function() {
 				var data = readAndTrim(path.resolve(p,file)).split("\n\n");
 
 				return {
-					description: data[0],
+					description: data[0] + (DEBUG ? " (" + path.resolve(p,file) + ")" : ''),
 					record_a: data[1],
 					record_b: data[2],
 					expected_merged_record: data[3]
