@@ -13,7 +13,6 @@ module.exports = function(grunt) {
 			lib: {
 				src: ['lib/**/*.js']
 			},
-		 
 		},
 
 		mochaTest: {
@@ -26,21 +25,19 @@ module.exports = function(grunt) {
 		},
 
 		mocha_istanbul: {
-           
-            coveralls: {
-                src: ['test'],
-                options: {
-                    coverage: true,
-                    check: {
-                        lines: 100,
-                        statements: 100,
-                        branches: 100,
-                        functions: 100
-                    }
-                }
-            }
-        },
-
+			coveralls: {
+				src: ['test'],
+				options: {
+					coverage: true,
+					check: {
+						lines: 90,
+						statements: 90,
+						branches: 70,
+						functions: 90
+					}
+				}
+			}
+		},
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-jshint');
