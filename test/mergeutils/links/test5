@@ -1,0 +1,34 @@
+should handle multiple SID fields correctly
+
+001    1
+SID __ ‡c4893‡bwilma
+SID __ ‡c3493‡balli
+SID __ ‡c3483‡balma
+SID __ ‡c3489‡bjykdo
+SID __ ‡c389‡boula
+LOW __ ‡aWILMA
+LOW __ ‡aALLI
+LOW __ ‡aALMA
+LOW __ ‡aJYKDO
+LOW __ ‡aOULA
+
+001    2
+LOW __ ‡aFENNI
+SID __ ‡c34893‡bfenni
+
+LDR    
+001    000000000
+035 __ ‡z(FI-MELINDA)2
+035 __ ‡z(FI-MELINDA)1
+LOW __ ‡aALLI
+LOW __ ‡aALMA
+LOW __ ‡aFENNI
+LOW __ ‡aJYKDO
+LOW __ ‡aOULA
+LOW __ ‡aWILMA
+SID __ ‡c3493‡balli
+SID __ ‡c3483‡balma
+SID __ ‡c34893‡bfenni
+SID __ ‡c3489‡bjykdo
+SID __ ‡c389‡boula
+SID __ ‡c4893‡bwilma
