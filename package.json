@@ -4,7 +4,7 @@
   "description": "Module for merging marc records",
   "main": "lib/marc-record-merge.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt default"
   },
   "author": "Pasi Tuominen <pasi.tuominen@gmail.com>",
   "license": "ISC",
