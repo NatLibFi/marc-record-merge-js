@@ -1,0 +1,11 @@
+should merge multiple different z-subfields to the same field. 
+
+020 __ ‡a951-563-055-X‡qnid.‡z951-792-076-8
+
+020 __ ‡a951-563-055-X‡qnid.‡z951-792-076-2
+
+LDR    
+020 __ ‡a951-563-055-X‡z951-792-076-2‡qnid.‡z951-792-076-8
+
+
+

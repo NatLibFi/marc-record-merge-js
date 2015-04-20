@@ -2,12 +2,14 @@
 module.exports = {
 
 	fields: {
-		'020': {
-			'action': 'copy',
+	
+		"020": { 
+			"action": "copy", 
 			"options": { 
-				"compareWithout": ["q"],
-			}
-		}
+				"compareWithout": ["z","c", "q"], 
+				"combine": ["c"] 
+			} 
+		},
 	}
 	
 };

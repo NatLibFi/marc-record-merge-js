@@ -22,7 +22,7 @@ describe('Merger', function() {
 			var p = path.resolve(suitesPath, suite);
 
 			var config = require(path.resolve(p, 'config.js'));
-
+			
 			var merger = new Merger(config);
 
 			var testFiles = fs.readdirSync(p)

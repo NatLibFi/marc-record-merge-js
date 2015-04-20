@@ -1,0 +1,8 @@
+should create an array of c subfields if there are multiple different ones.
+
+020 __ ‡a951-563-055-X‡c20 mk.
+
+020 __ ‡a951-563-055-X‡c25 mk.
+
+LDR    
+020 __ ‡a951-563-055-X‡c[25 mk., 20 mk.]
