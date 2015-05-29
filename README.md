@@ -13,7 +13,7 @@ npm install marc-record-merge
 The records are expected to be marc-record-js instances.
 
 ```
-var Merger = require('../lib/marc-record-merge');
+var Merger = require('marc-record-merge');
 var merger = new Merger(config);
 
 merger.merge(record1, record2).then(function(mergedRecord) {
