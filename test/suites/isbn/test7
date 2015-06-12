@@ -1,7 +1,9 @@
 should not make multiple isbn fields from similar items
 
+LDR    
 020 __ ‡a951-563-123-5‡qKustantaja A
 
+LDR    
 020 __ ‡a1234-951-563-055-X‡qKustantaja B
 
 LDR    

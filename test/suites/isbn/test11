@@ -1,7 +1,9 @@
 should not merge multiple different z,q-subfields to the same field when a-subfield is missing.
 
+LDR    
 020 __ ‡qnid.‡z951-792-076-8
 
+LDR    
 020 __ ‡qOtava‡z951-792-076-2
 
 LDR    

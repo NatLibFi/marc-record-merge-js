@@ -1,7 +1,9 @@
 should normalize for comparison but preserve diacritics in move subfields action
 
+LDR    
 490 #_ ‡aCafe
 
+LDR    
 490 #_ ‡aCafé
 
 LDR    

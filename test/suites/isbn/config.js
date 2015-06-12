@@ -6,7 +6,7 @@ module.exports = {
 		"020": { 
 			"action": "copy", 
 			"options": { 
-				"compareWithout": ["z","c", "q"], 
+				"compareWithout": ["z", "c", "q"], 
 				"combine": ["c"] 
 			} 
 		},

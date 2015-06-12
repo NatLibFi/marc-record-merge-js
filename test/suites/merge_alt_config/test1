@@ -1,0 +1,16 @@
+should not mess up any fields.
+
+LDR    
+500    ‡aSelkänimeke: Ruotsi.
+650  7 ‡asanakirjat‡xsuomen kieli‡xruotsin kieli‡2ysa
+700 1  ‡aCantell, Ilse.
+
+LDR    
+500    ‡aSelkänimeke: Ruotsi.‡9FENNI<KEEP>
+650  7 ‡asanakirjat‡2ysa‡9FENNI<KEEP>
+700 1  ‡aCantell, Ilse.
+
+LDR    
+500    ‡aSelkänimeke: Ruotsi.‡9FENNI<KEEP>
+650  7 ‡asanakirjat‡xsuomen kieli‡xruotsin kieli‡2ysa‡9FENNI<KEEP>
+700 1  ‡aCantell, Ilse.

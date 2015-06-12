@@ -1,8 +1,10 @@
 should copy whole field instead of merging specifically configured subfields if the fields are not identical
 
+LDR    
 490 #_ ‡aNote‡9OTHERLOWTAG<KEEP>
 505 #_ ‡bField505
 
+LDR    
 490 #_ ‡aNote‡bAdditional info‡9THISLOWTAG<KEEP>
 500 #_ ‡aNote‡bSecond subfield
 

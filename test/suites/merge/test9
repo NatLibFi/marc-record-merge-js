@@ -1,7 +1,9 @@
 should normalize punctuation for comparison but preserve it in move subfields action
 
+LDR    
 490 #_ ‡aCafe$%^&*;:
 
+LDR    
 490 #_ ‡aCafe.,-/#!$%^&*;:{}=-_`~()
 
 LDR    

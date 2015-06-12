@@ -1,8 +1,10 @@
 should create an array of c subfields if there are multiple different ones.
 
+LDR    
 020 __ ‡a951-563-055-X‡qnid.‡c20 mk.
 
+LDR    
 020 __ ‡a951-563-055-X‡qOtava
 
 LDR    
-020 __ ‡a951-563-055-X‡qOtava‡c20 mk.‡qnid.
+020 __ ‡a951-563-055-X‡qOtava‡qnid.‡c20 mk.

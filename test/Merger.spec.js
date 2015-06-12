@@ -14,17 +14,14 @@ describe('Merger', function() {
 
 	var suitesPath = path.resolve(__dirname, "suites");
 	var suites = fs.readdirSync(suitesPath);
-					
-	suites.forEach(function(suite) {
+	
 
-		describe(suite, function() {
+	var testSuites = suites.map(function(suite) {
 
 			var p = path.resolve(suitesPath, suite);
 
 			var config = require(path.resolve(p, 'config.js'));
 			
-			var merger = new Merger(config);
-
 			var testFiles = fs.readdirSync(p)
 				.filter(function(filename) {
 					return filename.indexOf("test") === 0;
@@ -38,28 +35,55 @@ describe('Merger', function() {
 					description: data[0] + (DEBUG ? " (" + path.resolve(p,file) + ")" : ''),
 					record_a: data[1],
 					record_b: data[2],
-					expected_merged_record: data[3]
+					expected_merged_record: data[3],
+					config: config
 				};
 			});
 
-			var runOnly = tests.filter(function(test) {
-				return test.description.charAt(0) == '!';
-			});
+			return {
+				name: suite,
+				tests: tests
+			};
+	});
 
-			if (runOnly.length > 0) {
-				tests = runOnly;
+
+	var runOnly = false;
+	testSuites.forEach(function(suite) {
+		suite.tests.forEach(function(test) {
+			if (test.description.charAt(0) == '!') {
+				runOnly = true;
 			}
+		});
+	});
 
-			tests.forEach(function(test) {
+	testSuites.forEach(function(suite) {
+
+		describe(suite.name, function() {
+
+			suite.tests.forEach(function(test) {
+
+				if (runOnly && test.description.charAt(0) != '!') {
+					return;
+				}
 
 				it(test.description, function(done) {
 
-					merger.merge(Record.fromString(test.record_b), Record.fromString(test.record_a))
+					var merger = new Merger(test.config);
+
+					var recordB = Record.fromString(test.record_b);
+					var recordA = Record.fromString(test.record_a);
+
+					merger.merge(recordB, recordA)
 					.then(function(merged) {
 
 						var mergedRecord = new Record(merged);
 
 						expect(mergedRecord.toString()).to.equal(test.expected_merged_record);
+
+						// Also validate that the source records are not mutated!
+						expect(recordB.toString(), '# Preferred record (second) has been mutated.').to.equal(test.record_b);
+						expect(recordA.toString(), '# Other record (first) has been mutated.').to.equal(test.record_a);
+
 						done();
 
 					}).done();
