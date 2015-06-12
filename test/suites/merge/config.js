@@ -2,6 +2,8 @@
 module.exports = {
 
 	fields: {
+		"022": { "action": "copy", "options": { "compareWithoutIndicators": true } },
+		'300': { 'action': 'copy' },
 		'500': { 'action': 'copy' },
 		'490': { 
 			'action': 'moveSubfields',
