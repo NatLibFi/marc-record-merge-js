@@ -1,0 +1,13 @@
+should be copied from other record if it's not present in preferred record.
+
+LDR    
+007    tu
+100 __ ‡aThis is data
+
+LDR    
+100 __ ‡aThis is data
+
+LDR    
+007    tu
+100 __ ‡aThis is data
+

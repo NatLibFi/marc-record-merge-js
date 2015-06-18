@@ -1,0 +1,11 @@
+should select the field that has more subfields using substring comparison of field equality.
+
+LDR    
+260    ‡aLondon :‡c1989.
+
+LDR    
+260    ‡aLondon :‡bPinter,‡ccop. 1989.
+
+LDR    
+260    ‡aLondon :‡bPinter,‡ccop. 1989.
+

@@ -1,0 +1,14 @@
+should take it from preferred record if both records have it.
+
+LDR    
+007    tux
+100 __ ‡aThis is data
+
+LDR    
+007    tu
+100 __ ‡aThis is data
+
+LDR    
+007    tu
+100 __ ‡aThis is data
+

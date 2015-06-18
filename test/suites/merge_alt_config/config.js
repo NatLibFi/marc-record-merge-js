@@ -2,6 +2,7 @@
 module.exports = {
 
 	fields: {
+		'300': { 'action': 'selectBetter' },
 		'500': { 'action': 'copy' },
 		'490': { 
 			'action': 'moveSubfields',

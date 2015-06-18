@@ -1,0 +1,11 @@
+should select the field that has better subfields if the filds have equal sets of subfields using substring comparator
+
+LDR    
+260    ‡aLondon :‡bPinter,‡ccop. 1989.
+
+LDR    
+260    ‡aLondon :‡bPinter,‡c1989.
+
+LDR    
+260    ‡aLondon :‡bPinter,‡ccop. 1989.
+

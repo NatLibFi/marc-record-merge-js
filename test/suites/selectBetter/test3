@@ -1,0 +1,10 @@
+SelectBetter option should not create a copy of non-identical fields and it should use the one in preferred if neither is subset.
+
+LDR    
+300    ‡a62, [59] s. :‡bill. ;‡c25 cm.
+
+LDR    
+300    ‡a62, [59] s. :‡bkuv. ;‡c25 cm.
+
+LDR    
+300    ‡a62, [59] s. :‡bkuv. ;‡c25 cm.
