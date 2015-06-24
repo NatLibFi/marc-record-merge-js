@@ -86,6 +86,20 @@ describe('Merger', function() {
 
 						done();
 
+					}).catch(function(err) {
+
+						if (err.name == "AssertionError") {
+							throw err;
+						}
+
+						
+						expect(err.message).to.equal(test.expected_merged_record);
+						
+						// Also validate that the source records are not mutated!
+						expect(recordB.toString(), '# Preferred record (second) has been mutated.').to.equal(test.record_b);
+						expect(recordA.toString(), '# Other record (first) has been mutated.').to.equal(test.record_a);
+
+						done();
 					}).done();
 
 				});

@@ -6,9 +6,10 @@ module.exports = {
 		'300': { 'action': 'copy' },
 		'500': { 'action': 'copy' },
 		'490': { 
-			'action': 'moveSubfields',
+			'action': 'copy',
 			'options': { 
-			 	'subfields': ['9'] 
+			 	"compareWithout": ["9"],
+			 	"mustBeIdentical": true
 			 } 
 		},
 		"6..": { "action": "copy", "options": { "compareWithout": ["9"], "mustBeIdentical": true } },
@@ -19,7 +20,9 @@ module.exports = {
 		'700': {
 			'action': 'copy',
 			"options": { "compareWithout": ["9","4","e"] },
-		}
+		},
+
+		"710": { "action": "copy", "options": { "compareWithout": ["9","e","4"] } },
 	}
 	
 };

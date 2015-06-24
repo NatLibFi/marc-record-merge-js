@@ -1,0 +1,11 @@
+should copy field from other if preferred doesn't have one.
+
+LDR    
+041    ‡afin
+
+LDR    
+100    ‡aSomedata
+
+LDR    
+041    ‡afin
+100    ‡aSomedata

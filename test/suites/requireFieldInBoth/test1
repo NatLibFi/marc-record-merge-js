@@ -1,0 +1,11 @@
+should select the field from other when it has more subfields.
+
+LDR    
+250    ‡a2. painos.‡bsome extra piece of data
+
+LDR    
+250    ‡a2. painos.
+
+LDR    
+250    ‡a2. painos.‡bsome extra piece of data
+
