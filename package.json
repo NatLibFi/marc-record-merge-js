@@ -1,6 +1,6 @@
 {
   "name": "marc-record-merge",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Module for merging marc records",
   "main": "lib/marc-record-merge.js",
   "scripts": {
