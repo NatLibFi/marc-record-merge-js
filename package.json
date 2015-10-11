@@ -18,7 +18,7 @@
     "mocha": "^2.1.0"
   },
   "dependencies": {
-    "marc-record-js": "git://github.com/petuomin/marc-record-js",
+    "marc-record-js": "^0.1.1",
     "q": "^1.2.0"
   }
 }
