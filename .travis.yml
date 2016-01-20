@@ -3,3 +3,8 @@ node_js:
   - "node"
   - "iojs"
 before_install: npm install -g grunt-cli
+after_script:
+  - codeclimate-test-reporter < coverage/lcov.info
+addons:
+    code_climate:
+        repo_token: 15bdd2af590186a6551b08f012976d5e28e1e9fe0dfc30600c95ab6d2e95ee12
