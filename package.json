@@ -27,20 +27,29 @@
     "version": "1.2.4",
     "main": "lib/marc-record-merge.js",
     "scripts": {
-	"test": "grunt default"
+	"lint": "jshint .",
+	"test-nodejs": "mocha",
+	"test-browser": "karma start",
+	"test": "npm run test-nodejs && npm run test-browser",
+	"coverage": "istanbul cover _mocha",
+	"check": "npm run lint && npm run test && npm run coverage",
+	"travisci": "npm run check",
+	"publish-to-npm": "npm run check && npm publish"
     },
     "devDependencies": {
-	"chai": "^2.0.0",
-	"grunt": "^0.4.5",
-	"grunt-contrib-jshint": "^0.11.0",
-	"grunt-mocha-istanbul": "^2.3.1",
-	"grunt-mocha-test": "^0.12.7",
-	"istanbul": "^0.3.6",
-	"mocha": "^2.1.0"
+	"chai": "^3.2.0",
+	"jshint": "^2.8.0",
+	"mocha": "^2.3.2",
+	"istanbul": "^0.3.20",
+	"karma": "^0.13.19",
+	"karma-mocha": "^0.2.1",
+	"karma-requirejs": "^0.2.3",
+	"karma-phantomjs-launcher": "^0.2.3",
+	"phantomjs": "^1.9.19",
+	"codeclimate-test-reporter": "^0.1.1"
     },
     "dependencies": {
 	"marc-record-js": "^0.1.1",
-	"q": "^1.2.0",
-	"codeclimate-test-reporter": ">=0.3.0 < 0.4"
+	"q": "^1.2.0"
     }
 }
