@@ -26,8 +26,8 @@
 	"url": "git@github.com:NatLibFi/marc-record-merge.git"
     },
     "license": " AGPL-3.0",
-    "version": "2.0.0",
-    "main": "lib/marc-record-merge.js",
+    "version": "2.0.1",
+    "main": "./lib/main.js",
     "scripts": {
 	"lint": "jshint .",
 	"test-nodejs": "mocha test/nodejs/*.spec.js",
