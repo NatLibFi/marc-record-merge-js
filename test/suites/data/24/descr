@@ -1,0 +1,1 @@
+should compare without indicators if compareWithoutIndicators options is true. Selects the field with most indicators.

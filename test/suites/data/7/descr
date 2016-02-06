@@ -1,0 +1,1 @@
+should copy whole field instead of merging specifically configured subfields if the fields are not identical

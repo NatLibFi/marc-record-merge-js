@@ -1,6 +1,6 @@
 {
     "name": "marc-record-merge",
-    "description": "Module for merging marc records",
+    "description": "A configurable Javascript module for merging MARC records",
     "author": {
 	"name": "The National Library of Finland"
     },
@@ -9,6 +9,8 @@
 	"record",
 	"merge",
 	"merging",
+	"combine",
+	"combining",
 	"bibliography",
 	"bibliographic",
 	"catalog",
@@ -24,32 +26,36 @@
 	"url": "git@github.com:NatLibFi/marc-record-merge.git"
     },
     "license": " AGPL-3.0",
-    "version": "1.2.4",
+    "version": "2.0.0",
     "main": "lib/marc-record-merge.js",
     "scripts": {
 	"lint": "jshint .",
-	"test-nodejs": "mocha",
+	"test-nodejs": "mocha test/nodejs/*.spec.js",
 	"test-browser": "karma start",
 	"test": "npm run test-nodejs && npm run test-browser",
-	"coverage": "istanbul cover _mocha",
+	"coverage": "istanbul cover _mocha test/nodejs/**/*.spec.js",
 	"check": "npm run lint && npm run test && npm run coverage",
 	"travisci": "npm run check",
-	"publish-to-npm": "npm run check && npm publish"
-    },
-    "devDependencies": {
-	"chai": "^3.2.0",
-	"jshint": "^2.8.0",
-	"mocha": "^2.3.2",
-	"istanbul": "^0.3.20",
-	"karma": "^0.13.19",
-	"karma-mocha": "^0.2.1",
-	"karma-requirejs": "^0.2.3",
-	"karma-phantomjs-launcher": "^0.2.3",
-	"phantomjs": "^1.9.19",
-	"codeclimate-test-reporter": "^0.1.1"
+	"publish-to-npm": "npm install && npm run check && npm publish"
     },
     "dependencies": {
 	"marc-record-js": "^0.1.1",
-	"q": "^1.2.0"
+	"es6-polyfills": "^1.0.1",
+	"es6-shims": "^1.0.0",
+	"jjv": ">=1.0.2 <1.1",
+	"jjve": "^0.5.1",
+	"requirejs-plugins": ">=1.0.2 <1.1"
+    },
+    "devDependencies": {
+	"chai": "~3.2.0",
+	"jshint": "~2.8.0",
+	"mocha": "~2.3.2",
+	"istanbul": "~0.3.20",
+	"karma": "~0.13.19",
+	"karma-mocha": "~0.2.1",
+	"karma-requirejs": "~0.2.3",
+	"karma-phantomjs-launcher": "~0.2.3",
+	"phantomjs": "~1.9.19",
+	"codeclimate-test-reporter": "~0.1.1"
     }
 }

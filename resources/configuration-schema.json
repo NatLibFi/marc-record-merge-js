@@ -1,0 +1,22 @@
+{
+    "type": "object",
+    "properties": {
+	"fields": {
+	    "type": "object",
+	    "patternProperties": {
+		"[A-Za-z0-9]+": {
+		    "type": "object",
+		    "properties": {
+			"action": {
+			    "type": "string"
+			},
+			"options": {}
+		    },
+		    "required": ["action"]
+		}
+	    },
+	    "additionalProperties": false
+	}
+    },
+    "required": ["fields"]
+}
