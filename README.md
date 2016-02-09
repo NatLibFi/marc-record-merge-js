@@ -81,12 +81,17 @@ The specified action is executed for each field in the other record that matches
 - _**compareWithoutIndicators**_: A boolean determing whether field indicators must be identical
 - _**compareWithout**_: An array of subfield codes. These subfields are filtered out from the comparison
 - _**combine**_: An array of subfields codes. These subfields will be combined into a single subfield
+- _**transformOnInequality**_: An object describing how to transform an inequal field. For this option to take effect the preferred record must have at least one field with the same tag name as the other record. The following properties are supported:
+  - _**tag**_: Tag name of the new field (*Mandatory*)
+  - _**drop**_: An array of subfields codes. These subfields are not included in the new field.
+  - _**add**_: An object with subfield codes as keys and subfield values as values.
+  - _**map**_: An object with new subfield codes as keys and the old subfield codes as values.
 
 **selectBetter**: Selects the **"better"** of the two fields of each record. Cannot be used if the tag has multiple fields. The following options are supported:
 
 - _**requireFieldInBoth**_: A boolean determing whether the field must exist in both records to make changes
 - _**onlyIfMissing**_: A boolean determing whether the field will be selected from the other record only if it missing from preferred record
-- _**comparator**_: A subfield comparator function or a name of a predefined function
+- _**comparator**_: A subfield comparator function name
 
 ## Predefined comparators
 

@@ -1,0 +1,63 @@
+{
+    "type": "object",
+    "properties": {
+	"mustBeIdentical": {
+	    "type": "boolean"
+	},
+	"compareWithoutIndicators": {
+	    "type": "boolean"
+	},
+	"compareWithout": {
+	    "type": "array",
+	    "items": {
+		"type": "string"
+	    }
+	},
+	"combine": {
+	    "type": "array",
+	    "items": {
+		"type": "string"
+	    }
+	},
+	"transformOnInequality": {
+	    "type": "object",
+	    "properties": {
+		"tag": {
+		    "type": "string"
+		},
+		"ind1": {
+		    "type": "string"
+		},
+		"ind2": {
+		    "type": "string"
+		},
+		"map": {
+		    "description": "Map of subfield codes of the merged record that are mapped to the subfields of the other record",
+		    "type": "object",
+		    "patternProperties": {
+			"\\w": {
+			    "type": "string"
+			}
+		    }
+		},
+		"drop": {
+		    "description": "Array of subfield codes to drop",
+		    "type": "array",
+		    "items": {
+			"type": "string"
+		    }
+		},
+		"add": {
+		    "description": "Map of subfields codes that are to be added to the merged record with static values",
+		    "type": "object",
+		    "patternProperties": {
+			"\\w": {
+			    "type": "string"
+			}
+		    }
+		}
+	    },
+	    "required": ["tag"]
+	}
+    }
+}

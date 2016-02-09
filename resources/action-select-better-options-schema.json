@@ -1,0 +1,14 @@
+{
+    "type": "object",
+    "properties": {
+	"requireFieldInBoth": {
+	    "type": "boolean"
+	},
+	"onlyIfMissing": {
+	    "type": "boolean"
+	},
+	"comparator": {
+	    "type": "string"
+	}
+    }
+}

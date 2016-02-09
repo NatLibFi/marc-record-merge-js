@@ -359,6 +359,10 @@ function factory(chai, MarcRecord, mergeFactory)
 		    
 		});
 
+		it("It should transform a copied field", function(done) {
+		    runSuite('65', '65', done);
+		});
+
 		it("Should return the merged record and details about the merge process", function() {
 
 		    var record_merged = new MarcRecord({
