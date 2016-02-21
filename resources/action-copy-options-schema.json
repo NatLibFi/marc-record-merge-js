@@ -19,6 +19,12 @@
 		"type": "string"
 	    }
 	},
+	"pickMissing": {
+	    "type": "array",
+	    "items": {
+		"type": "string"
+	    }
+	},
 	"transformOnInequality": {
 	    "type": "object",
 	    "properties": {

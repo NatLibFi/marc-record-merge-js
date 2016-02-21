@@ -1,0 +1,11 @@
+{
+    "fields": {
+	"773": {
+	    "action": "selectBetter",
+	    "options": {
+		"pickMissing": ["q", "g"],
+		"comparator": "skipQandG"
+	    }
+	}
+    }
+}

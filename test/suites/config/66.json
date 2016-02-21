@@ -1,0 +1,11 @@
+{
+    "fields": {
+	"773": {
+	    "action": "copy",
+	    "options": {
+		"compareWithout": ["z", "q", "g"],
+		"pickMissing": ["q", "g"]
+	    }
+	}
+    }
+}

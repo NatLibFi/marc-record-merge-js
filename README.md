@@ -81,6 +81,7 @@ The specified action is executed for each field in the other record that matches
 - _**compareWithoutIndicators**_: A boolean determing whether field indicators must be identical
 - _**compareWithout**_: An array of subfield codes. These subfields are filtered out from the comparison
 - _**combine**_: An array of subfields codes. These subfields will be combined into a single subfield
+- _**pickMissing**_: An array of subfields codes which are used to pick the respective subfields from the field that is not included in the merged record. If the included field already has subfields with these codes the option has no effect
 - _**transformOnInequality**_: An object describing how to transform an inequal field. For this option to take effect the preferred record must have at least one field with the same tag name as the other record. The following properties are supported:
   - _**tag**_: Tag name of the new field (*Mandatory*)
   - _**drop**_: An array of subfields codes. These subfields are not included in the new field.
@@ -91,6 +92,7 @@ The specified action is executed for each field in the other record that matches
 
 - _**requireFieldInBoth**_: A boolean determing whether the field must exist in both records to make changes
 - _**onlyIfMissing**_: A boolean determing whether the field will be selected from the other record only if it missing from preferred record
+- _**pickMissing**_: An array of subfields codes which are used to pick the respective subfields from the field that is not included in the merged record. If the included field already has subfields with these codes the option has no effect
 - _**comparator**_: A subfield comparator function name
 
 ## Predefined comparators

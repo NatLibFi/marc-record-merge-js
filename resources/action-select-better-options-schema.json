@@ -9,6 +9,12 @@
 	},
 	"comparator": {
 	    "type": "string"
+	},
+	"pickMissing": {
+	    "type": "array",
+	    "items": {
+		"type": "string"
+	    }
 	}
     }
 }

@@ -359,8 +359,29 @@ function factory(chai, MarcRecord, mergeFactory)
 		    
 		});
 
-		it("It should transform a copied field", function(done) {
+		it('It should transform a copied field', function(done) {
 		    runSuite('65', '65', done);
+		});
+
+		it('It should pick missing fields from the other field that is not copied to the merged record', function(done) {
+		    runSuite('66', '66', done);
+		});
+
+		it('It should pick missing fields from the other field to the preferred field that is considered better', function(done) {
+		    runSuite('67', '67', done);
+		});
+
+		it('It should pick missing fields from the preferred field to the other field that is considered better', function(done) {
+		    runSuite('68', '68', done, {
+			comparators: {
+			    skipQandG: function(a, b)
+			    {
+				var skip = ['g', 'q'];
+
+				return skip.indexOf(a.code) >= 0 || skip.indexOf(b.code) >= 0 ? true : a.code == b.code && a.value == b.value;
+			    }
+			}
+		    });
 		});
 
 		it("Should return the merged record and details about the merge process", function() {
