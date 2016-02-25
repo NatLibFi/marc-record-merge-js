@@ -95,6 +95,14 @@ The specified action is executed for each field in the other record that matches
 - _**pickMissing**_: An array of subfields codes which are used to pick the respective subfields from the field that is not included in the merged record. If the included field already has subfields with these codes the option has no effect
 - _**comparator**_: A subfield comparator function name
 
+The better field is selected as follows:
+
+1. Check if both fields' subfield are considered equal (Using the comparator function)
+  1. If equal, select the field that gets the most points (Fields get points for each subfield that has more characters than the corresponding subfield in the opposite field)
+  1. If not equal, check if the other field is a subset of the preferred field (Contains all the subfields of the preferred field and more)
+    1. If the other field is a subset of the preferred field, select the other field
+    1. Otherwise select the preferred field 
+
 ## Predefined comparators
 
 - **substring**: Require both subfields to have equal codes and that at least one value is a substring of the other subfield's value
