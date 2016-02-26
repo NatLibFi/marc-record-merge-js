@@ -88,6 +88,34 @@ The specified action is executed for each field in the other record that matches
   - _**add**_: An object with subfield codes as keys and subfield values as values.
   - _**map**_: An object with new subfield codes as keys and the old subfield codes as values.
 
+The action copies only fields that have no match in the preferred record:
+
+1. Attempt to find a corresponding field from preferred record
+  1. Attempt to find an identical field (All options are applied to comparison)
+    - [Normalize fields](#field-normalization)
+    - Tag names must be identicals
+    - Indicators must be identical
+    - Values must be identical
+      1. Variable fields: Each subfield must have a matching subfield in the opposite record (Code and value identical).
+      1. Control fields: The values must be identical
+  1. Attempt to find a similar field if an identical field was not found (All options are applied to comparison)
+    - [Normalize fields](#field-normalization)
+    - Tag names must be identical
+    - Indicators must be identical
+    - Values comparison
+      1. Variable fields: Either field's subfields must be a subset of the opposite subfields (There is a match for all of the opposite field's subfields)
+      1. Control fields: The values must be identical
+1. Copy or do nothing
+  1. No corresponding field was found
+    1. If no fields in the preferred record with the same tag name were found, copy the field
+    1. If fields with the same tag were found and option *transformOnInequality* is enabled, copy the other field using the specified transformations. Otherwise do nothing.
+
+  1. Corresponding field was found. Check if the other field is deemed different and should be copied to the merged record (All options are applied to comparison)
+    1. [Normalize fields](#field-normalization)
+    1. Check if the other field is a "proper" subset of the preferred field (Contains all the subfields of the preferred field and more)
+      1. If it is, copy the field
+      1. If it's not, do nothing
+
 **selectBetter**: Selects the **"better"** of the two fields of each record. Cannot be used if the tag has multiple fields. The following options are supported:
 
 - _**requireFieldInBoth**_: A boolean determing whether the field must exist in both records to make changes
@@ -97,11 +125,20 @@ The specified action is executed for each field in the other record that matches
 
 The better field is selected as follows:
 
-1. Check if both fields' subfield are considered equal (Using the comparator function)
+1. [Normalize fields](#field-normalization)
+1. Check if both fields' subfields are considered equal (Using the comparator function)
   1. If equal, select the field that gets the most points (Fields get points for each subfield that has more characters than the corresponding subfield in the opposite field)
-  1. If not equal, check if the other field is a subset of the preferred field (Contains all the subfields of the preferred field and more)
+  1. If not equal, check if the other field is a "proper" subset of the preferred field (Contains all the subfields of the preferred field and more)
     1. If the other field is a subset of the preferred field, select the other field
     1. Otherwise select the preferred field 
+
+## Field normalization
+
+Field values (Variable field subfields or control field value) are normalized as follows:
+
+1. String is converted to lower case
+1. Punctuation (See the function _**removePunctuation**_ in [lib/main.js](https://github.com/NatLibFi/marc-record-merge/blob/master/lib/main.js) for the characters replaced) is replaced with whitespace. The resulting string is trimmed (Whitespace removed from both ends) and subsequent whitespace is reduced to single whitespace.
+1. Diacritics are replaced with their corresponding ASCII characters (See the variable __*DIACRITICS_REMOVAL_MAP*__ in [lib/main.js](https://github.com/NatLibFi/marc-record-merge/blob/master/lib/main.js) for mapping)
 
 ## Predefined comparators
 
