@@ -1,9 +1,8 @@
 {
     "fields": {
 	"773": {
-	    "action": "copy",
+	    "action": "selectBetter",
 	    "options": {
-		"compareWithout": ["z", "q", "g"],
 		"pick": {
 		    "subfields": ["g", "q"],
 		    "missingOnly": true

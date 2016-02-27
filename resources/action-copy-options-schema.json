@@ -19,11 +19,20 @@
 		"type": "string"
 	    }
 	},
-	"pickMissing": {
-	    "type": "array",
-	    "items": {
-		"type": "string"
-	    }
+	"pick": {
+	    "type": "object",
+	    "properties": {
+		"subfields": {
+		    "type": "array",
+		    "items": {
+			"type": "string"
+		    }
+		},
+		"missingOnly": {
+		    "type": "boolean"
+		}
+	    },
+	    "required": ["subfields"]
 	},
 	"transformOnInequality": {
 	    "type": "object",

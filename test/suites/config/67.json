@@ -1,9 +1,13 @@
 {
     "fields": {
 	"773": {
-	    "action": "selectBetter",
+	    "action": "copy",
 	    "options": {
-		"pickMissing": ["q", "g"]
+		"compareWithout": ["z", "q", "g"],
+		"pick": {
+		    "subfields": ["g", "q"],
+		    "missingOnly": true
+		}
 	    }
 	}
     }
