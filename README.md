@@ -114,7 +114,7 @@ The action copies only fields that have no match in the preferred record:
 
   1. Corresponding field was found. Check if the other field is deemed different and should be copied to the merged record (All options are applied to comparison)
     1. [Normalize fields](#field-normalization)
-    1. Check if the other field is a "proper" subset of the preferred field (Contains all the subfields of the preferred field and more)
+    1. Check if the other field is a "proper" subset of the preferred field (Preferred field contains all of the other field's subfields and more)
       1. If it is, copy the field
       1. If it's not, do nothing
 
@@ -132,7 +132,7 @@ The better field is selected as follows:
 1. [Normalize fields](#field-normalization)
 1. Check if both fields' subfields are considered equal (Using the comparator function)
   1. If equal, select the field that gets the most points (Fields get points for each subfield that has more characters than the corresponding subfield in the opposite field)
-  1. If not equal, check if the other field is a "proper" subset of the preferred field (Contains all the subfields of the preferred field and more)
+  1. If not equal, check if the other field is a "proper" subset of the preferred field (Preferred field contains all of the other field's subfields and more)
     1. If the other field is a subset of the preferred field, select the other field
     1. Otherwise select the preferred field 
 
