@@ -32,7 +32,8 @@
 		    "type": "boolean"
 		}
 	    },
-	    "required": ["subfields"]
+	    "required": ["subfields"],
+	    "additionalProperties": false
 	},
 	"transformOnInequality": {
 	    "type": "object",
@@ -72,7 +73,9 @@
 		    }
 		}
 	    },
-	    "required": ["tag"]
+	    "required": ["tag"],
+	    "additionalProperties": false
 	}
-    }
+    },
+    "additionalProperties": false
 }
