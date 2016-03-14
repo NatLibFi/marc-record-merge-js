@@ -176,6 +176,30 @@ An object with comparator names as keys and functions as values. The comparator 
 function (subfield1, subfield2) {}
 ```
 
+### Sorting
+
+By default, new fields are added after the similar fields. This can be changed with the **sort** property:
+
+```js
+{
+  "fields": {
+    "020": {
+      "action": "copy"
+    }
+  },
+  "sort": {
+    "insert": "before",
+    "indexes": {
+      "CAT": 995
+    }
+  }
+}
+```
+
+### Properties
+- **insert**: Defines whether new fields are inserted before or after similar fields. Defaults to *after*.
+- **indexes**: An object with field tag patterns as keys and static sort indexes as values. By default, new fields are inserted by the tag's numeric index (If similar fields don't exist)
+
 ## License and copyright
 
 Copyright (c) 2015-2016 **University Of Helsinki (The National Library Of Finland)**

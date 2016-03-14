@@ -1,0 +1,10 @@
+{
+    "fields": {
+	"100": {
+	    "action": "copy"
+	}
+    },
+    "sort": {
+	"insert": "before"
+    }
+}

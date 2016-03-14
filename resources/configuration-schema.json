@@ -4,7 +4,7 @@
 	"fields": {
 	    "type": "object",
 	    "patternProperties": {
-		"[A-Za-z0-9]+": {
+		".+": {
 		    "type": "object",
 		    "properties": {
 			"action": {
@@ -17,7 +17,30 @@
 		}
 	    },
 	    "additionalProperties": false
+	},
+	"sort": {
+	    "type": "object",
+	    "properties": {
+		"insert": {
+		    "enum": ["before", "after"],
+		    "default": "after"
+		},
+		"indexes": {
+		    "type": "object",
+		    "patternProperties": {
+			".+": {
+			    "type": "number"
+			}
+		    },
+		    "additionalProperties": false
+		}
+	    },
+	    "additionalProperties": false,
+	    "default": {
+		"insert": "after"
+	    }
 	}
     },
-    "required": ["fields"]
+    "required": ["fields"],
+    "additionalProperties": false
 }

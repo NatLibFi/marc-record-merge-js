@@ -309,7 +309,7 @@ function factory(chai, MarcRecord, mergeFactory)
 		it("Should not merge multiple fields if all of the subfields are marked as compareWithout", function(done) {
 		    runSuite('55', '44to56', done);
 		});
-
+		
 		it("Should create an array of c subfields if there are multiple different ones.", function(done) {
 		    runSuite('56', '44to56', done);
 		});
@@ -381,6 +381,14 @@ function factory(chai, MarcRecord, mergeFactory)
 
 		it('It should pick only missing fields from the other field to the preferred field that is considered better', function(done) {
 		    runSuite('70', '70', done);
+		});
+
+		it('Should insert new content before the similar field', function(done) {
+		    runSuite('71', '71', done);
+		});
+
+		it('Should insert new content according to specified sort index', function(done) {
+		    runSuite('72', '72', done);
 		});
 
 		it("Should return the merged record and details about the merge process", function() {
