@@ -247,7 +247,7 @@ function factory(chai, MarcRecord, mergeFactory)
 		    runSuite('39', '32to40', done);
 		});
 
-		it("Should select the field that has better subfields if the filds have equal sets of subfields using substring comparato", function(done) {
+		it("Should select the field that has better subfields if the fields have equal sets of subfields using substring comparator", function(done) {
 		    runSuite('40', '32to40', done);
 		});
 		it("Should select the field from other when it has more subfields", function(done) {
