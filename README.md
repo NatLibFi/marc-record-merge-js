@@ -95,7 +95,7 @@ The action copies only fields that have no match in the preferred record:
 1. Attempt to find a corresponding field from preferred record
   1. Attempt to find an identical field (All options are applied to comparison)
     - [Normalize fields](#field-normalization)
-    - Tag names must be identicals
+    - Tag names must be identical
     - Indicators must be identical
     - Values must be identical
       1. Variable fields: Each subfield must have a matching subfield in the opposite record (Code and value identical).
