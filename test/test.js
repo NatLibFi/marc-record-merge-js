@@ -227,11 +227,11 @@ function factory(chai, MarcRecord, mergeFactory)
 		    runSuite('34', '32to40', done);
 		});
 
-		it("SelectBetter option should use the field from other record if it's a superse", function(done) {
+		it("SelectBetter option should use the field from other record if it's a superset", function(done) {
 		    runSuite('35', '32to40', done);
 		});
 
-		it("SelectBetter option should use the field from preferred record if it's a superse", function(done) {
+		it("SelectBetter option should use the field from preferred record if it's a superset", function(done) {
 		    runSuite('36', '32to40', done);
 		});
 
