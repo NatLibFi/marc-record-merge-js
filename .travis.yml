@@ -5,4 +5,5 @@ after_script:
   - codeclimate-test-reporter < coverage/lcov.info
 addons:
     code_climate:
-        repo_token: 15bdd2af590186a6551b08f012976d5e28e1e9fe0dfc30600c95ab6d2e95ee12
+        repo_token:
+          secure: "cFaqGqnzXG2aNUA/vNxK3qJQrgpQg6kzD5BqI3RRhbjj4eF0yPONzcvys3bBEWdyxdVY6fRVGgPsWrC0F/lmuP4P8fZVli5nStbkHeMq8UxAh2suqx5hqGfCYyF7Xqz4Wx3bzg31iDoosi3wNV3XVSZE+g0Z2Eh2bW5/q/heAbE="
