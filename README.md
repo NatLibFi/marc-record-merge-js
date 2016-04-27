@@ -122,6 +122,7 @@ The action copies only fields that have no match in the preferred record:
 
 - _**requireFieldInBoth**_: A boolean determing whether the field must exist in both records to make changes
 - _**onlyIfMissing**_: A boolean determing whether the field will be selected from the other record only if it missing from preferred record
+- _**skipOnMultiple**_: A boolean determing whether to skip the action (And keep the preferred fields) if the are multiple fields of the same tag. Default behavior is to fail the processing
 - _**pick**_: Include subfields from the field that is not preserved.
   - _**subfields**_: An array of subfield codes (*Mandatory*)
   - _**missingOnly**_: A boolean determing whether only subfields missing from the target field should be picked

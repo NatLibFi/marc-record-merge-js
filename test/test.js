@@ -391,6 +391,10 @@ function factory(chai, MarcRecord, mergeFactory)
 		    runSuite('72', '72', done);
 		});
 
+		it("Should keep the preferred field instead of selecting the better one because 'skipOnMultiple' is true", function(done) {
+		    runSuite('73', '73', done);
+		});
+
 		it("Should return the merged record and details about the merge process", function() {
 
 		    var record_merged = new MarcRecord({

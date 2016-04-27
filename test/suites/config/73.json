@@ -1,0 +1,10 @@
+{
+    "fields": {
+	"773": {
+	    "action": "selectBetter",
+	    "options": {
+		"skipMissing": true
+	    }
+	}
+    }
+}

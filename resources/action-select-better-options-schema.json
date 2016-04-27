@@ -7,6 +7,9 @@
 	"onlyIfMissing": {
 	    "type": "boolean"
 	},
+	"skipOnMultiple": {
+	    "type": "boolean"
+	},
 	"comparator": {
 	    "type": "string"
 	},
