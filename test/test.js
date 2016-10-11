@@ -85,10 +85,6 @@ function factory(chai, MarcRecord, mergeFactory)
 		expect(mergeFactory).to.be.a('function');
 	    });
 	    
-	    it('Should throw because configuration is invalid', function() {
-		expect(mergeFactory).to.throw(/^Invalid configuration:/);
-	    });
-
 	    it('Should return a function', function() {
 		expect(function() {
 
