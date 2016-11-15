@@ -116,7 +116,8 @@ The action copies only fields that have no match in the preferred record:
     1. [Normalize fields](#field-normalization)
     1. Check if the other field is a "proper" subset of the preferred field (Preferred field contains all of the other field's subfields and more)
       1. If it is, copy the field
-      1. If it's not, do nothing
+      1. If it's not, keep the preferred field
+      1. In both cases, merge the subfields that were not included in comparison by removing identical subfields
 
 **selectBetter**: Selects the **"better"** of the two fields of each record. Cannot be used if the tag has multiple fields. The following options are supported:
 
