@@ -27,62 +27,70 @@
  **/
 
 (function (root, factory) {
-    
-    'use strict';
+  
+  'use strict';
 
-    define([
-	'../test',
-	'es6-polyfills/lib/polyfills/promise',
-	'require'
-    ], factory);
-    
+  define([
+    '../test',
+    'es6-polyfills/lib/polyfills/promise',
+    'require'
+  ], factory);
+  
 }(this, factory));
 
 function factory(runTests, Promise, require)
 {
 
-    function requirePromise(path)
-    {
-	return new Promise(function(resolve, reject) {
-	    require(
-		[path],
-		function(module) {
-		    resolve(module);
-		},
-		function (error) {		    
-		    return new RegExp('/merged$').test(path) === true && error.xhr.status === 404 ? resolve() : reject(error);
-		}
-	    );
-	});
-    }
+  function xhrGetPromise(path)
+  {
+    return new Promise(function(resolve, reject) {
 
-    function getResources(name_data, name_config)
-    {
-	return Promise.all([
-	    requirePromise('json!../suites/config/' + name_config + '.json'),
-	    requirePromise('text!../suites/data/' + name_data + '/preferred'),
-	    requirePromise('text!../suites/data/' + name_data + '/other'),
-	    requirePromise('text!../suites/data/' + name_data + '/merged'),
-	]).then(function(resources) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', path);
 
-	    var obj = {
-		config: resources[0],
-		data: {
-		    preferred: resources[1],
-		    other: resources[2]
-		}
-	    };
+      xhr.addEventListener('load', function() {
+        if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 404) {
+          resolve(xhr.responseText);
+        } else {
+          reject(new Error(xhr.status+' : '+xhr.statusText));
+        }
+      });
+      xhr.addEventListener('error', function() {
+        reject(new Error(xhr.status+' : '+xhr.statusText));
+      });
+      
+      xhr.send(null);
 
-	    if (resources[3]) {
-		obj.data.merged = resources[3];
-	    }
+    });
+  }
 
-	    return obj;
+  function getResources(name_data, name_config)
+  {
+    return Promise.all([
+      xhrGetPromise('/base/test/suites/config/' + name_config + '.json').then(function(data) {return JSON.parse(data);}),
+      xhrGetPromise('/base/test/suites/data/' + name_data + '/preferred'),
+      xhrGetPromise('/base/test/suites/data/' + name_data + '/other'),
+      xhrGetPromise('/base/test/suites/data/' + name_data + '/merged'),
+    ]).then(function(resources) {
 
-	});
-    }
+      var obj = {
+        config: resources[0],
+        data: {
+          preferred: resources[1],
+          other: resources[2]
+        }
+      };
 
-    runTests(getResources);
+      if (resources[3]) {
+        obj.data.merged = resources[3];
+      }
+
+      return obj;
+
+    });
+  }
+
+  runTests(getResources);
 
 }
 

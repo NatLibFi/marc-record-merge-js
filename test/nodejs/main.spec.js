@@ -27,45 +27,45 @@
  **/
 
 (function (root, factory) {
-    
-    'use strict';
+  
+  'use strict';
 
-    module.exports = factory(
-	require('../test'),
-	require('es6-polyfills/lib/polyfills/promise'),
-	require('fs'),
-	require('path')
-    );
-    
+  module.exports = factory(
+    require('../test'),
+    require('es6-polyfills/lib/polyfills/promise'),
+    require('fs'),
+    require('path')
+  );
+  
 }(this, factory));
 
 function factory(runTests, Promise, fs, path)
 {
 
-    function getResources(name_data, name_config)
-    {
-
-	var obj = {},
-	path_base = path.join(path.dirname(module.filename), '..', 'suites');
-
-	obj.config = JSON.parse(fs.readFileSync(path.join(path_base, 'config', name_config + '.json'), {
-		encoding: 'utf8'
-	}));
-	   
-	obj.data = {
-		preferred: fs.readFileSync(path.join(path_base, 'data', name_data, 'preferred'), {encoding: 'utf8'}),
-		other: fs.readFileSync(path.join(path_base, 'data', name_data, 'other'), {encoding: 'utf8'})
-	};
-
-	if (fs.existsSync(path.join(path_base, 'data', name_data, 'merged'))) {
-	    obj.data.merged = fs.readFileSync(path.join(path_base, 'data', name_data, 'merged'), {encoding: 'utf8'});
-	}
-
-	return Promise.resolve(obj);
-
-    }
+  function getResources(name_data, name_config)
+  {
     
-    runTests(getResources);
+    var obj = {},
+        path_base = path.join(path.dirname(module.filename), '..', 'suites');
+
+    obj.config = JSON.parse(fs.readFileSync(path.join(path_base, 'config', name_config + '.json'), {
+      encoding: 'utf8'
+    }));
+    
+    obj.data = {
+      preferred: fs.readFileSync(path.join(path_base, 'data', name_data, 'preferred'), {encoding: 'utf8'}),
+      other: fs.readFileSync(path.join(path_base, 'data', name_data, 'other'), {encoding: 'utf8'})
+    };
+
+    if (fs.existsSync(path.join(path_base, 'data', name_data, 'merged'))) {
+      obj.data.merged = fs.readFileSync(path.join(path_base, 'data', name_data, 'merged'), {encoding: 'utf8'});
+    }
+
+    return Promise.resolve(obj);
+
+  }
+  
+  runTests(getResources);
 
 }
 

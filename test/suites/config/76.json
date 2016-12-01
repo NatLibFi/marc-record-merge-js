@@ -1,0 +1,13 @@
+{
+  "fields": {
+	  "773": {
+	    "action": "copy",
+	    "options": {
+		    "compareWithout": ["z", "q", "g"],
+		    "pick": {
+		      "subfields": ["g", "q"]
+		    }
+	    }
+	  }
+  }
+}

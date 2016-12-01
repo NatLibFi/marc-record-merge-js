@@ -1,14 +1,14 @@
 {
-    "fields": {
-	"773": {
-	    "action": "copy",
-	    "options": {
-		"compareWithout": ["z", "q", "g"],
-		"pick": {
-		    "subfields": ["g", "q"],
-		    "missingOnly": true
-		}
-	    }
-	}
+  "fields": {
+    "773": {
+      "action": "copy",
+      "options": {
+        "compareWithout": ["z", "q", "g"],
+        "pick": {
+          "subfields": ["b", "g", "q"],
+          "missingOnly": true
+        }
+      }
     }
+  }
 }
