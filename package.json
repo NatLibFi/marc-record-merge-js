@@ -35,15 +35,15 @@
     "test": "npm run test-nodejs && npm run test-browser",
     "cover": "npm run test && istanbul check-coverage",
     "check-coverage": "npm run test-nodejs && istanbul check-coverage",
-    "check": "npm run lint && npm run coverage",
+    "check": "npm run lint && npm run cover",
     "travisci": "npm run check",
-    "generate-requirejs-config": "requirejs-configurator --npm -D -P > test/browser/main.js",
+    "generate-requirejs-config": "requirejs-configurator --npm --include-dev-dependencies --exclude-peer-dependencies > test/browser/main.js",
     "publish-to-npm": "npm install && npm run check && npm publish"
   },
   "dependencies": {
     "marc-record-js": "^0.1.1",
-    "es6-polyfills": "^1.1.0",
-    "es6-shims": "^1.1.0"
+    "es6-polyfills": "^2.0.0",
+    "es6-shims": "^2.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
