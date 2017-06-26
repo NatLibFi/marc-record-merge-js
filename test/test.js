@@ -136,8 +136,9 @@ function factory(chai, MarcRecord, mergeFactory)
                 tag: '001',
                 value: 'bar'
               }]
-            })
-          )}).to.not.throw();
+						})
+					);
+				}).to.not.throw();
       });
 
     });
@@ -165,7 +166,8 @@ function factory(chai, MarcRecord, mergeFactory)
                 value: 'bar'
               }]
             })
-          )}).to.throw(Error, /^Undefined action \'foobar\'$/);
+          );
+				}).to.throw(Error, /^Undefined action \'foobar\'$/);
       });
 
       it("Should be copied from other record if it's not present in preferred record", function(done) {
