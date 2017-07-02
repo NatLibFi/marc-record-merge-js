@@ -32,7 +32,7 @@
 
   module.exports = factory(
     require('../test'),
-    require('es6-polyfills/lib/polyfills/promise'),
+    require('@natlibfi/es6-polyfills/lib/polyfills/promise'),
     require('fs'),
     require('path')
   );

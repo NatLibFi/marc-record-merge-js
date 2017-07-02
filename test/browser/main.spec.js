@@ -32,7 +32,7 @@
 
   define([
     '../test',
-    'es6-polyfills/lib/polyfills/promise',
+    '@natlibfi/es6-polyfills/lib/polyfills/promise',
     'require'
   ], factory);
   

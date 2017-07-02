@@ -1,5 +1,5 @@
 {
-  "name": "marc-record-merge",
+  "name": "@natlibfi/marc-record-merge",
   "description": "A configurable Javascript module for merging MARC records",
   "author": {
     "name": "The National Library of Finland"
@@ -26,7 +26,7 @@
     "url": "git@github.com:NatLibFi/marc-record-merge.git"
   },
   "license": "AGPL-3.0",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "main": "./lib/main.js",
   "scripts": {
     "lint": "jshint .",
@@ -38,12 +38,12 @@
     "check": "npm run lint && npm run cover",
     "travisci": "npm run check",
     "generate-requirejs-config": "requirejs-configurator --npm --include-dev-dependencies --exclude-peer-dependencies > test/browser/main.js",
-    "publish-to-npm": "npm install && npm run check && npm publish"
+    "publish-to-npm": "npm install && npm run check && npm publish --access=public"
   },
   "dependencies": {
     "marc-record-js": "^0.1.1",
-    "es6-polyfills": "^2.0.0",
-    "es6-shims": "^2.0.0"
+    "@natlibfi/es6-polyfills": "^2.0.0",
+    "@natlibfi/es6-shims": "^2.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

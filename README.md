@@ -1,4 +1,4 @@
-# MARC record merge [![NPM Version](https://img.shields.io/npm/v/marc-record-merge.svg)](https://npmjs.org/package/marc-record-merge) [![Build Status](https://travis-ci.org/NatLibFi/marc-record-merge.svg)](https://travis-ci.org/NatLibFi/marc-record-merge) [![Test Coverage](https://codeclimate.com/github/NatLibFi/marc-record-merge/badges/coverage.svg)](https://codeclimate.com/github/NatLibFi/marc-record-merge/coverage)
+# MARC record merge [![NPM Version](https://img.shields.io/npm/v/@natlibfi/marc-record-merge.svg)](https://npmjs.org/package/marc-record-merge) [![Build Status](https://travis-ci.org/NatLibFi/marc-record-merge.svg)](https://travis-ci.org/NatLibFi/marc-record-merge) [![Test Coverage](https://codeclimate.com/github/NatLibFi/marc-record-merge/badges/coverage.svg)](https://codeclimate.com/github/NatLibFi/marc-record-merge/coverage)
 
 A configurable Javascript module for merging [MARC](https://en.wikipedia.org/wiki/MARC_standards) records.
 
