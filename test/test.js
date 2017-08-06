@@ -229,7 +229,6 @@ function factory(chai, MarcRecord, mergeFactory)
       it("Should select better field from other record, making comparison without 'compareWithout' subfields.", function(done) {
         runSuite('16', '4to26', done);
       });
-            
       it("Should move only one instance of 'compareWithout' fields to merged", function(done) {
         runSuite('17', '4to26', done);
       });
@@ -241,6 +240,9 @@ function factory(chai, MarcRecord, mergeFactory)
       });
       it("Should handle e subfields with compareWithout setting.", function(done) {
         runSuite('20', '4to26', done);
+      });
+      it("Should copy field from the preferred record and include b-subfield only from the preferred field because the subfield are compared as normalized", function(done) {
+        runSuite('77', '77', done);
       });
       it("Should not mess up any fields.", function(done) {
         runSuite('21', '4to26', done);

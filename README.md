@@ -80,6 +80,7 @@ The specified action is executed for each field in the other record that matches
 - _**mustBeIdentical**_: A boolean determing whether all subfields must be identical
 - _**compareWithoutIndicators**_: A boolean determing whether field indicators must be identical
 - _**compareWithout**_: An array of subfield codes. These subfields are filtered out from the comparison
+- _**compareSubfieldsNormalized**_: A boolean determing whether the subfields included in _compareWithout_ should be compared as normalized
 - _**combine**_: An array of subfields codes. These subfields will be combined into a single subfield
 - _**pick**_: Include subfields from the field that is not preserved.
   - _**subfields**_: An array of subfield codes (*Mandatory*)

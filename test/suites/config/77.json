@@ -1,0 +1,11 @@
+{
+  "fields": {
+    "500": { 
+      "action": "copy",
+      "options": {
+        "compareWithout": ["b"],
+        "compareSubfieldsNormalized": true
+      }
+    }
+  }
+}
