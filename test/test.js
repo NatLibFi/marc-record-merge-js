@@ -29,16 +29,25 @@
 (function (root, factory) {
 
   'use strict';
-
   if (typeof define === 'function' && define.amd) {
-    define(['chai/chai', 'marc-record-js', '../lib/main'], factory);
+    define([
+      'chai/chai', 
+      'marc-record-js', 
+      '../lib/main', 
+      '@natlibfi/es6-shims/lib/shims/array'
+    ], factory);
   } else if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('chai'), require('marc-record-js'), require('../lib/main'));
+    module.exports = factory(
+      require('chai'), 
+      require('marc-record-js'), 
+      require('../lib/main'), 
+      require('@natlibfi/es6-shims/lib/shims/array')
+    );
   }
 
 }(this, factory));
 
-function factory(chai, MarcRecord, mergeFactory)
+function factory(chai, MarcRecord, mergeFactory, shim_array)
 {
 
   'use strict';
@@ -59,9 +68,9 @@ function factory(chai, MarcRecord, mergeFactory)
             record_other = MarcRecord.fromString(resources.data.other);
             record_merged = mergeFactory(resources.config, plugins)(record_preferred, record_other);
 
-            expect(record_merged.toString()).to.equal(resources.data.merged);
-            expect(record_preferred.toString()).to.equal(resources.data.preferred);
-            expect(record_other.toString()).to.equal(resources.data.other);
+            expect(record_merged.toString().trim()).to.equal(resources.data.merged.trim(), 'merged do not match');
+            expect(record_preferred.toString().trim()).to.equal(resources.data.preferred.trim(), 'preferreds do not match');
+            expect(record_other.toString().trim()).to.equal(resources.data.other.trim(), 'others do not match');
 
             doneCallback();
 
@@ -633,7 +642,127 @@ function factory(chai, MarcRecord, mergeFactory)
         });
 
       });
-            
+      
+      describe("mergeControlfield", function() {
+        var preferred, other;
+        var config = {
+          "fields": {
+            "008": { 
+              "action": "mergeControlfield",
+              "options": {
+                "actions": [
+                  {
+                    "formats": ["BK", "CF", "CR", "MU", "MX", "VM", "MP"],
+                    "range": [15, 17],
+                    "significantCaret": false,
+                    "type": "selectNonEmpty"
+                  },
+                  {
+                    "formats": ["BK", "CF", "CR", "MU", "MX", "VM", "MP"],
+                    "range": [35, 37],
+                    "significantCaret": false,
+                    "type": "selectNonEmpty"
+                  },
+                  {
+                    "formats": ["BK"],
+                    "range": [18, 21],
+                    "significantCaret": true,
+                    "type": "combine"
+                  }
+                ]
+              }
+            }
+          }
+        };
+        function selectValue(tag, record) {
+          var field = shim_array.find(record.fields, function(field) { return field.tag === tag; });
+          if (field) {
+            return field.value;
+          }
+          return undefined;
+        }
+        function setType(chars, leader) {
+          return leader.substr(0,6) + chars + leader.substr(8);
+        }
+        function prime008Fields(preferredValue, otherValue) {
+          preferred.appendControlField(['008', preferredValue]);
+          other.appendControlField(['008', otherValue]);
+        }
+
+        function primeTypes(preferredType, otherType) {
+          
+          var typeChars = {
+            'BK': 'am',
+            'MU': 'cm'
+          };
+          
+          preferred.leader = setType(typeChars[preferredType], preferred.leader);
+          other.leader = setType(typeChars[otherType], other.leader);
+
+        }
+
+        beforeEach(function() {
+          preferred = new MarcRecord();
+          other = new MarcRecord();
+
+          preferred.leader = "00000cam^a2200733^i^4500";
+          other.leader = "00000cam^a2200733^i^4500";
+        });
+
+        function selectMerged008Value() {
+          var merged = mergeFactory(config, [])(preferred, other);
+          return selectValue('008', merged);
+        }
+
+        it("should pick value form other if preferred is empty", function() {
+          primeTypes('BK', 'BK');
+          prime008Fields(
+            '861000s1972^^^^||||||||||||||||||||eng||',
+            '861000s1972^^^^xxu|||||||||||||||||eng||'
+          );
+          
+          expect(selectMerged008Value()).to.equal('861000s1972^^^^xxu|||||||||||||||||eng||');
+        });
+
+        it("should not do anything if record types are different", function() {
+          primeTypes('BK', 'MU');
+          prime008Fields(
+            '861000s1972^^^^||||||||||||||||||||eng||',
+            '861000s1972^^^^xxu|||||||||||||||||eng||'
+          );
+          
+          expect(selectMerged008Value()).to.equal('861000s1972^^^^||||||||||||||||||||eng||');
+        });
+
+        it("should combine fragment when action type is combine", function() {
+          primeTypes('BK', 'BK');
+          prime008Fields(
+            '861000s1972^^^^|||abc||||||||||||||eng||',
+            '861000s1972^^^^|||abe||||||||||||||eng||'
+          );
+          
+          expect(selectMerged008Value()).to.equal('861000s1972^^^^|||abce|||||||||||||eng||');
+        });
+
+        it("should not convert uncoded fragment to empty fragment", function() {
+          primeTypes('BK', 'BK');
+          prime008Fields(
+            '861000s1972^^^^||||||||||||||||||||eng||',
+            '861000s1972^^^^||||||||||||||||||||eng||'
+          );
+          
+          expect(selectMerged008Value()).to.equal('861000s1972^^^^||||||||||||||||||||eng||');
+        });
+        it("should fill combined fragment with empty characters", function() {
+          primeTypes('BK', 'BK');
+          prime008Fields(
+            '861000s1972^^^^|||c||||||||||||||||eng||',
+            '861000s1972^^^^|||ae|||||||||||||||eng||'
+          );
+          
+          expect(selectMerged008Value()).to.equal('861000s1972^^^^|||ace^|||||||||||||eng||');
+        });
+      });
     });
     
   };
