@@ -56,12 +56,39 @@ The configuration object is a document conforming to the [schema](https://github
     "005": {
       "action": "controlfield"
     },
+    "008": { 
+      "action": "mergeControlfield",
+      "options": {
+        "actions": [
+          {
+            "formats": ["BK", "CF", "CR", "MU", "MX", "VM", "MP"],
+            "range": [15, 17],
+            "significantCaret": false,
+            "type": "selectNonEmpty"
+          },
+          {
+            "formats": ["BK", "CF", "CR", "MU", "MX", "VM", "MP"],
+            "range": [35, 37],
+            "significantCaret": false,
+            "type": "selectNonEmpty"
+          },
+          {
+            "formats": ["BK"],
+            "range": [18, 21],
+            "significantCaret": true,
+            "type": "combine"
+          }
+        ]
+      }
+    },
     "7..": {
       "action": "copy",
       "options": {
         "compareWithoutIndicators": true
       }
-    }
+    },
+   
+       
   }
 }
 
@@ -74,6 +101,12 @@ The specified action is executed for each field in the other record that matches
 ### Predefined actions
 
 **controlfield**: Copy missing control fields from the other record.
+
+**mergeControlfield**: Merge controlfields. The rules are set using options:
+- _**formats**_: Array of formats to apply the rule. Available formats: `["BK", "CF", "CR", "MU", "MX", "VM", "MP"]`
+- _**range**_: character range of the controlfield fragment
+- _**significantCaret**_: whether the ^ is significant or not.
+- _**type**_: either `combine` or `selectNonEmpty`. `selectNonEmtpy` selects value from preferred, or if it's missing the from other. `combine` merges and sorts values from both fragments.
 
 **copy**: Copy fields from other record. The following options are supported:
 
