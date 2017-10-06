@@ -172,6 +172,18 @@ The better field is selected as follows:
     1. If the other field is a subset of the preferred field, select the other field
     1. Otherwise select the preferred field 
 
+**createFrom**: Creates new field based on field other record. The following options are supported:
+- _**convertTag**_: Converts field tag to another.
+- _**ind[1-2]**_: Converts indicator in created field.  
+- _**subfields**_: Object of subfields as keys to be included in created field. Each subfield object can have following properties:
+  - _**convertCode**_: Converts subfield code to another.
+  - _**convertValue**_: Converts value to another.
+  - _**modifications**_: Array of objects describing string to string operations for value. Each object is like following:
+    - _**type**_: Type of operation. Possible values are: _copy_, _replace_, _wrap_, _prepend_, _append_
+    - _**args**_: Array of arguments for operation
+
+  If subfield object is empty subfield is copied as is.
+  
 ## Field normalization
 
 Field values (Variable field subfields or control field value) are normalized as follows:
