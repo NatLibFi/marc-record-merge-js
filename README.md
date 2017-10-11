@@ -77,6 +77,12 @@ The configuration object is a document conforming to the [schema](https://github
             "range": [18, 21],
             "significantCaret": true,
             "type": "combine"
+          },
+          {
+            "formats": ["BK"],
+            "range": [29, 29],
+            "significantCaret": false,
+            "type": "selectNonEmpty"
           }
         ]
       }
@@ -104,9 +110,9 @@ The specified action is executed for each field in the other record that matches
 
 **mergeControlfield**: Merge controlfields. The rules are set using options:
 - _**formats**_: Array of formats to apply the rule. Available formats: `["BK", "CF", "CR", "MU", "MX", "VM", "MP"]`
-- _**range**_: character range of the controlfield fragment
+- _**range**_: character range of the controlfield fragment (start, end). One character range requires same number in both.
 - _**significantCaret**_: whether the ^ is significant or not.
-- _**type**_: either `combine` or `selectNonEmpty`. `selectNonEmtpy` selects value from preferred, or if it's missing the from other. `combine` merges and sorts values from both fragments.
+- _**type**_: either `combine` or `selectNonEmpty`. `selectNonEmpty` selects value from preferred, or if it's missing the from other. `combine` merges and sorts values from both fragments.
 
 **copy**: Copy fields from other record. The following options are supported:
 
