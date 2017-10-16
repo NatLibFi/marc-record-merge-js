@@ -210,6 +210,27 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
       it("Should copy whole field instead of merging specifically configured subfields if the fields are not identical", function(done) {
         runSuite('7', '4to26', done);
       });
+
+      it("Should copy because copyIf matches", function(done) {
+        runSuite('78', '78to79', done);
+      });
+
+      it("Should not copy because copyIf does not match", function(done) {
+        runSuite('79', '78to79', done);
+      });
+
+      it("Should copy because copyUnless does not match", function(done) {
+        runSuite('80', '80to81', done);
+      });
+
+      it("Should not copy because copyUnless matches", function(done) {
+        runSuite('81', '80to81', done);
+      });
+
+      it("Should copy field from other record and discard from preferred", function(done) {
+        runSuite('82', '82', done);
+      });
+
       it("Should move specifically configured subfields if the fields are identical (sans configured subfields)", function(done) {
         runSuite('8', '4to26', done);
       });

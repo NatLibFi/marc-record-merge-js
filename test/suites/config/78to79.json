@@ -1,0 +1,12 @@
+{
+  "fields": {
+    "500": { 
+      "action": "copy",
+      "options": {
+        "copyIf": {
+          "a": { "value": "keep" }
+        }
+      }
+    }
+  }
+}
