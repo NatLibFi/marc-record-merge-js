@@ -115,6 +115,10 @@ The specified action is executed for each field in the other record that matches
 - _**compareWithout**_: An array of subfield codes. These subfields are filtered out from the comparison
 - _**compareSubfieldsNormalized**_: A boolean determing whether the subfields included in _compareWithout_ should be compared as normalized
 - _**combine**_: An array of subfields codes. These subfields will be combined into a single subfield
+- _**dropOriginal**_: Drop matching original field taken from preferred record.
+_ _**copyIf/copyUnless**_: Object with subfields as keys containing conditions for copying. Each condition are defined as follows:
+  - _**value**_: Required value for subfield
+  - _**comparator**_: A subfield comparator function name
 - _**pick**_: Include subfields from the field that is not preserved.
   - _**subfields**_: An array of subfield codes (*Mandatory*)
   - _**missingOnly**_: A boolean determing whether only subfields missing from the target field should be picked
