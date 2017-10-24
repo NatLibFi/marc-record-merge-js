@@ -515,7 +515,7 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
 
         var record_expected = 
           "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
-          "720 12 ‡z9789526741796‡b123";
+          "720 12 ‡b123‡z9789526741796";
 
         var config = { "fields": { "020": { "action": "createFrom", "options": { "convertTag": "720", "ind1": "1", "ind2": "2", "subfields": { "a": { "convertCode": "z", "modifications": [ { "type": "replace", "args": [/-/g, ""] } ] }, "b": { "replaceValue": "123" } } } } } };
 
@@ -527,6 +527,98 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
         expect(record_merged.toString().trim()).to.equal(record_expected.trim(), 'merged do not match');
         expect(record_preferred_obj.toString().trim()).to.equal(record_preferred.trim(), 'preferreds do not match');
         expect(record_other_obj.toString().trim()).to.equal(record_other.trim(), 'others do not match');
+      });
+
+      it("Should add new subfield to existing field using field in other record", function() {
+        var record_preferred = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "773    ‡7p1am";
+
+        var record_other = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "100 1  ‡aAbcd";
+
+        var record_expected = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "773    ‡7p1am‡aAbcd";
+
+        var config = { "fields": { "100": { "action": "createFrom", "options": { "convertTag": "773", "useExisting": true, "subfields": { "a": {} } } } } };
+
+        var record_preferred_obj = MarcRecord.fromString(record_preferred);
+        var record_other_obj = MarcRecord.fromString(record_other);
+
+        var record_merged = mergeFactory(config)(record_preferred_obj, record_other_obj);
+
+        expect(record_merged.toString().trim()).to.equal(record_expected.trim(), 'merged do not match');
+        expect(record_preferred_obj.toString().trim()).to.equal(record_preferred.trim(), 'preferreds do not match');
+        expect(record_other_obj.toString().trim()).to.equal(record_other.trim(), 'others do not match');
+      });
+
+      it("Should add new subfield to existing field keeping field in other record", function() {
+        var record_preferred = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "773    ‡7p1am";
+
+        var record_other = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "100    ‡aAbcd";
+
+        var record_expected = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "773    ‡7p1am" + "\n" +
+          "773    ‡aAbcd";
+
+        var config = { "fields": { "100": { "action": "createFrom", "options": { "convertTag": "773", "keepExisting": true, "subfields": { "a": {} } } } } };
+
+        var record_preferred_obj = MarcRecord.fromString(record_preferred);
+        var record_other_obj = MarcRecord.fromString(record_other);
+
+        var record_merged = mergeFactory(config)(record_preferred_obj, record_other_obj);
+
+        expect(record_merged.toString().trim()).to.equal(record_expected.trim(), 'merged do not match');
+        expect(record_preferred_obj.toString().trim()).to.equal(record_preferred.trim(), 'preferreds do not match');
+        expect(record_other_obj.toString().trim()).to.equal(record_other.trim(), 'others do not match');
+      });
+
+      it("Should add new field with subfield concatenating two subfields together", function() {
+        var record_preferred = 
+          "LDR    ^^^^^cam^a2200637zi^4500";
+
+        var record_other = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "260    ‡aabc‡bdef";
+
+        var record_expected = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "773    ‡dabcdef";
+
+        var config = { "fields": { "260": { "action": "createFrom", "options": { "convertTag": "773", "subfields": { "a": { "convertCode": "d", "append": true }, "b": { "convertCode": "d", "append": true } } } } } };
+
+        var record_preferred_obj = MarcRecord.fromString(record_preferred);
+        var record_other_obj = MarcRecord.fromString(record_other);
+
+        var record_merged = mergeFactory(config)(record_preferred_obj, record_other_obj);
+
+        expect(record_merged.toString().trim()).to.equal(record_expected.trim(), 'merged do not match');
+        expect(record_preferred_obj.toString().trim()).to.equal(record_preferred.trim(), 'preferreds do not match');
+        expect(record_other_obj.toString().trim()).to.equal(record_other.trim(), 'others do not match');
+      });
+
+
+      it("Should fail to add new field with subfield concatenating two subfields together", function() {
+        var record_preferred = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "773    ‡dabc‡ddef";
+
+        var record_other = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "260    ‡aghi";
+
+        var config = { "fields": { "260": { "action": "createFrom", "options": { "useExisting": true, "convertTag": "773", "subfields": { "a": { "convertCode": "d", "append": true } } } } } };
+
+        expect(function() {
+          mergeFactory(config)(MarcRecord.fromString(record_preferred), MarcRecord.fromString(record_other));
+        }).to.throw(Error, /^append option cannot be used if there are multiple subfields of same code\.$/);
       });
 
       it("Should modify field based on field in other record", function() {
