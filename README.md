@@ -135,6 +135,11 @@ The specified action is executed for each field in the other record that matches
 - _**pick**_: Include subfields from the field that is not preserved.
   - _**subfields**_: An array of subfield codes (*Mandatory*)
   - _**missingOnly**_: A boolean determing whether only subfields missing from the target field should be picked
+- _**reduce**_: Drop defined subfield from other record 
+  - _**subfields**_: An array of subfield codes (*Mandatory*)
+  - _**condition**_: Condition used to determine if field should be dropped. If undefined drops all subfields of type. Possible values _if_ and _unless_.
+  - _**value**_: Value for comparison. Can be regular expression if exact is option is not set.
+  - _**exact**_: If set requires subfield value match exactly. Defaults to false.
 - _**transformOnInequality**_: An object describing how to transform an inequal field. For this option to take effect the preferred record must have at least one field with the same tag name as the other record. The following properties are supported:
   - _**tag**_: Tag name of the new field (*Mandatory*)
   - _**drop**_: An array of subfields codes. These subfields are not included in the new field.

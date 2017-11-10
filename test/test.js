@@ -231,6 +231,30 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
         runSuite('82', '82', done);
       });
 
+      it("It should keep matched subfield", function(done) {
+        runSuite('83', '83to85', done);
+      });
+
+      it("It should drop unmatched subfields", function(done) {
+        runSuite('84', '83to85', done);
+      });
+
+      it("It should keep subfields from preferred", function(done) {
+        runSuite('85', '83to85', done);
+      });
+
+      it("It should keep exactly matched subfield", function(done) {
+        runSuite('86', '86', done); 
+      });
+
+      it("It should keep unmatched subfield", function(done) {
+        runSuite('87', '87', done);
+      });
+
+      it("It should keep exactly unmatched subfield", function(done) {
+        runSuite('88', '88', done);
+      });
+
       it("Should move specifically configured subfields if the fields are identical (sans configured subfields)", function(done) {
         runSuite('8', '4to26', done);
       });
