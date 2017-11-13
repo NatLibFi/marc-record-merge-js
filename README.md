@@ -20,6 +20,13 @@ npm run check
 
 ```
 
+To run browser test run following npm commands:
+
+```
+npm install karma-phantomjs-launcher
+npm run test-browser
+```
+
 ## Usage
 
 The module returns a factory function that takes configuration object as the first (mandatory) argument. The second argument (optional) is an object specifying plugin functions. The factory returns a function that takes two MARC records (Instances of [marc-record-js](https://github.com/petuomin/marc-record-js)) as arguments. The first one is the preferred record which will be used as a base records (All fields are taken from this record unless otherwise specified).
