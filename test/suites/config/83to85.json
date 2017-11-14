@@ -1,0 +1,15 @@
+{
+  "fields": {
+    "650": { 
+      "action": "copy",
+      "options": {
+        "reduce": {
+          "subfields": ["9"],
+          "condition": "unless",
+          "value": "FENNI"
+        },
+        "compareWithout": ["9"]
+      }
+    }
+  }
+}
