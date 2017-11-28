@@ -197,6 +197,7 @@ The better field is selected as follows:
 **createFrom**: Creates new field based on field other record. The following options are supported:
 - _**convertTag**_: Converts field tag to another.
 - _**ind[1-2]**_: Converts indicator in created field.  
+- _**skipIfExists**_: Skip creating new field if target field is found in preferred.
 - _**useExisting**_: Use existing field from preferred as base copying all subrecords.
 - _**keepExisting**_: Keep existing field from preferred and create new field.
 - _**subfields**_: Object of subfields as keys to be included in created field. Each subfield object can have following properties:
