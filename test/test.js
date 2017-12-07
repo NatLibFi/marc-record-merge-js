@@ -530,8 +530,7 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
 
       it("Should create new field based on field in other record", function() {
         var record_preferred = 
-          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
-          "020    ‡z";
+          "LDR    ^^^^^cam^a2200637zi^4500";
 
         var record_other = 
           "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
@@ -668,23 +667,6 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
         expect(record_merged.toString().trim()).to.equal(record_expected.trim(), 'merged do not match');
         expect(record_preferred_obj.toString().trim()).to.equal(record_preferred.trim(), 'preferreds do not match');
         expect(record_other_obj.toString().trim()).to.equal(record_other.trim(), 'others do not match');
-      });
-
-      it("Should fail to modify field because there are multiple fields of type", function() {
-        var record_preferred = 
-          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
-          "300    ‡a1 verkkoaineisto (XXX sivua)" + "\n" +
-          "300    ‡a1 verkkoaineisto (XXX sivua)";
-
-        var record_other = 
-          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
-          "300    ‡a83 s.";
-
-        var config = { "fields": { "300": { "action": "createFrom", "options": { "subfields": { "a": { "modifications": [ { "type": "unknown", "args": [/ s\./, " sivua"] } ] } } } } } };
-
-        expect(function() {
-          mergeFactory(config)(MarcRecord.fromString(record_preferred), MarcRecord.fromString(record_other));
-        }).to.throw(Error, /^createFrom cannot be used if there are multiple fields of same tag.$/);
       });
 
       it("Should fail to modify field because unknown operation", function() {
