@@ -538,7 +538,7 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
 
         var record_expected = 
           "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
-          "720 12 ‡b123‡z9789526741796";
+          "720 12 ‡z9789526741796‡b123";
 
         var config = { "fields": { "020": { "action": "createFrom", "options": { "convertTag": "720", "ind1": "1", "ind2": "2", "subfields": { "a": { "convertCode": "z", "modifications": [ { "type": "replace", "args": [/-/g, ""] } ] }, "b": { "replaceValue": "123" } } } } } };
 
@@ -626,7 +626,6 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
         expect(record_preferred_obj.toString().trim()).to.equal(record_preferred.trim(), 'preferreds do not match');
         expect(record_other_obj.toString().trim()).to.equal(record_other.trim(), 'others do not match');
       });
-
 
       it("Should fail to add new field with subfield concatenating two subfields together", function() {
         var record_preferred = 
