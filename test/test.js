@@ -577,6 +577,37 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
         expect(record_other_obj.toString().trim()).to.equal(record_other.trim(), 'others do not match');
       });
 
+      it("Should create new field based on field in other record using custom function", function() {
+        var record_preferred = 
+          "LDR    ^^^^^cam^a2200637zi^4500";
+
+        var record_other = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "020    ‡a1234567890";
+
+        var record_expected = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "020    ‡a0987654321";
+
+        var reverseString = function(str) {
+          if (str === "")
+            return "";
+          else
+            return reverseString(str.substr(1)) + str.charAt(0);
+        };
+
+        var config = { "fields": { "020": { "action": "createFrom", "options": { "subfields": { "a": { "modifications": [ reverseString ] } } } } } };
+
+        var record_preferred_obj = MarcRecord.fromString(record_preferred);
+        var record_other_obj = MarcRecord.fromString(record_other);
+
+        var record_merged = mergeFactory(config)(record_preferred_obj, record_other_obj);
+
+        expect(record_merged.toString().trim()).to.equal(record_expected.trim(), 'merged do not match');
+        expect(record_preferred_obj.toString().trim()).to.equal(record_preferred.trim(), 'preferreds do not match');
+        expect(record_other_obj.toString().trim()).to.equal(record_other.trim(), 'others do not match');
+      });
+
       it("Should add new subfield to existing field keeping field in other record", function() {
         var record_preferred = 
           "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +

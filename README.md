@@ -205,7 +205,7 @@ The better field is selected as follows:
   - _**convertValue**_: Converts value to another.
   - _**append**_: Append value to existing subfield. If subfield does not exists create as new.
   - _**replace**_: Replace existing subfield.
-  - _**modifications**_: Array of objects describing string to string operations for value. Each object is like following:
+  - _**modifications**_: Array of modifications for value. Can be either function or following object:
     - _**type**_: Type of operation. Possible values are: _copy_, _replace_, _wrap_, _prepend_, _append_
     - _**args**_: Array of arguments for operation
 
