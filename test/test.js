@@ -899,7 +899,14 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
                     "range": [18, 21],
                     "significantCaret": true,
                     "type": "combine"
-                  }
+                  },
+                  {
+                    "formats": ["MU"],
+                    "range": [18, 23],
+                    "significantCaret": true,
+                    "type": "combine"
+                  },
+
                 ]
               }
             }
@@ -992,6 +999,15 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
           );
           
           expect(selectMerged008Value()).to.equal('861000s1972^^^^|||ace^|||||||||||||eng||');
+        });
+        it("should handle combining fragments with non-4 length", function() {
+          primeTypes('MU', 'MU');
+          prime008Fields(
+            '861000s1972^^^^|||c||||||||||||||||eng||',
+            '861000s1972^^^^|||ae|||||||||||||||eng||'
+          );
+          
+          expect(selectMerged008Value()).to.equal('861000s1972^^^^|||ace^^^|||||||||||eng||');
         });
       });
     });
