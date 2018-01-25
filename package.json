@@ -28,6 +28,9 @@
   "license": "AGPL-3.0",
   "version": "5.0.0",
   "main": "./lib/main.js",
+  "engines": {
+    "node": ">=4"
+  },
   "scripts": {
     "lint": "jshint .",
     "test": "istanbul cover _mocha test/nodejs/*.spec.js",
@@ -39,21 +42,22 @@
     "publish-to-npm": "npm install && npm run check && npm publish --access=public"
   },
   "dependencies": {
-    "marc-record-js": "^0.1.1",
-    "@natlibfi/es6-polyfills": "^2.0.0",
-    "@natlibfi/es6-shims": "^2.0.0"
+    "@natlibfi/es6-polyfills": "^2.0.1",
+    "@natlibfi/es6-shims": "^2.0.2",
+    "@natlibfi/melinda-marc-record-utils": "^1.1.1",
+    "marc-record-js": "^0.3.2"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "jshint": "^2.9.3",
-    "mocha": "^3.0.2",
+    "chai": "^4.1.2",
+    "jshint": "^2.9.5",
+    "mocha": "^5.0.1",
     "istanbul": "^0.4.5",
-    "karma": "^1.2.0",
-    "karma-mocha": "^1.1.1",
+    "karma": "^2.0.0",
+    "karma-mocha": "^1.3.0",
     "karma-requirejs": "https://github.com/natlibfi-arlehiko/karma-requirejs#fix-npm3-dist",
     "karma-requirejs-preprocessor": "^0.0.2",
-    "requirejs": "^2.3.2",
+    "requirejs": "^2.3.5",
     "requirejs-configurator": "https://github.com/natlibfi-arlehiko/requirejs-configurator#peer-deps",
-    "codeclimate-test-reporter": "^0.3.3"
+    "codeclimate-test-reporter": "^0.5.0"
   }
 }

@@ -1,12 +1,12 @@
 language: node_js
 node_js: 
-  - "0.12"
-  - "7"
+  - "4"
+  - "node"
 before_script:
-  - if [ "$TRAVIS_NODE_VERSION" == "7" ]; then npm install karma-phantomjs-launcher; fi
+  - if [ "$TRAVIS_NODE_VERSION" > "4" ]; then npm install karma-phantomjs-launcher; fi
 script: 
-  - if [ "$TRAVIS_NODE_VERSION" == "0.12" ]; then npm run check; fi
-  - if [ "$TRAVIS_NODE_VERSION" == "7" ]; then npm run test-browser; fi
+  - npm run check
+  - if [ "$TRAVIS_NODE_VERSION" > "4" ]; then npm run test-browser; fi
 
 after_script:
   - codeclimate-test-reporter < coverage/lcov.info

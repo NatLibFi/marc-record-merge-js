@@ -699,6 +699,47 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
         expect(record_other_obj.toString().trim()).to.equal(record_other.trim(), 'others do not match');
       });
 
+      it('Should punctuate field correctly', function(){
+        var record_preferred = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "100 1  ‡aRosberg, Harri‡d1946-";
+
+        var record_other = 
+          "LDR    ^^^^^cam^a2200637zi^4500";
+
+        var record_expected = 
+          "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
+          "100 1  ‡aRosberg, Harri,‡d1946-";
+
+        var config = { "fields": {}, "fixPunctuation": [ 
+          { 
+            selector: '[1457]00',
+            namePortion: '$a',
+            description: 'Personal name (NR)',
+            portion: 'N',
+            preceedingPunctuation: 'none',
+            exceptions: '' 
+          },
+          { 
+            selector: '[1457]00',
+            namePortion: '$d',
+            description: 'Dates associated with a name (NR)',
+            portion: 'N',
+            preceedingPunctuation: 'comma',
+            exceptions: '- colon if preceded by $n' 
+          },
+        ]};
+
+        var record_preferred_obj = MarcRecord.fromString(record_preferred);
+        var record_other_obj = MarcRecord.fromString(record_other);
+
+        var record_merged = mergeFactory(config)(record_preferred_obj, record_other_obj);
+
+        expect(record_merged.toString().trim()).to.equal(record_expected.trim(), 'merged do not match');
+        expect(record_preferred_obj.toString().trim()).to.equal(record_preferred.trim(), 'preferreds do not match');
+        expect(record_other_obj.toString().trim()).to.equal(record_other.trim(), 'others do not match');
+      });
+
       it("Should fail to modify field because unknown operation", function() {
         var record_preferred = 
           "LDR    ^^^^^cam^a2200637zi^4500" + "\n" +
