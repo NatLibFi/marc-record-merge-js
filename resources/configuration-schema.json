@@ -1,46 +1,79 @@
 {
-    "type": "object",
-    "properties": {
-	"fields": {
-	    "type": "object",
-	    "patternProperties": {
-		".+": {
-		    "type": "object",
-		    "properties": {
-			"action": {
-			    "type": "string"
-			},
-			"options": {}
-		    },
-		    "required": ["action"],
-		    "additionalProperties": false
-		}
-	    },
-	    "additionalProperties": false
-	},
-	"sort": {
-	    "type": "object",
-	    "properties": {
-		"insert": {
-		    "enum": ["before", "after"],
-		    "default": "after"
-		},
-		"indexes": {
-		    "type": "object",
-		    "patternProperties": {
-			".+": {
-			    "type": "number"
-			}
-		    },
-		    "additionalProperties": false
-		}
-	    },
-	    "additionalProperties": false,
-	    "default": {
-		"insert": "after"
-	    }
-	}
+  "type": "object",
+  "properties": {
+    "fields": {
+      "type": "object",
+      "patternProperties": {
+        ".+": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string"
+            },
+            "options": {}
+          },
+          "required": [
+            "action"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     },
-    "required": ["fields"],
-    "additionalProperties": false
+    "sort": {
+      "type": "object",
+      "properties": {
+        "insert": {
+          "enum": [
+            "before",
+            "after"
+          ],
+          "default": "after"
+        },
+        "indexes": {
+          "type": "object",
+          "patternProperties": {
+            ".+": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "default": {
+        "insert": "after"
+      }
+    },
+    "fixPunctuation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "type": "string"
+          },
+          "namePortion": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "portion": {
+            "type": "string"
+          },
+          "preceedingPunctuation": {
+            "type": "string"
+          },
+          "exceptions": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "fields"
+  ],
+  "additionalProperties": false
 }

@@ -93,14 +93,22 @@ The configuration object is a document conforming to the [schema](https://github
         "compareWithoutIndicators": true
       }
     },
-   
-       
-  }
+  },
+  "fixPunctuation": [
+    selector: "[1457]00",
+    namePortion: "$a",
+    description: "Personal name (NR)",
+    portion: "N",
+    preceedingPunctuation: "none",
+    exceptions: ""
+  ]
 }
 
 ```
 
 Each property of **fields** is a MARC field name or pattern (*..5*, *700*). The value of the **field** property is an object which must contain a **action** property. Action-specific options are defined in **options** property.
+
+Property **fixPunctuation** defines configuration for [melinda-marc-record-utils](https://github.com/NatLibFi/melinda-marc-record-utils) punctuation fixer.
 
 The specified action is executed for each field in the other record that matches the field tag pattern.
 
