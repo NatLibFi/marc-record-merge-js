@@ -35,7 +35,6 @@
     "lint": "jshint .",
     "test": "istanbul cover _mocha test/nodejs/*.spec.js",
     "test:watch": "mocha test/nodejs/*.spec.js -w",
-    "test-browser": "npm run generate-requirejs-config && karma start",
     "cover": "npm run test && istanbul check-coverage",
     "check": "npm run lint && npm run cover",
     "generate-requirejs-config": "requirejs-configurator --npm --include-dev-dependencies --exclude-peer-dependencies > test/browser/main.js",
@@ -54,10 +53,6 @@
     "istanbul": "^0.4.5",
     "karma": "^2.0.0",
     "karma-mocha": "^1.3.0",
-    "karma-requirejs": "https://github.com/natlibfi-arlehiko/karma-requirejs#fix-npm3-dist",
-    "karma-requirejs-preprocessor": "^0.0.2",
-    "requirejs": "^2.3.5",
-    "requirejs-configurator": "https://github.com/natlibfi-arlehiko/requirejs-configurator#peer-deps",
     "codeclimate-test-reporter": "^0.5.0"
   }
 }

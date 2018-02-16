@@ -26,33 +26,16 @@
  *
  **/
 
-(function (root, factory) {
-
-  'use strict';
-  if (typeof define === 'function' && define.amd) {
-    define([
-      'chai/chai', 
-      'marc-record-js', 
-      '../lib/main', 
-      '@natlibfi/es6-shims/lib/shims/array'
-    ], factory);
-  } else if (typeof module === 'object' && module.exports) {
-    module.exports = factory(
-      require('chai'), 
-      require('marc-record-js'), 
-      require('../lib/main'), 
-      require('@natlibfi/es6-shims/lib/shims/array')
-    );
-  }
-
-}(this, factory));
-
-function factory(chai, MarcRecord, mergeFactory, shim_array)
-{
+(function () {
 
   'use strict';
 
-  return function(getResources)
+  var chai = require('chai');
+  var MarcRecord = require('marc-record-js');
+  var mergeFactory = require('../lib/main');
+  var shim_array = require('@natlibfi/es6-shims/lib/shims/array');
+
+  module.exports = function(getResources)
   {
 
     function runSuite(name_data, name_config, doneCallback, plugins)
@@ -1055,4 +1038,4 @@ function factory(chai, MarcRecord, mergeFactory, shim_array)
     
   };
 
-}
+})();

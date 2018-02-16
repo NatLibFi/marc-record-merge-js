@@ -26,21 +26,12 @@
  *
  **/
 
-(function (root, factory) {
-  
-  'use strict';
 
-  module.exports = factory(
-    require('../test'),
-    require('@natlibfi/es6-polyfills/lib/polyfills/promise'),
-    require('fs'),
-    require('path')
-  );
-  
-}(this, factory));
-
-function factory(runTests, Promise, fs, path)
-{
+(function () {
+  var runTests = require('../test');
+  var Promise = require('@natlibfi/es6-polyfills/lib/polyfills/promise');
+  var fs = require('fs');
+  var path = require('path');
 
   function getResources(name_data, name_config)
   {
@@ -67,5 +58,5 @@ function factory(runTests, Promise, fs, path)
   
   runTests(getResources);
 
-}
+})();
 
