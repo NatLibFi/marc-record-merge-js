@@ -1,6 +1,0 @@
-check:
-  each:
-    statements: 88
-    lines: 88
-    branches: 88
-    functions: 88

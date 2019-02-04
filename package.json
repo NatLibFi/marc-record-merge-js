@@ -1,59 +1,89 @@
 {
-  "name": "@natlibfi/marc-record-merge",
-  "description": "A configurable Javascript module for merging MARC records",
-  "author": {
-    "name": "The National Library of Finland"
-  },
-  "keywords": [
-    "marc",
-    "record",
-    "merge",
-    "merging",
-    "combine",
-    "combining",
-    "bibliography",
-    "bibliographic",
-    "catalog",
-    "library",
-    "libraries"
-  ],
-  "homepage": "https://github.com/NatLibFi/marc-record-merge",
-  "bugs": {
-    "url": "https://github.com/NatLibFi/marc-record-merge/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:NatLibFi/marc-record-merge.git"
-  },
-  "license": "AGPL-3.0",
-  "version": "5.0.0",
-  "main": "./lib/main.js",
-  "scripts": {
-    "lint": "jshint .",
-    "test": "istanbul cover _mocha test/nodejs/*.spec.js",
-    "test:watch": "mocha test/nodejs/*.spec.js -w",
-    "test-browser": "npm run generate-requirejs-config && karma start",
-    "cover": "npm run test && istanbul check-coverage",
-    "check": "npm run lint && npm run cover",
-    "generate-requirejs-config": "requirejs-configurator --npm --include-dev-dependencies --exclude-peer-dependencies > test/browser/main.js",
-    "publish-to-npm": "npm install && npm run check && npm publish --access=public"
-  },
-  "dependencies": {
-    "marc-record-js": "^0.1.1",
-    "@natlibfi/es6-polyfills": "^2.0.0",
-    "@natlibfi/es6-shims": "^2.0.0"
-  },
-  "devDependencies": {
-    "chai": "^3.5.0",
-    "jshint": "^2.9.3",
-    "mocha": "^3.0.2",
-    "istanbul": "^0.4.5",
-    "karma": "^1.2.0",
-    "karma-mocha": "^1.1.1",
-    "karma-requirejs": "https://github.com/natlibfi-arlehiko/karma-requirejs#fix-npm3-dist",
-    "karma-requirejs-preprocessor": "^0.0.2",
-    "requirejs": "^2.3.2",
-    "requirejs-configurator": "https://github.com/natlibfi-arlehiko/requirejs-configurator#peer-deps",
-    "codeclimate-test-reporter": "^0.3.3"
-  }
+	"name": "@natlibfi/marc-record-merge",
+	"description": "Merge MARC records",
+	"author": {
+		"name": "The National Library of Finland"
+	},
+	"keywords": [],
+	"homepage": "https://github.com/natlibfi/marc-record-merge-js",
+	"bugs": {
+		"url": "https://github.com/natlibfi/marc-record-merge-js/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:natlibfi/marc-record-merge-js.git"
+	},
+	"license": "LGPL-3.0+",
+	"version": "6.0.0",
+	"main": "./dist/index.js",
+	"engines": {
+		"node": ">=8"
+	},
+	"scripts": {
+		"prepublishOnly": "npm run build:transpile",
+		"check-deps": "npm-check;exit 0",
+		"lint": "eslint --fix src",
+		"test:base": "cross-env NODE_ENV=test mocha --require @babel/register",
+		"test": "npm run lint && npm run test:base -- src/**/*.spec.js src/**/**/*.spec.js",
+		"build:transpile": "babel src --copy-files --source-maps --delete-dir-on-start --out-dir=dist",
+		"build": "npm run build:transpile && npm run check-deps",
+		"watch": "cross-env DEBUG=1 NODE_ENV=test chokidar src -c 'npm test'"
+	},
+	"dependencies": {
+		"@babel/register": "^7.0.0",
+		"@natlibfi/marc-record": "^4.0.4",
+		"deep-eql": "^4.0.0"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.2.0",
+		"@babel/core": "^7.2.0",
+		"@babel/preset-env": "^7.2.0",
+		"babel-eslint": "^10.0.1",
+		"babel-plugin-rewire": "^1.2.0",
+		"chai": "^4.2.0",
+		"chokidar-cli": "^1.2.0",
+		"cross-env": "^5.1.1",
+		"eslint": "^5.9.0",
+		"eslint-config-xo": ">=0.25.1 <1.0.0",
+		"eslint-plugin-import": "^2.14.0",
+		"mocha": "^5.2.0",
+		"npm-check": "^5.9.0"
+	},
+	"eslintConfig": {
+		"parser": "babel-eslint",
+		"plugins": [
+			"import"
+		],
+		"extends": [
+			"xo",
+			"plugin:import/errors"
+		],
+		"rules": {
+			"prefer-arrow-callback": [
+				"error"
+			]
+		},
+		"env": {
+			"mocha": true
+		}
+	},
+	"babel": {
+		"presets": [
+			[
+				"@babel/preset-env",
+				{
+					"targets": {
+						"node": "8"
+					}
+				}
+			]
+		],
+		"env": {
+			"test": {
+				"plugins": [
+					"rewire"
+				]
+			}
+		}
+	}
 }
