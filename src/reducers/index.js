@@ -29,4 +29,4 @@
 export * from './select';
 export * from './merge-controlfield';
 export * from './select-subfield-9';
-
+export {copyBoth, copyComplete, copyMissing} from './copy';

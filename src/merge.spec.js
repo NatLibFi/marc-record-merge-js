@@ -103,11 +103,23 @@ describe('index', () => {
 		};
 
 		const parametersSubfield9 = /^500$/;
+		const parametersCopy = /^015$/;
 
 		const base = new MarcRecord({
 			leader: '00000ccm a22004574i 4500',
 			fields: [
 				{tag: '008', value: '160311s2016||||fi ||z|  |||||||| | fin|c'},
+				{
+					tag: '015',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
+						{
+							code: 'a',
+							value: 'B67-20987'
+						}
+					]
+				},
 				{
 					tag: '500',
 					ind1: ' ',
@@ -130,6 +142,21 @@ describe('index', () => {
 			leader: '00000ccm a22004574i 4500',
 			fields: [
 				{tag: '008', value: '160311s2016||||fi ||z|  |||||||| | fin|d'},
+				{
+					tag: '015',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
+						{
+							code: 'a',
+							value: 'B67-20988'
+						},
+						{
+							code: 'q',
+							value: 'pbk'
+						}
+					]
+				},
 				{
 					tag: '500',
 					ind1: ' ',
@@ -154,6 +181,9 @@ describe('index', () => {
 			},
 			(base, source) => {
 				return Reducers.selectSubfield9(parametersSubfield9)(base, source);
+			},
+			(base, source) => {
+				return Reducers.copyComplete(parametersCopy)(base, source);
 			}
 		];
 
@@ -161,6 +191,21 @@ describe('index', () => {
 			leader: '00000ccm a22004574i 4500',
 			fields: [
 				{tag: '008', value: '160311s2016||||fi ||z|  |||||||| | fin|d'},
+				{
+					tag: '015',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
+						{
+							code: 'a',
+							value: 'B67-20988'
+						},
+						{
+							code: 'q',
+							value: 'pbk'
+						}
+					]
+				},
 				{
 					tag: '500',
 					ind1: ' ',

@@ -32,7 +32,6 @@ export default function ({base, source, reducers}) {
 	const sourceRecord = MarcRecord.clone(source);
 
 	return reducers.reduce((baseRecord, reducer) => {
-		const res = reducer(baseRecord, sourceRecord);
-		return res;
+		return reducer(baseRecord, sourceRecord);
 	}, MarcRecord.clone(base));
 }

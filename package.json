@@ -24,7 +24,7 @@
 		"check-deps": "npm-check;exit 0",
 		"lint": "eslint --fix src",
 		"test:base": "cross-env NODE_ENV=test mocha --require @babel/register",
-		"test": "npm run lint && npm run test:base -- src/**/*.spec.js src/**/**/*.spec.js",
+		"test": "npm run lint && npm run test:base -- src/**/*_run.spec.js src/**/**/*_run.spec.js",
 		"build:transpile": "babel src --copy-files --source-maps --delete-dir-on-start --out-dir=dist",
 		"build": "npm run build:transpile && npm run check-deps",
 		"watch": "cross-env DEBUG=1 NODE_ENV=test chokidar src -c 'npm test'"
