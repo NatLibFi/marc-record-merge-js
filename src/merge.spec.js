@@ -29,6 +29,7 @@
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import merge from './merge';
+import {Reducers} from './index';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
@@ -84,6 +85,98 @@ describe('index', () => {
 						{
 							code: 'a',
 							value: 'Foobar'
+						}
+					]
+				}
+			]
+		});
+
+		const mergedRecord = merge({base, source, reducers});
+
+		expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
+	});
+
+	it('Custom merge of two records - control fields', () => {
+		const parametersControl = {
+			pattern: '^008$',
+			indexes: [39]
+		};
+
+		const parametersSubfield9 = /^500$/;
+
+		const base = new MarcRecord({
+			leader: '00000ccm a22004574i 4500',
+			fields: [
+				{tag: '008', value: '160311s2016||||fi ||z|  |||||||| | fin|c'},
+				{
+					tag: '500',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
+						{
+							code: '9',
+							value: 'FENNI<KEEP>'
+						},
+						{
+							code: 'a',
+							value: 'blah'
+						}
+					]
+				}
+			]
+		});
+
+		const source = new MarcRecord({
+			leader: '00000ccm a22004574i 4500',
+			fields: [
+				{tag: '008', value: '160311s2016||||fi ||z|  |||||||| | fin|d'},
+				{
+					tag: '500',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
+						{
+							code: '9',
+							value: 'VIOLA<KEEP>'
+						},
+						{
+							code: 'a',
+							value: 'blah'
+						}
+					]
+				}
+			]
+		});
+
+		const reducers = [
+			(base, source) => {
+				return Reducers.mergeControlfield(parametersControl)(base, source);
+			},
+			(base, source) => {
+				return Reducers.selectSubfield9(parametersSubfield9)(base, source);
+			}
+		];
+
+		const expectedRecord = new MarcRecord({
+			leader: '00000ccm a22004574i 4500',
+			fields: [
+				{tag: '008', value: '160311s2016||||fi ||z|  |||||||| | fin|d'},
+				{
+					tag: '500',
+					ind1: ' ',
+					ind2: ' ',
+					subfields: [
+						{
+							code: '9',
+							value: 'VIOLA<KEEP>'
+						},
+						{
+							code: '9',
+							value: 'FENNI<KEEP>'
+						},
+						{
+							code: 'a',
+							value: 'blah'
 						}
 					]
 				}
