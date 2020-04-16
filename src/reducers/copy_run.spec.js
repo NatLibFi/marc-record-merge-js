@@ -38,54 +38,54 @@ MarcRecord.setValidationOptions({subfieldValues: false});
 const FIXTURES_PATH = path.join(__dirname, '../../test-fixtures/reducers/copy/');
 
 describe('reducers', () => {
-	const PATH_MISSING = path.join(FIXTURES_PATH, 'copyMissing');
-	describe('Copy - Missing', () => {
-		fs.readdirSync(PATH_MISSING).forEach(dir => {
-			it(dir, () => {
-				const fixturesPath = path.join(PATH_MISSING, dir);
-				const base = parseRecord(fixturesPath, 'base.json');
-				const source = parseRecord(fixturesPath, 'source.json');
-				const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'));
-				const expectedRecord = parseRecord(fixturesPath, 'merged.json');
+  const PATH_MISSING = path.join(FIXTURES_PATH, 'copyMissing');
+  describe('Copy - Missing', () => {
+    fs.readdirSync(PATH_MISSING).forEach(dir => {
+      it(dir, () => {
+        const fixturesPath = path.join(PATH_MISSING, dir);
+        const base = parseRecord(fixturesPath, 'base.json');
+        const source = parseRecord(fixturesPath, 'source.json');
+        const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'));
+        const expectedRecord = parseRecord(fixturesPath, 'merged.json');
 
-				const mergedRecord = copyMissing(pattern)(base, source);
+        const mergedRecord = copyMissing(pattern)(base, source);
 
-				expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
-			});
-		});
-	});
+        expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
+      });
+    });
+  });
 
-	const PATH_BOTH = path.join(FIXTURES_PATH, 'copyBoth');
-	describe('Copy - Both', () => {
-		fs.readdirSync(PATH_BOTH).forEach(dir => {
-			it(dir, () => {
-				const fixturesPath = path.join(PATH_BOTH, dir);
-				const base = parseRecord(fixturesPath, 'base.json');
-				const source = parseRecord(fixturesPath, 'source.json');
-				const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'));
-				const expectedRecord = parseRecord(fixturesPath, 'merged.json');
+  const PATH_BOTH = path.join(FIXTURES_PATH, 'copyBoth');
+  describe('Copy - Both', () => {
+    fs.readdirSync(PATH_BOTH).forEach(dir => {
+      it(dir, () => {
+        const fixturesPath = path.join(PATH_BOTH, dir);
+        const base = parseRecord(fixturesPath, 'base.json');
+        const source = parseRecord(fixturesPath, 'source.json');
+        const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'));
+        const expectedRecord = parseRecord(fixturesPath, 'merged.json');
 
-				const mergedRecord = copyBoth(pattern)(base, source);
+        const mergedRecord = copyBoth(pattern)(base, source);
 
-				expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
-			});
-		});
-	});
+        expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
+      });
+    });
+  });
 
-	const PATH_COMPLETE = path.join(FIXTURES_PATH, 'copyComplete');
-	describe('Copy - Complete', () => {
-		fs.readdirSync(PATH_COMPLETE).forEach(dir => {
-			it(dir, () => {
-				const fixturesPath = path.join(PATH_COMPLETE, dir);
-				const base = parseRecord(fixturesPath, 'base.json');
-				const source = parseRecord(fixturesPath, 'source.json');
-				const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'));
-				const expectedRecord = parseRecord(fixturesPath, 'merged.json');
+  const PATH_COMPLETE = path.join(FIXTURES_PATH, 'copyComplete');
+  describe('Copy - Complete', () => {
+    fs.readdirSync(PATH_COMPLETE).forEach(dir => {
+      it(dir, () => {
+        const fixturesPath = path.join(PATH_COMPLETE, dir);
+        const base = parseRecord(fixturesPath, 'base.json');
+        const source = parseRecord(fixturesPath, 'source.json');
+        const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'));
+        const expectedRecord = parseRecord(fixturesPath, 'merged.json');
 
-				const mergedRecord = copyComplete(pattern)(base, source);
+        const mergedRecord = copyComplete(pattern)(base, source);
 
-				expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
-			});
-		});
-	});
+        expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
+      });
+    });
+  });
 });

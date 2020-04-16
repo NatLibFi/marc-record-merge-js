@@ -38,19 +38,19 @@ MarcRecord.setValidationOptions({subfieldValues: false});
 const FIXTURES_PATH = path.join(__dirname, '../../test-fixtures/reducers/select');
 
 describe('reducers', () => {
-	describe('select', () => {
-		fs.readdirSync(FIXTURES_PATH).forEach(dir => {
-			it(dir, () => {
-				const fixturesPath = path.join(FIXTURES_PATH, dir);
-				const base = parseRecord(fixturesPath, 'base.json');
-				const source = parseRecord(fixturesPath, 'source.json');
-				const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'));
-				const expectedRecord = parseRecord(fixturesPath, 'merged.json');
+  describe('select', () => {
+    fs.readdirSync(FIXTURES_PATH).forEach(dir => {
+      it(dir, () => {
+        const fixturesPath = path.join(FIXTURES_PATH, dir);
+        const base = parseRecord(fixturesPath, 'base.json');
+        const source = parseRecord(fixturesPath, 'source.json');
+        const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'));
+        const expectedRecord = parseRecord(fixturesPath, 'merged.json');
 
-				const mergedRecord = select(pattern)(base, source);
+        const mergedRecord = select(pattern)(base, source);
 
-				expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
-			});
-		});
-	});
+        expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
+      });
+    });
+  });
 });

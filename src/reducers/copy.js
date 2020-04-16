@@ -27,88 +27,88 @@
 */
 
 const enums = Object.freeze({
-	both: 'both',
-	missing: 'missing',
-	complete: 'complete'
+  both: 'both',
+  missing: 'missing',
+  complete: 'complete'
 });
 
 export function copyMissing(pattern) {
-	return copyBase(pattern, enums.missing);
+  return copyBase(pattern, enums.missing);
 }
 
 export function copyBoth(pattern) {
-	return copyBase(pattern, enums.both);
+  return copyBase(pattern, enums.both);
 }
 
 export function copyComplete(pattern) {
-	return copyBase(pattern, enums.complete);
+  return copyBase(pattern, enums.complete);
 }
 
 function copyBase(pattern, state) {
-	return (base, source) => {
-		// Artturi: should I use this to get single field or use regex from pattern as in other functions
-		// This causes single result to be nested in array
-		// const baseFields = base.getFields('010');
-		const baseFields = base.get(pattern);
-		const sourceFields = source.get(pattern);
-		const mergedField = mergeFields();
+  return (base, source) => {
+    // Artturi: should I use this to get single field or use regex from pattern as in other functions
+    // This causes single result to be nested in array
+    // const baseFields = base.getFields('010');
+    const baseFields = base.get(pattern);
+    const sourceFields = source.get(pattern);
+    const mergedField = mergeFields();
 
-		if (typeof (baseFields[0]) !== 'undefined') {
-			base.removeField(baseFields[0]); // Remove unmerged field
-		}
+    if (typeof baseFields[0] !== 'undefined') {
+      base.removeField(baseFields[0]); // Remove unmerged field
+    }
 
-		if (mergedField) {
-			base.insertField(mergedField); // Insert merged field
-		}
+    if (mergedField) {
+      base.insertField(mergedField); // Insert merged field
+    }
 
-		return base;
+    return base;
 
-		function mergeFields() {
-			let sourceField = sourceFields[0];
-			let baseField = baseFields[0];
+    function mergeFields() {
+      const sourceField = sourceFields[0];
+      const baseField = baseFields[0];
 
-			// Saa tulla, jos puuttuu
-			if (state === enums.missing && typeof (baseField) === 'undefined') {
-				return sourceField;
-			}
+      // Saa tulla, jos puuttuu
+      if (state === enums.missing && typeof baseField === 'undefined') {
+        return sourceField;
+      }
 
-			// Saa tulla
-			if (state === enums.both) {
-				if (sourceField && sourceField.subfields) {
-					sourceField.subfields = mergeSubfields();
-					return sourceField;
-				}
+      // Saa tulla
+      if (state === enums.both) {
+        if (sourceField && sourceField.subfields) {
+          sourceField.subfields = mergeSubfields();
+          return sourceField;
+        }
 
-				return baseField;
-			}
+        return baseField;
+      }
 
-			// Verrataan > täydellisempi (enemmän osakenttiä) voittaa
-			if (state === enums.complete) {
-				if (typeof (sourceField) === 'undefined' || (baseField && sourceField.subfields.length <= baseField.subfields.length)) {
-					return baseField;
-				}
+      // Verrataan > täydellisempi (enemmän osakenttiä) voittaa
+      if (state === enums.complete) {
+        if (typeof sourceField === 'undefined' || baseField && sourceField.subfields.length <= baseField.subfields.length) {
+          return baseField;
+        }
 
-				return sourceField;
-			}
+        return sourceField;
+      }
 
-			return baseField;
+      return baseField;
 
-			function mergeSubfields() {
-				let baseSubfields = [];
-				if (baseField && baseField.subfields) {
-					baseSubfields = clone(baseField.subfields);
-				}
+      function mergeSubfields() {
+        let baseSubfields = [];
+        if (baseField && baseField.subfields) {
+          baseSubfields = clone(baseField.subfields);
+        }
 
-				if (sourceField && sourceField.subfields) {
-					return baseSubfields.concat(sourceField.subfields);
-				}
+        if (sourceField && sourceField.subfields) {
+          return baseSubfields.concat(sourceField.subfields);
+        }
 
-				return baseSubfields;
-			}
+        return baseSubfields;
+      }
 
-			function clone(o) {
-				return JSON.parse(JSON.stringify(o));
-			}
-		}
-	};
+      function clone(o) {
+        return JSON.parse(JSON.stringify(o));
+      }
+    }
+  };
 }

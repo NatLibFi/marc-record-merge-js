@@ -27,9 +27,9 @@
 */
 
 export function select(pattern) {
-	return (base, source) => {
-		base.get(pattern).forEach(f => base.removeField(f));
-		source.get(pattern).forEach(f => base.insertField(f));
-		return base;
-	};
+  return (base, source) => {
+    base.get(pattern).forEach(f => base.removeField(f));
+    source.get(pattern).forEach(f => base.insertField(f));
+    return base;
+  };
 }

@@ -29,9 +29,7 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 
 export default function ({base, source, reducers}) {
-	const sourceRecord = MarcRecord.clone(source);
+  const sourceRecord = MarcRecord.clone(source);
 
-	return reducers.reduce((baseRecord, reducer) => {
-		return reducer(baseRecord, sourceRecord);
-	}, MarcRecord.clone(base));
+  return reducers.reduce((baseRecord, reducer) => reducer(baseRecord, sourceRecord), MarcRecord.clone(base));
 }

@@ -1,14 +1,19 @@
-pipeline:
-  build:
-    image: node:8
-    commands:
-    - npm install
-    - npm test
-    - npm run build
-  npm:
-    image: plugins/npm
-    settings:
-      token: $NPM_TOKEN
-    secrets: [npm_token]
-    when:
-      event: tag
+kind: pipeline
+name: default
+steps:
+- name: build
+  image: node:12
+  commands:
+  - npm install
+  - npm test
+  - npm run build
+- name: npm
+  image: plugins/npm
+  settings:
+    token:
+      from_secret: npm_token
+  when:
+    branch: [master]
+    event: push
+trigger:
+  event: [push, tag]
