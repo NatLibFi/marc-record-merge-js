@@ -52,9 +52,7 @@ describe('index', () => {
 
     const source = new MarcRecord({
       leader: '00000ccm a22004574i 4500',
-      fields: [
-        {tag: '008', value: '160311s2016||||fi ||z|  |||||||| | fin|c'}
-      ]
+      fields: [{tag: '008', value: '160311s2016||||fi ||z|  |||||||| | fin|c'}]
     });
 
     const reducers = [
@@ -63,13 +61,13 @@ describe('index', () => {
         return base;
       },
       base => {
-        if (base.get(/^008$/).length > 0) {
+        if (base.get(/^008$/u).length > 0) {
           base.insertField({
             tag: '001',
             value: '12345'
           });
+          return base;
         }
-
         return base;
       }
     ];
@@ -102,8 +100,8 @@ describe('index', () => {
       indexes: [39]
     };
 
-    const parametersSubfield9 = /^500$/;
-    const parametersCopy = /^015$/;
+    const parametersSubfield9 = /^500$/u;
+    const parametersCopy = /^015$/u;
 
     const base = new MarcRecord({
       leader: '00000ccm a22004574i 4500',

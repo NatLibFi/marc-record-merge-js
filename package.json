@@ -37,10 +37,10 @@
 		"deep-eql": "^4.0.0"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.2.0",
-		"@babel/core": "^7.2.0",
-		"@babel/preset-env": "^7.2.0",
-		"babel-eslint": "^10.0.1",
+		"@babel/cli": "^7.8.4",
+		"@babel/core": "^7.8.4",
+		"@babel/preset-env": "^7.8.4",
+		"babel-eslint": "^10.0.3",
 		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.2.0",
 		"chokidar-cli": "^1.2.0",
@@ -53,23 +53,9 @@
 		"npm-check": "^5.9.0"
 	},
 	"eslintConfig": {
-		"parser": "babel-eslint",
-		"plugins": [
-			"import"
-		],
 		"extends": [
-			"xo",
-			"plugin:import/errors",
 			"@natlibfi/melinda-backend"
-		],
-		"rules": {
-			"prefer-arrow-callback": [
-				"error"
-			]
-		},
-		"env": {
-			"mocha": true
-		}
+		]
 	},
 	"babel": {
 		"presets": [
@@ -77,7 +63,7 @@
 				"@babel/preset-env",
 				{
 					"targets": {
-						"node": "8"
+						"node": "12"
 					}
 				}
 			]

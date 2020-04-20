@@ -44,7 +44,7 @@ describe('reducers', () => {
         const fixturesPath = path.join(FIXTURES_PATH, dir);
         const base = parseRecord(fixturesPath, 'base.json');
         const source = parseRecord(fixturesPath, 'source.json');
-        const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'));
+        const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'), 'u');
         const expectedRecord = parseRecord(fixturesPath, 'merged.json');
 
         const mergedRecord = select(pattern)(base, source);

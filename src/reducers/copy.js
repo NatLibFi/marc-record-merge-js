@@ -48,24 +48,35 @@ function copyBase(pattern, state) {
   return (base, source) => {
     // Artturi: should I use this to get single field or use regex from pattern as in other functions
     // This causes single result to be nested in array
-    // const baseFields = base.getFields('010');
+    // Const baseFields = base.getFields('010');
     const baseFields = base.get(pattern);
     const sourceFields = source.get(pattern);
     const mergedField = mergeFields();
 
     if (typeof baseFields[0] !== 'undefined') {
       base.removeField(baseFields[0]); // Remove unmerged field
+      return base;
     }
 
     if (mergedField) {
       base.insertField(mergedField); // Insert merged field
+      return base;
     }
 
     return base;
 
+    /* Sarianna 17.4.:
+    Tässä oli ennen:
+      function mergeFields() {
+        const sourceField = sourceFields[0];
+        const baseField = baseFields[0];
+      mutta siitä tuli virheilmoitus "Use array destructuring"
+      Tässä muodossa virheilmoitusta ei tule, mutta en ole silti varma onko tämä nyt oikein?
+      Destrukturointi on mulle ihan uusi käsite ja sitä pitää vielä opiskella...
+    */
     function mergeFields() {
-      const sourceField = sourceFields[0];
-      const baseField = baseFields[0];
+      const [sourceField] = sourceFields;
+      const [baseField] = baseFields;
 
       // Saa tulla, jos puuttuu
       if (state === enums.missing && typeof baseField === 'undefined') {
@@ -75,6 +86,9 @@ function copyBase(pattern, state) {
       // Saa tulla
       if (state === enums.both) {
         if (sourceField && sourceField.subfields) {
+          // Sarianna 17.4.:
+          // Tästä tulee virheilmoitus "Modifying an existing object/array is not allowed",
+          // Mutta en tiedä miten se pitäisi korjata.
           sourceField.subfields = mergeSubfields();
           return sourceField;
         }
@@ -84,7 +98,7 @@ function copyBase(pattern, state) {
 
       // Verrataan > täydellisempi (enemmän osakenttiä) voittaa
       if (state === enums.complete) {
-        if (typeof sourceField === 'undefined' || baseField && sourceField.subfields.length <= baseField.subfields.length) {
+        if (typeof sourceField === 'undefined' || (baseField && sourceField.subfields.length) <= baseField.subfields.length) {
           return baseField;
         }
 
@@ -94,9 +108,15 @@ function copyBase(pattern, state) {
       return baseField;
 
       function mergeSubfields() {
+
+        /* Sarianna 17.4.
+        Tästä tulee ilmoitus: "Unexpected let, use const instead"
+        Mutta kun vaihdan constiksi, tulee seuraavasta rivistä virhe siitä että constille ei saa määrittää uutta arvoa.
+        */
         let baseSubfields = [];
         if (baseField && baseField.subfields) {
           baseSubfields = clone(baseField.subfields);
+          return baseSubfields;
         }
 
         if (sourceField && sourceField.subfields) {
