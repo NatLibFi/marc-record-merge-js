@@ -50,7 +50,7 @@ describe('reducers', () => {
 
         const mergedRecord = copyMissing(pattern)(base, source);
 
-        expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
+        expect(mergedRecord.toObject()).to.eql(expectedRecord);
       });
     });
   });

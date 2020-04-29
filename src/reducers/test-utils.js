@@ -26,5 +26,11 @@
 *
 */
 
-export * from './select';
-export {copyBoth, copyComplete, copyMissing} from './copy';
+import fs from 'fs';
+import path from 'path';
+import {MarcRecord} from '@natlibfi/marc-record';
+
+export function parseRecord(dir, file) {
+  const filePath = path.join(dir, file);
+  return new MarcRecord(JSON.parse(fs.readFileSync(filePath, 'utf8')));
+}

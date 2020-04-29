@@ -26,7 +26,7 @@
 *
 */
 
-import * as Reducers from './reducers/index';
+import * as Reducers from './reducers';
 
 export {default} from './merge';
 export {Reducers};

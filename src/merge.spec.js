@@ -29,7 +29,7 @@
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import merge from './merge';
-import {Reducers} from './index';
+import {Reducers} from './reducers';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
@@ -95,12 +95,6 @@ describe('index', () => {
   });
 
   it('Custom merge of two records - control fields', () => {
-    const parametersControl = {
-      pattern: '^008$',
-      indexes: [39]
-    };
-
-    const parametersSubfield9 = /^500$/u;
     const parametersCopy = /^015$/u;
 
     const base = new MarcRecord({
@@ -173,11 +167,7 @@ describe('index', () => {
       ]
     });
 
-    const reducers = [
-      (base, source) => Reducers.mergeControlfield(parametersControl)(base, source),
-      (base, source) => Reducers.selectSubfield9(parametersSubfield9)(base, source),
-      (base, source) => Reducers.copyComplete(parametersCopy)(base, source)
-    ];
+    const reducers = [(base, source) => Reducers.copyComplete(parametersCopy)(base, source)];
 
     const expectedRecord = new MarcRecord({
       leader: '00000ccm a22004574i 4500',
