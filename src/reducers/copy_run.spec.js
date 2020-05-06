@@ -32,6 +32,7 @@ import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {parseRecord} from './test-utils';
 import {copyMissing, copyBoth, copyComplete} from './copy';
+import fixturesFactory from './testUtils';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 

@@ -30,6 +30,7 @@ import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import merge from './merge';
 import {Reducers} from './reducers';
+import fixturesFactory from './testUtils';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
