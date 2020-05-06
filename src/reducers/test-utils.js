@@ -29,8 +29,9 @@
 import fs from 'fs';
 import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
-
+import fixturesFactory, {READERS} from '@natlibfi/fixura';
 export function parseRecord(dir, file) {
   const filePath = path.join(dir, file);
+  const {getFixture} = fixturesFactory({root: dir});
   return new MarcRecord(JSON.parse(fs.readFileSync(filePath, 'utf8')));
 }
