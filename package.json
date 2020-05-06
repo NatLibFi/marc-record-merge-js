@@ -32,23 +32,23 @@
 		"watch": "cross-env DEBUG=1 NODE_ENV=test chokidar src -c 'npm test'"
 	},
 	"dependencies": {
-		"@babel/register": "^7.0.0",
-		"@natlibfi/marc-record": "^4.0.4",
-		"deep-eql": "^4.0.0"
+		"@natlibfi/fixura": "^1.0.0",
+		"@natlibfi/marc-record": "^4.0.4"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.8.4",
 		"@babel/core": "^7.8.4",
 		"@babel/preset-env": "^7.8.4",
+		"@babel/register": "^7.9.0",
+		"@natlibfi/eslint-config-melinda-backend": ">1.0.0-alpha.1",
 		"babel-eslint": "^10.0.3",
 		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.2.0",
-		"chokidar-cli": "^1.2.0",
-		"cross-env": "^5.1.1",
+		"chokidar-cli": "^2.1.0",
+		"cross-env": "^7.0.2",
 		"eslint": "^6.8.0",
-		"@natlibfi/eslint-config-melinda-backend": ">1.0.0-alpha.1",
 		"eslint-config-xo": ">=0.25.1 <1.0.0",
-		"mocha": "^5.2.0",
+		"mocha": "^7.1.2",
 		"npm-check": "^5.9.0"
 	},
 	"eslintConfig": {

@@ -26,93 +26,18 @@
 *
 */
 
-const enums = Object.freeze({
-  both: 'both',
-  missing: 'missing',
-  complete: 'complete'
-});
-
-export function copyMissing(pattern) {
-  return copyBase(pattern, enums.missing);
-}
-
-export function copyBoth(pattern) {
-  return copyBase(pattern, enums.both);
-}
-
-export function copyComplete(pattern) {
-  return copyBase(pattern, enums.complete);
-}
-
-function copyBase(pattern, state) {
+export default (pattern) => {
   return (base, source) => {
-    // Artturi: should I use this to get single field or use regex from pattern as in other functions
-    // This causes single result to be nested in array
-    // Const baseFields = base.getFields('010');
     const baseFields = base.get(pattern);
     const sourceFields = source.get(pattern);
-    const mergedField = mergeFields();
+    return copyFields();
 
-    if (typeof baseFields[0] !== 'undefined') {
-      base.removeField(baseFields[0]); // Remove unmerged field
+    function copyFields() {      
+      /*if (baseFields.length === 0) {
+        sourceFields.forEach(f => base.insertField(f)); // eslint-disable-line functional/no-immutable
+      }*/
+
       return base;
-    }
-
-    if (mergedField) {
-      base.insertField(mergedField); // Insert merged field
-      return base;
-    }
-
-    return base;
-
-    function mergeFields() {
-      const [sourceField] = sourceFields;
-      const [baseField] = baseFields;
-
-      // Allowed if missing
-      if (state === enums.missing && typeof baseField === 'undefined') {
-        return sourceField;
-      }
-
-      // Allowed
-      if (state === enums.both) {
-        if (sourceField && sourceField.subfields) {
-          return {
-            ...sourceField,
-            subfields: mergeSubfields()
-          };
-        }
-
-        return baseField;
-      }
-
-      // Fields are compared, and the one with the more subfields wins
-      if (state === enums.complete) {
-        if (typeof sourceField === 'undefined' || (baseField && sourceField.subfields.length) <= baseField.subfields.length) {
-          return baseField;
-        }
-
-        return sourceField;
-      }
-
-      return baseField;
-
-      function mergeSubfields() {
-
-        if (baseField && baseField.subfields) {
-          return clone(baseField.subfields);
-        }
-
-        if (sourceField && sourceField.subfields) {
-          return clone(baseField.subfields).concat(sourceField.subfields);
-        }
-
-        return clone(baseField.subfields);
-      }
-
-      function clone(o) {
-        return JSON.parse(JSON.stringify(o));
-      }
     }
   };
 }
