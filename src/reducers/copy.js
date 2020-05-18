@@ -26,18 +26,19 @@
 *
 */
 
-export default (pattern) => {
-  return (base, source) => {
-    const baseFields = base.get(pattern);
-    const sourceFields = source.get(pattern);
-    return copyFields();
+// Hakee basesta ja sourcesta copy.spec.js:ssä määritellyn patternin mukaiset kentät
+export default (pattern) => (base, source) => {
+  const baseFields = base.get(pattern);
+  const sourceFields = source.get(pattern);
+  return copyFields();
 
-    function copyFields() {      
-      /*if (baseFields.length === 0) {
-        sourceFields.forEach(f => base.insertField(f)); // eslint-disable-line functional/no-immutable
-      }*/
-
+  // Jos basessa ei ole kenttää lainkaan, se kopioidaan sourcesta baseen
+  // CopyFields tässä on nimellä copyMissingFields copy.spec.js:ssä
+  function copyFields() {
+    if (baseFields.length === 0) {
+      sourceFields.forEach(f => base.insertField(f));
       return base;
     }
-  };
-}
+    return base;
+  }
+};

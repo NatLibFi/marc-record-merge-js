@@ -26,67 +26,45 @@
 *
 */
 
+// Poistin test-utils.js:n ja laitoin sen sisällön tänne
+// Julkaisuarkiston esimerkin mukaan
+
+import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
-import {expect} from 'chai';
+// Miksi marc-recordia ei löydy?
 import {MarcRecord} from '@natlibfi/marc-record';
-import {parseRecord} from './test-utils';
-import copy from './copy';
-import fixturesFactory from './testUtils';
+// CopyMissingFields-funktio on sama kuin copyFields copy.js:ssä koska siellä on export default ja vain yksi funktio
+import copyMissingFields from './copy';
+import fixturesFactory, {READERS} from '@natlibfi/fixura';
 
+// Tsekkaa mitä tämä tekee
 MarcRecord.setValidationOptions({subfieldValues: false});
 
-const FIXTURES_PATH = path.join(__dirname, '../../test-fixtures/reducers/copy/');
+// Siirretty parseRecord tänne test-utils.js:stä
+function parseRecord(dir, file) {
+  const filePath = path.join(dir, file);
+  return new MarcRecord(JSON.parse(fs.readFileSync(filePath, 'utf8')));
+}
 
-describe('reducers', () => {
-  const PATH_MISSING = path.join(FIXTURES_PATH, 'copyMissing');
-  describe('Copy - Missing', () => {
-    fs.readdirSync(PATH_MISSING).forEach(dir => {
-      it(dir, () => {
-        const fixturesPath = path.join(PATH_MISSING, dir);
-        const base = parseRecord(fixturesPath, 'base.json');
-        const source = parseRecord(fixturesPath, 'source.json');
-        const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'), 'u');
-        const expectedRecord = parseRecord(fixturesPath, 'merged.json');
+describe('reducers/copy', () => {
+  const {expect} = chai;
+  const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'copy'); // Rakenne kopioitu julkaisuarkiston convert.spec.js:stä
+  // Root on polku josta fixturesFactory löytää tiedostoja eli fixturesPath/subDir
+  // SubDir on numeroidut testihakemistot, 01 jne.
+  const {getFixture} = fixturesFactory({root: [
+    fixturesPath,
+    subDir
+  ], reader: READERS.JSON});
 
-        const mergedRecord = copyMissing(pattern)(base, source);
-
-        expect(mergedRecord.toObject()).to.eql(expectedRecord);
-      });
-    });
-  });
-
-  const PATH_BOTH = path.join(FIXTURES_PATH, 'copyBoth');
-  describe('Copy - Both', () => {
-    fs.readdirSync(PATH_BOTH).forEach(dir => {
-      it(dir, () => {
-        const fixturesPath = path.join(PATH_BOTH, dir);
-        const base = parseRecord(fixturesPath, 'base.json');
-        const source = parseRecord(fixturesPath, 'source.json');
-        const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'), 'u');
-        const expectedRecord = parseRecord(fixturesPath, 'merged.json');
-
-        const mergedRecord = copyBoth(pattern)(base, source);
-
-        expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
-      });
-    });
-  });
-
-  const PATH_COMPLETE = path.join(FIXTURES_PATH, 'copyComplete');
-  describe('Copy - Complete', () => {
-    fs.readdirSync(PATH_COMPLETE).forEach(dir => {
-      it(dir, () => {
-        const fixturesPath = path.join(PATH_COMPLETE, dir);
-        const base = parseRecord(fixturesPath, 'base.json');
-        const source = parseRecord(fixturesPath, 'source.json');
-        const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'), 'u');
-        const expectedRecord = parseRecord(fixturesPath, 'merged.json');
-
-        const mergedRecord = copyComplete(pattern)(base, source);
-
-        expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
-      });
+  fs.readdirSync(fixturesPath).forEach(subDir => {
+    const baseTest = parseRecord(getFixture(['base.json']));
+    const sourceTest = parseRecord(getFixture(['source.json']));
+    const patternTest = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'), 'u');
+    it(subDir, () => {
+      const expectedRecord = parseRecord(getFixture(['merged.json']));
+      const mergedRecord = copyMissingFields(patternTest)(baseTest, sourceTest);
+      expect(mergedRecord.toObject()).to.eql(expectedRecord);
     });
   });
 });

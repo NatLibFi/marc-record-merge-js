@@ -26,5 +26,6 @@
 *
 */
 
+export * from './copy';
 export * from './select';
-export {copyBoth, copyComplete, copyMissing} from './copy';
+
