@@ -26,19 +26,50 @@
 *
 */
 
-// Hakee basesta ja sourcesta copy.spec.js:ssä määritellyn patternin mukaiset kentät
+// Hakee basesta ja sourcesta copy.spec.js:ssä määritellyn patternin (patternTest) mukaiset kentät
 export default (pattern) => (base, source) => {
   const baseFields = base.get(pattern);
   const sourceFields = source.get(pattern);
   return copyFields();
 
-  // Jos basessa ei ole kenttää lainkaan, se kopioidaan sourcesta baseen
-  // CopyFields tässä on nimellä copyMissingFields copy.spec.js:ssä
+  // CopyFields tässä on nimellä createReducer copy.spec.js:ssä
+  // Kaikki toiminnallisuus menee copyFieldsin sisään
   function copyFields() {
+    // Testi 01: Jos basessa ei ole kenttää lainkaan, se kopioidaan sourcesta baseen
     if (baseFields.length === 0) {
       sourceFields.forEach(f => base.insertField(f));
       return base;
     }
-    return base;
-  }
-};
+
+    /* // MissingFieldsillä etsitään mitkä kentät puuttuvat
+     const missingFields = sourceFields.filter(sourceField => {
+      // Onko identtisiä kontrollikenttiä?
+      // if value in sourceField kertoo, että kyseessä on kontrollikenttä,
+      // koska vain kontrollikentillä on value suoraan fieldissä, datakentillä value on joka subfieldin alla
+      if ('value' in sourceField) {
+        const normalizedSourceField = normalize(sourceField);
+        // Jos palauttaa false, ei löydy matchia eli ei ole identtisiä kontrollikenttiä
+        return baseFields.some(isIdentical) === false;
+      }
+
+      // Jos basessa on epäidenttisiä kenttiä, ne kopioidaan uusina kenttinä
+      return baseFields.some(baseField => {
+
+      });
+
+      // Marc-kentän normalisointi
+      function normalize(field) {
+        return field.value.toLowerCase().replace(/\s+/u, '');
+      }
+
+      // Ovatko normalisoitu base ja source identtisiä?
+      // Jos funktio palauttaa true niin ovat, jos false niin eivät
+      function isIdentical(baseField) {
+        const normalizedBaseField = normalize(baseField);
+        return normalizedSourceField === normalizedBaseField;
+      }
+    });
+    // Sitten lisätään puuttuvat kentät eli missingFieldsin palauttama arvo?
+    return base; */
+  } // CopyFieldsin loppu
+}; // Export defaultin loppu

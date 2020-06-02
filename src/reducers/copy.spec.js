@@ -32,39 +32,35 @@
 import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
-// Miksi marc-recordia ei löydy?
 import {MarcRecord} from '@natlibfi/marc-record';
-// CopyMissingFields-funktio on sama kuin copyFields copy.js:ssä koska siellä on export default ja vain yksi funktio
-import copyMissingFields from './copy';
+// CreateReducer-funktio on sama kuin copyFields copy.js:ssä
+// Nimen voi muuttaa koska copy.js:ssä on export default ja vain yksi funktio.
+// CreateReducer on geneerisempi nimi jota voi käyttää muissakin testeissä
+// (siirretään myöhemmin testutilsiin?)
+import createReducer from './copy';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
 
-// Tsekkaa mitä tämä tekee
+// Oletuksena subfieldValues = true
+// Miksi muutetaan tässä falseksi? Ei tarvitse tarkistaa ovatko osakenttien arvot valideja?
 MarcRecord.setValidationOptions({subfieldValues: false});
-
-// Siirretty parseRecord tänne test-utils.js:stä
-function parseRecord(dir, file) {
-  const filePath = path.join(dir, file);
-  return new MarcRecord(JSON.parse(fs.readFileSync(filePath, 'utf8')));
-}
 
 describe('reducers/copy', () => {
   const {expect} = chai;
   const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'copy'); // Rakenne kopioitu julkaisuarkiston convert.spec.js:stä
-  // Root on polku josta fixturesFactory löytää tiedostoja eli fixturesPath/subDir
-  // SubDir on numeroidut testihakemistot, 01 jne.
-  const {getFixture} = fixturesFactory({root: [
-    fixturesPath,
-    subDir
-  ], reader: READERS.JSON});
 
+  // Root on polku josta fixturesFactory löytää tiedostoja eli tässä fixturesPath/subDir
+  // SubDir on numeroidut testihakemistot, 01 jne.
   fs.readdirSync(fixturesPath).forEach(subDir => {
-    const baseTest = parseRecord(getFixture(['base.json']));
-    const sourceTest = parseRecord(getFixture(['source.json']));
-    const patternTest = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'), 'u');
+    const {getFixture} = fixturesFactory({root: [fixturesPath, subDir], reader: READERS.JSON});
     it(subDir, () => {
-      const expectedRecord = parseRecord(getFixture(['merged.json']));
-      const mergedRecord = copyMissingFields(patternTest)(baseTest, sourceTest);
+      const baseTest = new MarcRecord(getFixture('base.json'));
+      const sourceTest = new MarcRecord(getFixture('source.json'));
+      // Ei marc-muodossa, u = unicode
+      const patternTest = new RegExp(getFixture({components: ['pattern.txt'], reader: READERS.TEXT}), 'u');
+      const expectedRecord = getFixture('merged.json');
+      const mergedRecord = createReducer(patternTest)(baseTest, sourceTest);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
     });
+
   });
 });
