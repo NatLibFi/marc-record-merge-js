@@ -36,40 +36,44 @@ export default (pattern) => (base, source) => {
   // Kaikki toiminnallisuus menee copyFieldsin sisään
   function copyFields() {
     // Testi 01: Jos basessa ei ole kenttää lainkaan, se kopioidaan sourcesta baseen
+    // Testissä 01 basessa ei ole lainkaan kenttää 010 (pattern) joten se kopioidaan sourcesta.
     if (baseFields.length === 0) {
       sourceFields.forEach(f => base.insertField(f));
       return base;
     }
+    // Jos basessa on jo kenttä, sourcen kenttä kopioidaan uutena basen kentän lisäksi
+    // Eli merged.jsonissa voi olla useampi kappale samaa kenttää.
 
-    /* // MissingFieldsillä etsitään mitkä kentät puuttuvat
-     const missingFields = sourceFields.filter(sourceField => {
-      // Onko identtisiä kontrollikenttiä?
-      // if value in sourceField kertoo, että kyseessä on kontrollikenttä,
-      // koska vain kontrollikentillä on value suoraan fieldissä, datakentillä value on joka subfieldin alla
+    // MissingFieldsillä etsitään mitkä kentät puuttuvat
+    const missingFields = sourceFields.filter(sourceField => {
+      // Testi 02: Onko identtisiä kontrollikenttiä?
+      // If value in sourceField kertoo, että kyseessä on kontrollikenttä,
+      // Koska vain kontrollikentillä on value suoraan fieldissä, datakentillä value on joka subfieldin alla
       if ('value' in sourceField) {
-        const normalizedSourceField = normalize(sourceField);
         // Jos palauttaa false, ei löydy matchia eli ei ole identtisiä kontrollikenttiä
         return baseFields.some(isIdentical) === false;
       }
-
-      // Jos basessa on epäidenttisiä kenttiä, ne kopioidaan uusina kenttinä
+      // Eli sourcen kentät kopioidaan uusina kenttinä baseen:
+      // Testissä 02 kenttää 001 (pattern) tulee 2 kpl joilla on eri arvot
       return baseFields.some(baseField => {
-
+        // Kopioi kenttä sourcesta baseen ja tee niistä yhdessä merged
+        normalizedSourceField.forEach(f => normalizedBaseField.insertField(f));
+        return normalizedBaseField;
       });
-
+      // Apufunktiot:
       // Marc-kentän normalisointi
       function normalize(field) {
         return field.value.toLowerCase().replace(/\s+/u, '');
       }
-
       // Ovatko normalisoitu base ja source identtisiä?
       // Jos funktio palauttaa true niin ovat, jos false niin eivät
       function isIdentical(baseField) {
         const normalizedBaseField = normalize(baseField);
+        const normalizedSourceField = normalize(sourceField);
         return normalizedSourceField === normalizedBaseField;
       }
-    });
+    }); // MissingFieldsin loppu
     // Sitten lisätään puuttuvat kentät eli missingFieldsin palauttama arvo?
-    return base; */
+    return base;
   } // CopyFieldsin loppu
 }; // Export defaultin loppu

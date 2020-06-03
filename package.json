@@ -30,7 +30,7 @@
 		"coverage": "nyc check-coverage --per-file",
 		"build:transpile": "babel src --copy-files --source-maps --delete-dir-on-start --out-dir=dist",
 		"build": "npm run build:transpile && npm run check-deps",
-		"watch": "cross-env DEBUG=1 NODE_ENV=test chokidar src -c 'npm test'"
+		"watch:test": "cross-env DEBUG=1 NODE_ENV=test nodemon -w src -w test-fixtures --exec 'npm run test:dev'"
 	},
 	"dependencies": {
 		"@natlibfi/fixura": "^2.0.0",
@@ -43,12 +43,13 @@
 		"@babel/register": "^7.10.1",
 		"@natlibfi/eslint-config-melinda-backend": "^1.0.3",
 		"babel-eslint": "^10.0.3",
+		"babel-plugin-istanbul": "^6.0.0",
 		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.2.0",
-		"chokidar-cli": "^2.1.0",
 		"cross-env": "^7.0.2",
 		"eslint": "^7.1.0",
 		"mocha": "^7.2.0",
+		"nodemon": "^2.0.4",
 		"npm-check": "^5.9.0",
 		"nyc": "^15.1.0"
 	},
@@ -71,7 +72,8 @@
 		"env": {
 			"test": {
 				"plugins": [
-					"rewire"
+					"rewire",
+					"istanbul"
 				]
 			}
 		}
