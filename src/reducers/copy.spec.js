@@ -58,6 +58,7 @@ describe('reducers/copy', () => {
       // Ei marc-muodossa, u = unicode
       const patternTest = new RegExp(getFixture({components: ['pattern.txt'], reader: READERS.TEXT}), 'u');
       const expectedRecord = getFixture('merged.json');
+      // MergedRecord on se jonka copy.js:n copyFields palauttaa
       const mergedRecord = createReducer(patternTest)(baseTest, sourceTest);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
     });

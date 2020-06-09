@@ -29,7 +29,15 @@
 // Hakee basesta ja sourcesta copy.spec.js:ssä määritellyn patternin (patternTest) mukaiset kentät
 export default (pattern) => (base, source) => {
   const baseFields = base.get(pattern);
+  // eslint-disable-next-line no-console
+  console.log('baseFields: ');
+  // eslint-disable-next-line no-console
+  console.log(baseFields);
   const sourceFields = source.get(pattern);
+  // eslint-disable-next-line no-console
+  console.log('sourceFields: ');
+  // eslint-disable-next-line no-console
+  console.log(sourceFields);
   return copyFields();
 
   // CopyFields tässä on nimellä createReducer copy.spec.js:ssä
@@ -37,8 +45,13 @@ export default (pattern) => (base, source) => {
   function copyFields() {
     // Testi 01: Jos basessa ei ole kenttää lainkaan, se kopioidaan sourcesta baseen
     // Testissä 01 basessa ei ole lainkaan kenttää 010 (pattern) joten se kopioidaan sourcesta.
+    // InsertField tulee MarcRecordista
     if (baseFields.length === 0) {
       sourceFields.forEach(f => base.insertField(f));
+      // eslint-disable-next-line no-console
+      console.log('base after test 01: ');
+      // eslint-disable-next-line no-console
+      console.log(base);
       return base;
     }
     // Jos basessa on jo kenttä, sourcen kenttä kopioidaan uutena basen kentän lisäksi
@@ -50,16 +63,21 @@ export default (pattern) => (base, source) => {
       // If value in sourceField kertoo, että kyseessä on kontrollikenttä,
       // Koska vain kontrollikentillä on value suoraan fieldissä, datakentillä value on joka subfieldin alla
       if ('value' in sourceField) {
-        // Jos palauttaa false, ei löydy matchia eli ei ole identtisiä kontrollikenttiä
+        // Jos isIdentical palauttaa falsen, ei löydy matchia eli ei ole identtisiä kontrollikenttiä
+        // (eli koko if-blokin arvo on true)
         return baseFields.some(isIdentical) === false;
       }
-      // Eli sourcen kentät kopioidaan uusina kenttinä baseen:
+      // Sourcen kentät kopioidaan uusina kenttinä baseen:
       // Testissä 02 kenttää 001 (pattern) tulee 2 kpl joilla on eri arvot
       return baseFields.some(baseField => {
-        // Kopioi kenttä sourcesta baseen ja tee niistä yhdessä merged
-        normalizedSourceField.forEach(f => normalizedBaseField.insertField(f));
-        return normalizedBaseField;
+        sourceFields.forEach(f => base.insertField(f));
+        // eslint-disable-next-line no-console
+        console.log('baseField after test 02: '); // Tähän ei koskaan mennä, miksi?
+        // eslint-disable-next-line no-console
+        console.log(baseField);
+        return baseField; // MissingFieldsin pitäisi palauttaa tämä
       });
+
       // Apufunktiot:
       // Marc-kentän normalisointi
       function normalize(field) {
@@ -74,6 +92,14 @@ export default (pattern) => (base, source) => {
       }
     }); // MissingFieldsin loppu
     // Sitten lisätään puuttuvat kentät eli missingFieldsin palauttama arvo?
-    return base;
+    // eslint-disable-next-line no-console
+    console.log('missingFields: ');
+    // eslint-disable-next-line no-console
+    console.log(missingFields); // missingFields palauttaa oikean arvon mutta sitä ei lisätä lopuksi baseen
+    // eslint-disable-next-line no-console
+    console.log('base lopussa: ');
+    // eslint-disable-next-line no-console
+    console.log(base);
+    return base; // CopyFieldsin pitäisi palauttaa tämä
   } // CopyFieldsin loppu
 }; // Export defaultin loppu
