@@ -67,16 +67,7 @@ export default (pattern) => (base, source) => {
         // (eli koko if-blokin arvo on true)
         return baseFields.some(isIdentical) === false;
       }
-      // Sourcen kentät kopioidaan uusina kenttinä baseen:
-      // Testissä 02 kenttää 001 (pattern) tulee 2 kpl joilla on eri arvot
-      return baseFields.some(baseField => {
-        sourceFields.forEach(f => base.insertField(f));
-        // eslint-disable-next-line no-console
-        console.log('baseField after test 02: '); // Tähän ei koskaan mennä, miksi?
-        // eslint-disable-next-line no-console
-        console.log(baseField);
-        return baseField; // MissingFieldsin pitäisi palauttaa tämä
-      });
+      return missingFields; // MissingFields palauttaa ei-identtiset kentät
 
       // Apufunktiot:
       // Marc-kentän normalisointi
@@ -91,13 +82,15 @@ export default (pattern) => (base, source) => {
         return normalizedSourceField === normalizedBaseField;
       }
     }); // MissingFieldsin loppu
-    // Sitten lisätään puuttuvat kentät eli missingFieldsin palauttama arvo?
+
     // eslint-disable-next-line no-console
     console.log('missingFields: ');
     // eslint-disable-next-line no-console
-    console.log(missingFields); // missingFields palauttaa oikean arvon mutta sitä ei lisätä lopuksi baseen
+    console.log(missingFields);
+    // Puuttuvat kentät lisätään uusina baseen
+    missingFields.forEach(f => base.insertField(f));
     // eslint-disable-next-line no-console
-    console.log('base lopussa: ');
+    console.log('base lopussa pitää olla sama kuin merged: ');
     // eslint-disable-next-line no-console
     console.log(base);
     return base; // CopyFieldsin pitäisi palauttaa tämä
