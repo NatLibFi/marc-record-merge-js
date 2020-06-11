@@ -34,7 +34,8 @@
 	},
 	"dependencies": {
 		"@natlibfi/fixura": "^2.0.0",
-		"@natlibfi/marc-record": "^4.0.4"
+		"@natlibfi/marc-record": "^4.0.4",
+		"debug": "^4.1.1"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.10.1",

@@ -25,19 +25,15 @@
 * for the JavaScript code in this file.
 *
 */
+import createDebugLogger from 'debug';
+const debug = createDebugLogger('@natlibfi/marc-record-merge');
 
 // Hakee basesta ja sourcesta copy.spec.js:ssä määritellyn patternin (patternTest) mukaiset kentät
 export default (pattern) => (base, source) => {
   const baseFields = base.get(pattern);
-  // eslint-disable-next-line no-console
-  console.log('baseFields: ');
-  // eslint-disable-next-line no-console
-  console.log(baseFields);
+  debug(`baseFields: ${baseFields}`);
   const sourceFields = source.get(pattern);
-  // eslint-disable-next-line no-console
-  console.log('sourceFields: ');
-  // eslint-disable-next-line no-console
-  console.log(sourceFields);
+  debug(`sourceFields: ${sourceFields}`);
   return copyFields();
 
   // CopyFields tässä on nimellä createReducer copy.spec.js:ssä
@@ -48,17 +44,13 @@ export default (pattern) => (base, source) => {
     // InsertField tulee MarcRecordista
     if (baseFields.length === 0) {
       sourceFields.forEach(f => base.insertField(f));
-      // eslint-disable-next-line no-console
-      console.log('base after test 01: ');
-      // eslint-disable-next-line no-console
-      console.log(base);
+      debug(`base after test 01: ${base}`);
       return base;
     }
     // Jos basessa on jo kenttä, sourcen kenttä kopioidaan uutena basen kentän lisäksi
     // Eli merged.jsonissa voi olla useampi kappale samaa kenttää.
 
-    // MissingFieldsillä etsitään mitkä kentät puuttuvat
-    const missingFields = sourceFields.filter(sourceField => {
+    const filterMissing = (sourceField) => {
       // Testi 02: Onko identtisiä kontrollikenttiä?
       // If value in sourceField kertoo, että kyseessä on kontrollikenttä,
       // Koska vain kontrollikentillä on value suoraan fieldissä, datakentillä value on joka subfieldin alla
@@ -67,7 +59,7 @@ export default (pattern) => (base, source) => {
         // (eli koko if-blokin arvo on true)
         return baseFields.some(isIdentical) === false;
       }
-      return missingFields; // MissingFields palauttaa ei-identtiset kentät
+      return filterMissing; // Palauttaa ei-identtiset kentät
 
       // Apufunktiot:
       // Marc-kentän normalisointi
@@ -81,18 +73,15 @@ export default (pattern) => (base, source) => {
         const normalizedSourceField = normalize(sourceField);
         return normalizedSourceField === normalizedBaseField;
       }
-    }); // MissingFieldsin loppu
+    }; // FilterMissingin loppu
 
-    // eslint-disable-next-line no-console
-    console.log('missingFields: ');
-    // eslint-disable-next-line no-console
-    console.log(missingFields);
+    // MissingFieldsillä etsitään mitkä kentät puuttuvat
+    const missingFields = sourceFields.filter(filterMissing);
+
+    debug(`missingFields: ${missingFields}`);
     // Puuttuvat kentät lisätään uusina baseen
     missingFields.forEach(f => base.insertField(f));
-    // eslint-disable-next-line no-console
-    console.log('base lopussa pitää olla sama kuin merged: ');
-    // eslint-disable-next-line no-console
-    console.log(base);
+    debug(`base lopussa pitää olla sama kuin merged: ${base}`);
     return base; // CopyFieldsin pitäisi palauttaa tämä
   } // CopyFieldsin loppu
 }; // Export defaultin loppu
