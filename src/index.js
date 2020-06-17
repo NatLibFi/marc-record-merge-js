@@ -28,11 +28,9 @@
 
 import * as Reducers from './reducers';
 import {MarcRecord} from '@natlibfi/marc-record';
-// Import createDebugLogger from 'debug';
 
 export {Reducers};
 export default ({base, source, reducers}) => {
-  // Const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const sourceRecord = MarcRecord.clone(source);
   return reducers.reduce((baseRecord, reducer) => reducer(baseRecord, sourceRecord), MarcRecord.clone(base));
 };

@@ -26,14 +26,14 @@
 *
 */
 import createDebugLogger from 'debug';
-const debug = createDebugLogger('@natlibfi/marc-record-merge');
 
 // Hakee basesta ja sourcesta copy.spec.js:ssä määritellyn patternin (patternTest) mukaiset kentät
 export default (pattern) => (base, source) => {
+  const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const baseFields = base.get(pattern);
-  debug(`baseFields: ${baseFields}`);
+  debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(pattern);
-  debug(`sourceFields: ${sourceFields}`);
+  debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
   return copyFields();
 
   // CopyFields tässä on nimellä createReducer copy.spec.js:ssä
@@ -44,13 +44,13 @@ export default (pattern) => (base, source) => {
     // InsertField tulee MarcRecordista
     if (baseFields.length === 0) {
       sourceFields.forEach(f => base.insertField(f));
-      debug(`base after test 01: ${base}`);
+      debug(`base after test 01: ${JSON.stringify(base, undefined, 2)}`);
       return base;
     }
     // Jos basessa on jo kenttä, sourcen kenttä kopioidaan uutena basen kentän lisäksi
     // Eli merged.jsonissa voi olla useampi kappale samaa kenttää.
 
-    const filterMissing = (sourceField) => {
+    const filterMissing = function(sourceField) {
       // Testi 02: Onko identtisiä kontrollikenttiä?
       // If value in sourceField kertoo, että kyseessä on kontrollikenttä,
       // Koska vain kontrollikentillä on value suoraan fieldissä, datakentillä value on joka subfieldin alla
@@ -78,10 +78,10 @@ export default (pattern) => (base, source) => {
     // MissingFieldsillä etsitään mitkä kentät puuttuvat
     const missingFields = sourceFields.filter(filterMissing);
 
-    debug(`missingFields: ${missingFields}`);
-    // Puuttuvat kentät lisätään uusina baseen
+    debug(`missingFields: ${JSON.stringify(missingFields, undefined, 2)}`);
+    // Testi 03: Jos on puuttuvia kenttiä, ne lisätään uusina baseen
     missingFields.forEach(f => base.insertField(f));
-    debug(`base lopussa pitää olla sama kuin merged: ${base}`);
+    debug(`base lopussa pitää olla sama kuin merged: ${JSON.stringify(base, undefined, 2)}`);
     return base; // CopyFieldsin pitäisi palauttaa tämä
   } // CopyFieldsin loppu
 }; // Export defaultin loppu
