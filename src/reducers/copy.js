@@ -59,6 +59,18 @@ export default (pattern) => (base, source) => {
         // (eli koko if-blokin arvo on true)
         return baseFields.some(isIdentical) === false;
       }
+
+      // Testi 04: Onko identtisiä datakenttiä?
+      // The tag, ind1 & ind2 must match with strict string equality
+      // The number of subfields must be equal.
+      // Each subfield must find an identical pair in the another record.
+      // The code and value must match with strict string equality.
+      // The order of subfield does not matter.
+
+      // 17.6.: Nyt identtinenkin datakenttä 010 menee läpi filtteristä ja lisätään tuplana
+      // tämä korjattava seuraavaksi 
+
+
       return filterMissing; // Palauttaa ei-identtiset kentät
 
       // Apufunktiot:
@@ -79,7 +91,7 @@ export default (pattern) => (base, source) => {
     const missingFields = sourceFields.filter(filterMissing);
 
     debug(`missingFields: ${JSON.stringify(missingFields, undefined, 2)}`);
-    // Testi 03: Jos on puuttuvia kenttiä, ne lisätään uusina baseen
+    // Testi 03: Jos on puuttuvia kenttiä, ne lisätään uusina baseen (kontrollikentät)
     missingFields.forEach(f => base.insertField(f));
     debug(`base lopussa pitää olla sama kuin merged: ${JSON.stringify(base, undefined, 2)}`);
     return base; // CopyFieldsin pitäisi palauttaa tämä
