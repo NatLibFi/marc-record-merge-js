@@ -57,20 +57,30 @@ export default (pattern) => (base, source) => {
       if ('value' in sourceField) {
         // Jos isIdentical palauttaa falsen, ei löydy matchia eli ei ole identtisiä kontrollikenttiä
         // (eli koko if-blokin arvo on true)
+        debug('tarkistetaan kontrollikenttä');
         return baseFields.some(isIdentical) === false;
       }
-
+      // Jos sourceFieldillä ei ole value-parametriä suoraan fieldissä, kyseessä on datakenttä.
       // Testi 04: Onko identtisiä datakenttiä?
+
+      // 24.6. Tarkista mikä on oikea syntaksi jotta tämä osuus toimii
+
       // The tag, ind1 & ind2 must match with strict string equality
       // The number of subfields must be equal.
-      // Each subfield must find an identical pair in the another record.
-      // The code and value must match with strict string equality.
-      // The order of subfield does not matter.
+      if (('tag' in sourceField) === ('tag' in baseFields) &&
+      ('ind1' in sourceField) === ('ind1' in baseFields) &&
+      ('ind2' in sourceField) === ('ind2' in baseFields) &&
+      (sourceField.subfields.length === baseFields.subfields.length)) {
+        // Tähän väliin osakenttien tarkistus?
+        // Each subfield must find an identical pair in the another record.
+        // The code and value must match with strict string equality.
+        // The order of subfield does not matter.
 
-      // 17.6.: Nyt identtinenkin datakenttä 010 menee läpi filtteristä ja lisätään tuplana
-      // tämä korjattava seuraavaksi 
+      }
 
 
+
+      debug(`filterMissingin arvo on: ${JSON.stringify(filterMissing, undefined, 2)}`);
       return filterMissing; // Palauttaa ei-identtiset kentät
 
       // Apufunktiot:
