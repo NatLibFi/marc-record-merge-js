@@ -50,34 +50,60 @@ export default (pattern) => (base, source) => {
     // Jos basessa on jo kenttä, sourcen kenttä kopioidaan uutena basen kentän lisäksi
     // Eli merged.jsonissa voi olla useampi kappale samaa kenttää.
 
+    // SourceField käsittelee vuorotellen jokaisen patternin mukaisen kentän sourcesta
     const filterMissing = function(sourceField) {
       // Testi 02: Onko identtisiä kontrollikenttiä?
       // If value in sourceField kertoo, että kyseessä on kontrollikenttä,
-      // Koska vain kontrollikentillä on value suoraan fieldissä, datakentillä value on joka subfieldin alla
+      // Koska vain kontrollikentillä on 'value'-stringi suoraan fieldissä, datakentillä joka subfieldin alla
       if ('value' in sourceField) {
         // Jos isIdentical palauttaa falsen, ei löydy matchia eli ei ole identtisiä kontrollikenttiä
         // (eli koko if-blokin arvo on true)
-        debug('tarkistetaan kontrollikenttä');
+        debug('tarkistetaan kontrollikentät');
         return baseFields.some(isIdentical) === false;
       }
       // Jos sourceFieldillä ei ole value-parametriä suoraan fieldissä, kyseessä on datakenttä.
-      // Testi 04: Onko identtisiä datakenttiä?
-
-      // 24.6. Tarkista mikä on oikea syntaksi jotta tämä osuus toimii
+      // Testi 04: Onko identtisiä datakenttiä? (04:ssä on)
 
       // The tag, ind1 & ind2 must match with strict string equality
       // The number of subfields must be equal.
-      if (('tag' in sourceField) === ('tag' in baseFields) &&
-      ('ind1' in sourceField) === ('ind1' in baseFields) &&
-      ('ind2' in sourceField) === ('ind2' in baseFields) &&
-      (sourceField.subfields.length === baseFields.subfields.length)) {
-        // Tähän väliin osakenttien tarkistus?
+
+      // BaseFields on array ja siitä pitää saada irti baseField-objekti
+      // Jota voi verrata sourceField-objektin kanssa.
+
+      const baseField = baseFields.forEach(f => {
+        // Irrota objekti arrayn sisältä, mutta miten?
+        // tästäkin tulee undefined
+        base.getFields(f);
+      });
+
+      debug(`sourceField on: ${JSON.stringify(sourceField, undefined, 2)}`);
+      debug(`baseField on: ${JSON.stringify(baseField, undefined, 2)}`);
+      debug(`sourceField.tag: ${sourceField.tag}`);
+      debug(`baseField.tag: ${baseField.tag}`);
+      debug(`sourceField.ind1: ${sourceField.ind1}`);
+      debug(`baseField.ind1: ${baseField.ind1}`);
+      debug(`sourceField.ind2: ${sourceField.ind2}`);
+      debug(`baseField.ind2: ${baseField.ind2}`);
+      debug(`sourceField.subfields.length: ${sourceField.subfields.length}`);
+      debug(`baseField.subfields.length: ${baseField.subfields.length}`);
+
+      // datakentässä näiden pitää täsmätä
+      if (sourceField.tag === baseField.tag &&
+      sourceField.ind1 === baseField.ind1 &&
+      sourceField.ind2 === baseField.ind2 &&
+      sourceField.subfields.length === baseField.subfields.length) {
+        debug('tarkistetaan datakentät');
+        return;
+
+        /* SourceField.subfields.forEach(f => sourceField.subfields.code === baseFields.subfields.code);
+        sourceField.subfields.forEach(f => sourceField.subfields.value === baseFields.subfields.value);*/
+        // Tähän väliin osakenttien tarkistus
+
         // Each subfield must find an identical pair in the another record.
         // The code and value must match with strict string equality.
         // The order of subfield does not matter.
 
       }
-
 
 
       debug(`filterMissingin arvo on: ${JSON.stringify(filterMissing, undefined, 2)}`);
@@ -101,7 +127,7 @@ export default (pattern) => (base, source) => {
     const missingFields = sourceFields.filter(filterMissing);
 
     debug(`missingFields: ${JSON.stringify(missingFields, undefined, 2)}`);
-    // Testi 03: Jos on puuttuvia kenttiä, ne lisätään uusina baseen (kontrollikentät)
+    // Testi 03: Jos on puuttuvia kontrollikenttiä, ne lisätään uusina baseen
     missingFields.forEach(f => base.insertField(f));
     debug(`base lopussa pitää olla sama kuin merged: ${JSON.stringify(base, undefined, 2)}`);
     return base; // CopyFieldsin pitäisi palauttaa tämä
