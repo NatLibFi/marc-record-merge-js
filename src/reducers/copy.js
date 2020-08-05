@@ -28,8 +28,10 @@
 import createDebugLogger from 'debug';
 
 // Hakee basesta ja sourcesta copy.spec.js:ssä määritellyn patternin (patternTest) mukaiset kentät
+// Base ja source ovat MarcRecord-objekteja
 export default (pattern) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
+  // Get tulee MarcRecordista
   const baseFields = base.get(pattern);
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(pattern);
@@ -59,75 +61,65 @@ export default (pattern) => (base, source) => {
         // Jos isIdentical palauttaa falsen, ei löydy matchia eli ei ole identtisiä kontrollikenttiä
         // (eli koko if-blokin arvo on true)
         debug('tarkistetaan kontrollikentät');
-        return baseFields.some(isIdentical) === false;
+        debug(`sourceField kontrollikentät on: ${JSON.stringify(sourceField, undefined, 2)}`);
+        return baseFields.some(isIdenticalControlField) === false;
       }
-      // Jos sourceFieldillä ei ole value-parametriä suoraan fieldissä, kyseessä on datakenttä.
-      // Testi 04: Onko identtisiä datakenttiä? (04:ssä on)
 
-      // The tag, ind1 & ind2 must match with strict string equality
-      // The number of subfields must be equal.
-
-      // BaseFields on array ja siitä pitää saada irti baseField-objekti
-      // Jota voi verrata sourceField-objektin kanssa.
-
-      const baseField = baseFields.forEach(f => {
-        // Irrota objekti arrayn sisältä, mutta miten?
-        // tästäkin tulee undefined
-        base.getFields(f);
-      });
-
-      debug(`sourceField on: ${JSON.stringify(sourceField, undefined, 2)}`);
-      debug(`baseField on: ${JSON.stringify(baseField, undefined, 2)}`);
-      debug(`sourceField.tag: ${sourceField.tag}`);
-      debug(`baseField.tag: ${baseField.tag}`);
-      debug(`sourceField.ind1: ${sourceField.ind1}`);
-      debug(`baseField.ind1: ${baseField.ind1}`);
-      debug(`sourceField.ind2: ${sourceField.ind2}`);
-      debug(`baseField.ind2: ${baseField.ind2}`);
-      debug(`sourceField.subfields.length: ${sourceField.subfields.length}`);
-      debug(`baseField.subfields.length: ${baseField.subfields.length}`);
-
-      // datakentässä näiden pitää täsmätä
-      if (sourceField.tag === baseField.tag &&
-      sourceField.ind1 === baseField.ind1 &&
-      sourceField.ind2 === baseField.ind2 &&
-      sourceField.subfields.length === baseField.subfields.length) {
+      // Jos sourceFieldillä on subfields-osio, kyseessä on datakenttä.
+      // Testi 04: Onko identtisiä datakenttiä? (04:ssä on 2 kpl)
+      // Testi 05: Yksi samanlainen ja yksi erilainen datakenttä
+      if ('subfields' in sourceField) {
         debug('tarkistetaan datakentät');
-        return;
-
-        /* SourceField.subfields.forEach(f => sourceField.subfields.code === baseFields.subfields.code);
-        sourceField.subfields.forEach(f => sourceField.subfields.value === baseFields.subfields.value);*/
-        // Tähän väliin osakenttien tarkistus
-
-        // Each subfield must find an identical pair in the another record.
-        // The code and value must match with strict string equality.
-        // The order of subfield does not matter.
-
+        debug(`sourceField datakentät on: ${JSON.stringify(sourceField, undefined, 2)}`);
+        return baseFields.some(isIdenticalDataField) === false;
       }
 
-
-      debug(`filterMissingin arvo on: ${JSON.stringify(filterMissing, undefined, 2)}`);
-      return filterMissing; // Palauttaa ei-identtiset kentät
+      // Debug(`filterMissingin arvo on: ${JSON.stringify(filterMissing, undefined, 2)}`);
+      // Return filterMissing; // Palauttaa ei-identtiset kentät
 
       // Apufunktiot:
       // Marc-kentän normalisointi
-      function normalize(field) {
+      function normalizeControlField(field) {
         return field.value.toLowerCase().replace(/\s+/u, '');
       }
+      function normalizeDataField(field) {
+        // Return field.subfields[0].value.toLowerCase().replace(/\s+/u, ''); // tämä toimii mutta vain ekalle indeksille
+        const x = field.subfields.map(subfield => subfield.value.toLowerCase().replace(/\s+/u, '')); // Miksi tämä ei toimi?
+        debug(`tulos on ${x}`);
+        return x;
+      }
+
       // Ovatko normalisoitu base ja source identtisiä?
       // Jos funktio palauttaa true niin ovat, jos false niin eivät
-      function isIdentical(baseField) {
-        const normalizedBaseField = normalize(baseField);
-        const normalizedSourceField = normalize(sourceField);
+      function isIdenticalControlField(baseField) {
+        const normalizedBaseField = normalizeControlField(baseField);
+        const normalizedSourceField = normalizeControlField(sourceField);
         return normalizedSourceField === normalizedBaseField;
+      }
+
+      // Ovatko datakentät identtisiä? tag, ind1, ind2 ja kaikki osakentät
+      function isIdenticalDataField(baseField) {
+        const normalizedBaseField = normalizeDataField(baseField);
+        const normalizedSourceField = normalizeDataField(sourceField);
+        if (sourceField.tag === baseField.tag &&
+          sourceField.ind1 === baseField.ind1 &&
+          sourceField.ind2 === baseField.ind2 &&
+          sourceField.subfields.length === baseField.subfields.length) {
+        // Jos mikään näistä ei toteudu, palauttaa false
+        // Ja tämän sisään tulee subfieldien vertailu
+        // SourceField.subfields[0].code === baseField.subfields[0].code &&
+        // SourceField.subfields[0].value === baseField.subfields[0].value) {
+          debug('tarkistetaan datakenttien sisällöt');
+          return normalizedSourceField === normalizedBaseField;
+        }
       }
     }; // FilterMissingin loppu
 
-    // MissingFieldsillä etsitään mitkä kentät puuttuvat
+    // MissingFieldsillä etsitään mitkä kentät puuttuvat basesta
     const missingFields = sourceFields.filter(filterMissing);
-
     debug(`missingFields: ${JSON.stringify(missingFields, undefined, 2)}`);
-    // Testi 03: Jos on puuttuvia kontrollikenttiä, ne lisätään uusina baseen
+    // Testi 03: Lisätään puuttuva kontrollikenttä uutena baseen
+    // Testi 05: Lisätään puuttuva datakenttä uutena baseen
     missingFields.forEach(f => base.insertField(f));
     debug(`base lopussa pitää olla sama kuin merged: ${JSON.stringify(base, undefined, 2)}`);
     return base; // CopyFieldsin pitäisi palauttaa tämä

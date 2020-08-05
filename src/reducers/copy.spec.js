@@ -40,8 +40,6 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './copy';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
 
-// Oletuksena subfieldValues = true
-// Miksi muutetaan tässä falseksi? Ei tarvitse tarkistaa ovatko osakenttien arvot valideja?
 MarcRecord.setValidationOptions({subfieldValues: false});
 
 describe('reducers/copy', () => {
