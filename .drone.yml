@@ -1,16 +1,76 @@
+---
 kind: pipeline
-name: default
+type: docker
+name: Default
+
+trigger:
+  event:
+    - push
+    - tag
+
 steps:
-- name: build
-  image: node:12
-  commands:
-  - npm install
-  - npm test
-  - npm run build
-- name: npm
-  image: plugins/npm
-  settings:
-    token:
-      from_secret: npm_token
-  when:
-    event: tag
+
+  - name: audit
+    image: node:12
+    commands:
+      - npm audit --package-lock-only --production --audit-level=moderate
+
+  - name: install
+    image: node:12
+    environment:
+      NPM_CONFIG_IGNORE_SCRIPTS: true      
+    commands:
+      - npm ci
+
+  - name: test
+    image: node:12
+    commands:
+      - npm test
+
+  - name: check-coverage
+    image: node:12
+    commands:
+      - npm run coverage
+
+  - name: build
+    image: node:12
+    commands:
+      - npm run build
+      - npm ci --production
+
+  - name: static-security-scan
+    image: quay.io/natlibfi/nodejsscan
+    commands:
+      - python /usr/src/app/cli.py -d dist
+
+  - name: npm
+    image: plugins/npm
+    settings:
+      registry: 'https://registry.npmjs.org/'
+      token:
+        from_secret: npm_token
+    when:
+      event: tag 
+---
+kind: pipeline
+type: docker
+name: Update dependencies
+
+trigger:
+  event:
+    - custom
+  branch:
+    - master
+
+steps:
+
+  - name: publish
+    image: quay.io/natlibfi/drone-npm-git-publish
+    settings:
+      git_user_name: natlibfi-melinda-automation
+      git_user_email: 65649125+natlibfi-melinda-automation@users.noreply.github.com
+      git_ssh_key:
+        from_secret: ssh_key
+      git_gpg_key:
+        from_secret: gpg_key
+        

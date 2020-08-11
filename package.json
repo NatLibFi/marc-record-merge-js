@@ -34,7 +34,7 @@
 	},
 	"dependencies": {
 		"@natlibfi/fixura": "^2.0.0",
-		"@natlibfi/marc-record": "^4.0.4",
+		"@natlibfi/marc-record": "^6.0.0",
 		"debug": "^4.1.1"
 	},
 	"devDependencies": {
