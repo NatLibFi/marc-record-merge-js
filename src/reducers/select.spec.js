@@ -29,14 +29,14 @@ import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './copy';
+import createReducer from './select';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
-describe('reducers/copy', () => {
+describe('reducers/select', () => {
   const {expect} = chai;
-  const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'copy');
+  const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'select');
 
   fs.readdirSync(fixturesPath).forEach(subDir => {
     const {getFixture} = fixturesFactory({root: [fixturesPath, subDir], reader: READERS.JSON});
