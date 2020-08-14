@@ -19,6 +19,22 @@
                     "value": "GöódbÿÉ"
                 }
             ]
-        }
+        },
+        {
+            "tag": "010",
+            "ind1": " ",
+            "ind2": " ",
+            "subfields": [
+                {
+                    "code": "c",
+                    "value": "Sômé Spèciål CHARäctêrs .,-/#!$%^&*;:"
+                },
+                {
+                    "code": "d",
+                    "value": "Mõré Chåräçterš ňŭųœ {}=_`~()[]"
+                }
+            ]
+        }       
+
     ]
 }

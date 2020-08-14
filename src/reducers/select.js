@@ -26,10 +26,13 @@
 *
 */
 import createDebugLogger from 'debug';
-// Import {normalize} from 'normalize-diacritics';
+//import {normalize} from 'normalize-diacritics';
+import {normalizeSync} from 'normalize-diacritics';
 
 export default (pattern) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
+  //const norm = normalizeSync(`Téstàtaañ tâtä!`);
+  //debug(`testataan: ${norm}`);
   const baseFields = base.get(pattern);
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(pattern);
@@ -38,18 +41,18 @@ export default (pattern) => (base, source) => {
 
   function selectFields() {
     const x = checkFieldType(baseFields);
-    debug(`checkFieldType: ${x}`);
+    debug(`checkFieldType: ${JSON.stringify(x, undefined, 2)}`);
     const y = baseFields.map(checkTags);
-    debug(`checkTags: ${y}`);
+    debug(`checkTags: ${JSON.stringify(y, undefined, 2)}`);
 
-    /* Const z = baseFields.map(normalizeDiacritics);
-    debug(`normalizeDiacritics for baseFields: ${z}`);
+    const z = baseFields.map(normalizeDiacritics);
+    debug(`normalizeDiacritics for baseFields: ${JSON.stringify(z, undefined, 2)}`);
     const s = sourceFields.map(normalizeDiacritics);
-    debug(`normalizeDiacritics for sourceFields: ${s}`);*/
+    debug(`normalizeDiacritics for sourceFields: ${JSON.stringify(s, undefined, 2)}`);
 
     // Check whether the field is a data field
     function checkFieldType() {
-      baseFields.forEach(field => {
+      const checkedFields = baseFields.map(field => {
         // Control fields are not handled here
         if ('value' in field) {
           return false;
@@ -57,22 +60,30 @@ export default (pattern) => (base, source) => {
         // Data fields are passed on
         return true;
       });
+      return checkedFields;
     }
 
     // Base and source field tags must be equal
     function checkTags(baseField) {
-      sourceFields.forEach(sourceField => {
+      const tags = [];
+      sourceFields.map(sourceField => {
+        debug(`sourceField.tag: ${sourceField.tag}`);
+        debug(`baseField.tag: ${sourceField.tag}`);
         if (sourceField.tag === baseField.tag) {
-          return true;
-        }
-        return false;
+          return tags.push('1');
+        };
+        return tags.push('0');
       });
+      debug(`tags: ${tags}`);
+      return tags;
     }
 
-    /* Function normalizeDiacritics(field) {
-      const a = field.subfields.map(normalize);
-      debug(`normalizeDiacritics: ${a}`);
-    }*/
+    function normalizeDiacritics(field) {
+      const values = field.subfields.map(subfield => subfield.value);
+      const a = values.map(value => normalizeSync(value));
+      debug(`normalizeDiacritics: ${JSON.stringify(a, undefined, 2)}`);
+      return a;
+    }
   }
 };
 

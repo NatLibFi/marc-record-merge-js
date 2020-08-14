@@ -19,6 +19,22 @@
                     "value": "GöódbÿÉ #Crüél $Wörld?"
                 }
             ]
+        },
+        {
+            "tag": "010",
+            "ind1": " ",
+            "ind2": " ",
+            "subfields": [
+                {
+                    "code": "c",
+                    "value": "Sômé Spèciål CHARäctêrs tö Délètë .,-/#!$%^&*;:"
+                },
+                {
+                    "code": "d",
+                    "value": "Mõré {}=_`~()[]"
+                }
+            ]
         }       
+
     ]
 }
