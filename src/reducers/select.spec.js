@@ -25,32 +25,28 @@
 * for the JavaScript code in this file.
 *
 */
-
+import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
-import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {parseRecord} from './test-utils';
-import {select} from './select';
+import createReducer from './select';
+import fixturesFactory, {READERS} from '@natlibfi/fixura';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
-const FIXTURES_PATH = path.join(__dirname, '../../test-fixtures/reducers/select');
+describe('reducers/select', () => {
+  const {expect} = chai;
+  const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'select');
 
-describe('reducers', () => {
-	describe('select', () => {
-		fs.readdirSync(FIXTURES_PATH).forEach(dir => {
-			it(dir, () => {
-				const fixturesPath = path.join(FIXTURES_PATH, dir);
-				const base = parseRecord(fixturesPath, 'base.json');
-				const source = parseRecord(fixturesPath, 'source.json');
-				const pattern = new RegExp(fs.readFileSync(path.join(fixturesPath, 'pattern.txt'), 'utf8'));
-				const expectedRecord = parseRecord(fixturesPath, 'merged.json');
-
-				const mergedRecord = select(pattern)(base, source);
-
-				expect(mergedRecord.equalsTo(expectedRecord)).to.equal(true);
-			});
-		});
-	});
+  fs.readdirSync(fixturesPath).forEach(subDir => {
+    const {getFixture} = fixturesFactory({root: [fixturesPath, subDir], reader: READERS.JSON});
+    it(subDir, () => {
+      const baseTest = new MarcRecord(getFixture('base.json'));
+      const sourceTest = new MarcRecord(getFixture('source.json'));
+      const patternTest = new RegExp(getFixture({components: ['pattern.txt'], reader: READERS.TEXT}), 'u');
+      const expectedRecord = getFixture('merged.json');
+      const mergedRecord = createReducer(patternTest)(baseTest, sourceTest);
+      expect(mergedRecord.toObject()).to.eql(expectedRecord);
+    });
+  });
 });
