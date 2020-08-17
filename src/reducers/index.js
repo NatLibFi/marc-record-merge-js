@@ -26,7 +26,6 @@
 *
 */
 
+export * from './copy';
 export * from './select';
-export * from './merge-controlfield';
-export * from './select-subfield-9';
 

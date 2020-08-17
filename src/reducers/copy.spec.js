@@ -25,12 +25,28 @@
 * for the JavaScript code in this file.
 *
 */
-
-import * as Reducers from './reducers';
+import chai from 'chai';
+import fs from 'fs';
+import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
+import createReducer from './copy';
+import fixturesFactory, {READERS} from '@natlibfi/fixura';
 
-export {Reducers};
-export default ({base, source, reducers}) => {
-  const sourceRecord = MarcRecord.clone(source);
-  return reducers.reduce((baseRecord, reducer) => reducer(baseRecord, sourceRecord), MarcRecord.clone(base));
-};
+MarcRecord.setValidationOptions({subfieldValues: false});
+
+describe('reducers/copy', () => {
+  const {expect} = chai;
+  const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'copy');
+
+  fs.readdirSync(fixturesPath).forEach(subDir => {
+    const {getFixture} = fixturesFactory({root: [fixturesPath, subDir], reader: READERS.JSON});
+    it(subDir, () => {
+      const baseTest = new MarcRecord(getFixture('base.json'));
+      const sourceTest = new MarcRecord(getFixture('source.json'));
+      const patternTest = new RegExp(getFixture({components: ['pattern.txt'], reader: READERS.TEXT}), 'u');
+      const expectedRecord = getFixture('merged.json');
+      const mergedRecord = createReducer(patternTest)(baseTest, sourceTest);
+      expect(mergedRecord.toObject()).to.eql(expectedRecord);
+    });
+  });
+});
