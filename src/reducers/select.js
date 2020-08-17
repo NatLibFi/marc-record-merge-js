@@ -31,12 +31,8 @@ import {normalizeSync} from 'normalize-diacritics';
 
 export default (pattern) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
-  //const norm = normalizeSync(`Téstàtaañ tâtä!`);
-  //debug(`testataan: ${norm}`);
   const baseFields = base.get(pattern);
-  debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(pattern);
-  debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
   return selectFields();
 
   function selectFields() {
@@ -50,12 +46,16 @@ export default (pattern) => (base, source) => {
     const s = sourceFields.map(normalizeDiacritics);
     debug(`normalizeDiacritics for sourceFields: ${JSON.stringify(s, undefined, 2)}`);
 
+    const mergedFields = baseFields; // parhaat kentät mergataan
+    debug(`mergedFields: ${JSON.stringify(selectedFields, undefined, 2)}`);
+
     // Check whether the field is a data field
     function checkFieldType() {
       const checkedFields = baseFields.map(field => {
         // Control fields are not handled here
         if ('value' in field) {
-          return false;
+          const err = new Error('Invalid control field, expected data field');
+          throw err;
         }
         // Data fields are passed on
         return true;
@@ -84,6 +84,7 @@ export default (pattern) => (base, source) => {
       debug(`normalizeDiacritics: ${JSON.stringify(a, undefined, 2)}`);
       return a;
     }
+  return mergedFields;
   }
 };
 
