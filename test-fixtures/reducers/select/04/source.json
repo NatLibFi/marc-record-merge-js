@@ -1,0 +1,40 @@
+{
+    "leader": "01331cam a22003494i 4500",
+    "fields": [
+        {
+            "tag": "001",
+            "value": "007346734"
+        },
+        {
+            "tag": "010",
+            "ind1": " ",
+            "ind2": " ",
+            "subfields": [
+                {
+                    "code": "a",
+                    "value": " =_`~()[]   Héllö  Wörld"
+                },
+                {
+                    "code": "b",
+                    "value": "GöódbÿÉ              Crüél#!$%^& wörLD"
+                }
+            ]
+        },
+        {
+            "tag": "010",
+            "ind1": " ",
+            "ind2": " ",
+            "subfields": [
+                {
+                    "code": "c",
+                    "value": "Sômé=_    Åcçèñts  "
+                },
+                {
+                    "code": "d",
+                    "value": "  çšŕ#!$%ňŭųœ       #!$%ËÑĶãýğĝŧŵ"
+                }
+            ]
+        }       
+
+    ]
+}
