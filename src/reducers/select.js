@@ -31,38 +31,44 @@ import {normalizeSync} from 'normalize-diacritics';
 
 export default (pattern) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
-  const baseFields = base.get(pattern);
-  const sourceFields = source.get(pattern);
+  const baseFieldsFromPattern = base.get(pattern);
+  const sourceFieldsFromPattern = source.get(pattern);
   return selectFields();
 
   function selectFields() {
-    // Check that the field is a data field
-    const x = checkFieldType(baseFields);
-    debug(`checkFieldType: ${JSON.stringify(x, undefined, 2)}`);
-    // Check that the base and source tags are identical
-    const y = baseFields.map(checkTags);
-    debug(`checkTags: ${JSON.stringify(y, undefined, 2)}`);
+    // Check that all fields are data fields
+    const baseFields = checkFieldType(baseFieldsFromPattern);
+    debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
+    const sourceFields = checkFieldType(sourceFieldsFromPattern);
+    debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
+    
+    // Check that the base and source tags are equal
+    //const y = baseFields.map(checkTags);
+    //const y = checkTags(baseFields, sourceFields);
+    //debug(`checkTags: ${JSON.stringify(y, undefined, 2)}`);
+
     // Normalize subfields of both base and source fields in order:
     // 1. Remove diacritics (test 01)
-    // return array to feed into step 2
-    const normBases = baseFields.map(normalizeDiacritics);
-    debug(`normalizeDiacritics for baseFields: ${JSON.stringify(normBases, undefined, 2)}`);
-    const normSources = sourceFields.map(normalizeDiacritics);
-    debug(`normalizeDiacritics for sourceFields: ${JSON.stringify(normSources, undefined, 2)}`);
-    
     // 2. Change to lowercase (test 02)
-    // return array to feed into step 3
-    const t = baseFields.map(changeToLowerCase);
-    debug(`changeToLowerCase for baseFields: ${JSON.stringify(t, undefined, 2)}`);
-    const u = sourceFields.map(changeToLowerCase);
-    debug(`changeToLowerCase for sourceFields: ${JSON.stringify(u, undefined, 2)}`);
-
-    // 3. Replace sequential whitespace with a single whitespace character (test 03)
-    // Note: can there be whitespace at the start and end of a value? remove completely?
-    // return array to feed into step 4
-
+    // 3. Trim whitespace at ends and replace sequential whitespace with a single whitespace character (test 03)
     // 4. Remove punctuation characters (test 04)
-    // return array for equality comparison
+    // ###Should whitespace be trimmed (again) after removing punctuation? 
+    // In one of my test cases, there is a string of punctuation characters with one space between it and the actual word, 
+    // and this one space remains at the end when punctuation is removed:
+    // " =_`~ ([çšŕňŭųœ])  " becomes " csrnuuoe" and not "csrnuuoe" as it should be
+
+    const baseValues = 
+      baseFields.map(normalizeDiacritics)
+      .map(changeToLowerCase)
+      .map(removeWhitespace)
+      .map(removePunctuation);
+    debug(`baseValues: ${JSON.stringify(baseValues, undefined, 2)}`);
+    const sourceValues = 
+      sourceFields.map(normalizeDiacritics)
+      .map(changeToLowerCase)
+      .map(removeWhitespace)
+      .map(removePunctuation);
+    debug(`sourceValues: ${JSON.stringify(sourceValues, undefined, 2)}`);
 
     // Compare equality of normalized subfields:
     // 1. Default: Strict equality (subfield values and codes are equal)
@@ -73,35 +79,41 @@ export default (pattern) => (base, source) => {
 
     // Functions:
 
-    // Check whether the field is a data field
-    function checkFieldType() {
-      const checkedFields = baseFields.map(field => {
+    // Check that all fields are data fields
+    function checkFieldType(fields) {
+      const checkedFields = fields.map(field => {
         // Control fields are not handled here
+        // ###Should this do something else in addition to throwing an error?
         if ('value' in field) {
-          const err = new Error('Invalid control field, expected data field');
-          throw err;
+          throw new Error('Invalid control field, expected data field');
         }
         // Data fields are passed on
-        return true;
+        return field;
       });
       return checkedFields;
     }
 
     // Base and source field tags must be equal
-    function checkTags(baseField) {
+    // ###Function with two objects as parameters, compare values for the "tag" key, return what?
+    // ###What should be done if the tags are not equal?
+    /*function checkTags(baseFields, sourceFields) {
       const tags = [];
-      sourceFields.map(sourceField => {
-        debug(`sourceField.tag: ${sourceField.tag}`);
-        debug(`baseField.tag: ${sourceField.tag}`);
-        if (sourceField.tag === baseField.tag) {
+      baseFields.map(baseField => {
+        //debug(`sourceField.tag: ${sourceField.tag}`);
+        //debug(`baseField.tag: ${sourceField.tag}`);
+        if (baseField.tag === sourceField.tag) {
           return tags.push('1');
         };
         return tags.push('0');
       });
       debug(`tags: ${tags}`);
-      return tags;
-    }
-
+      const isOne = value => value == '1';
+      if (tags.every(isOne)) {
+        return true;
+      };
+      return false;
+    }*/
+    
     function normalizeDiacritics(field) {
       const values = field.subfields.map(subfield => subfield.value);
       const a = values.map(value => normalizeSync(value));
@@ -109,11 +121,23 @@ export default (pattern) => (base, source) => {
       return a;
     }
 
-    function changeToLowerCase(field) {
-        const values = field.subfields.map(subfield => subfield.value);
-        const b = values.map(value => value.toLowerCase());
-        debug(`changeToLowerCase: ${JSON.stringify(b, undefined, 2)}`);
-        return b;
+    function changeToLowerCase(array) {
+      const b = array.map(value => value.toLowerCase());
+      debug(`changeToLowerCase: ${JSON.stringify(b, undefined, 2)}`);
+      return b;
+  }
+
+    function removeWhitespace(array) {
+      const c = array.map(value => value.replace(/\s\s+/g, ' ').trim());    
+      debug(`removeWhitespace: ${JSON.stringify(c, undefined, 2)}`);
+      return c;
+    }
+
+    function removePunctuation(array) {
+      const regexp = /[\.\,\-,\/\#\!\$\%\^\&\*\;\:\{\}\=\_\`\~\(\)\[\]]/g;
+      const d = array.map(value => value.replace(regexp, ''));    
+      debug(`removePunctuation: ${JSON.stringify(d, undefined, 2)}`);
+      return d;
     }
 
   return mergedFields;
