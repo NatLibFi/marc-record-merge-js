@@ -6,35 +6,15 @@
             "value": "007346734"
         },
         {
-            "tag": "010",
+            "tag": "020",
             "ind1": " ",
             "ind2": " ",
             "subfields": [
                 {
                     "code": "a",
-                    "value": " =_`~()[]   Héllö  Wörld"
-                },
-                {
-                    "code": "b",
-                    "value": "GöódbÿÉ              Crüél#!$%^& wörLD"
+                    "value": "hello world"
                 }
             ]
-        },
-        {
-            "tag": "010",
-            "ind1": " ",
-            "ind2": " ",
-            "subfields": [
-                {
-                    "code": "c",
-                    "value": "Sômé=_    Åcçèñts  "
-                },
-                {
-                    "code": "d",
-                    "value": "  çšŕ#!$%ňŭųœ       #!$%ËÑĶãýğĝŧŵ"
-                }
-            ]
-        }       
-
+        }
     ]
 }

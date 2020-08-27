@@ -7,13 +7,16 @@
         },
         {
             "tag": "010",
-            "value": "this is wrong",
             "ind1": " ",
             "ind2": " ",
             "subfields": [
                 {
                     "code": "a",
-                    "value": "hello world"
+                    "value": "Héllõ  .,-/   Wörld .,-/#!$%^&*;:{}=_`~()[]"
+                },
+                {
+                    "code": "b",
+                    "value": "  çšŕ#!$%ňŭųœ       #!$%ËÑĶãýğĝŧŵ"
                 }
             ]
         }

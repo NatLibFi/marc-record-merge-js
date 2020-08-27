@@ -12,29 +12,9 @@
             "subfields": [
                 {
                     "code": "a",
-                    "value": "    Héllö  Wörld"
-                },
-                {
-                    "code": "b",
-                    "value": "GöódbÿÉ              Crüél wörLD"
+                    "value": "hello world"
                 }
             ]
-        },
-        {
-            "tag": "010",
-            "ind1": " ",
-            "ind2": " ",
-            "subfields": [
-                {
-                    "code": "c",
-                    "value": "Sômé    Åcçèñts  "
-                },
-                {
-                    "code": "d",
-                    "value": "  çšŕňŭųœ           ËÑĶãýğĝŧŵ"
-                }
-            ]
-        }       
-
+        }
     ]
 }

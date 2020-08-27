@@ -3,7 +3,7 @@
     "fields": [
         {
             "tag": "001",
-            "value": "control_field_value"
+            "value": "007346734"
         },
         {
             "tag": "010",
@@ -13,28 +13,8 @@
                 {
                     "code": "a",
                     "value": "hello world"
-                },
-                {
-                    "code": "b",
-                    "value": "goodbye cruel world"
                 }
             ]
-        },
-        {
-            "tag": "010",
-            "ind1": " ",
-            "ind2": " ",
-            "subfields": [
-                {
-                    "code": "c",
-                    "value": "some accents here and there"
-                },
-                {
-                    "code": "d",
-                    "value": "csrnuuoe ayggtw"
-                }
-            ]
-        }       
-
+        }
     ]
 }

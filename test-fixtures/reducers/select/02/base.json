@@ -12,11 +12,7 @@
             "subfields": [
                 {
                     "code": "a",
-                    "value": "Héllö Wörld"
-                },
-                {
-                    "code": "b",
-                    "value": "GöódbÿÉ WörLD"
+                    "value": "hello world"
                 }
             ]
         },
@@ -26,15 +22,10 @@
             "ind2": " ",
             "subfields": [
                 {
-                    "code": "c",
-                    "value": "Sômé Åcçèñts hÊrè änd thèrê"
-                },
-                {
-                    "code": "d",
-                    "value": "çšŕňŭųœ"
+                    "code": "b",
+                    "value": "goodbye world"
                 }
             ]
-        }       
-
+        }
     ]
 }

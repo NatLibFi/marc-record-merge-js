@@ -26,7 +26,6 @@
 *
 */
 import createDebugLogger from 'debug';
-//import {normalize} from 'normalize-diacritics';
 import {normalizeSync} from 'normalize-diacritics';
 
 export default (pattern) => (base, source) => {
@@ -37,28 +36,47 @@ export default (pattern) => (base, source) => {
 
   function selectFields() {
     // Check that all fields are data fields
+    // Test 01: The field is a control field (contains 'value')
     const baseFields = checkFieldType(baseFieldsFromPattern);
     debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
     const sourceFields = checkFieldType(sourceFieldsFromPattern);
     debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
-    
-    // Check that the base and source tags are equal
-    const y = baseFields.map(checkTags);
-    //const y = checkTags(baseFields, sourceFields);
-    debug(`checkTags: ${JSON.stringify(y, undefined, 2)}`);
+      
+    // Test 02: If there are multiple fields, the base field is returned unmodified
+    if (baseFields.length > 1 || sourceFields.length > 1) {
+      debug(`Multiple fields in base or source`);
+      return base;
+    }
 
-    // Normalize subfields of both base and source fields in order:
-    // 1. Remove diacritics (test 01)
-    // 2. Change to lowercase (test 02)
-    // 3. Trim whitespace at ends and replace sequential whitespace with a single whitespace character (test 03)
-    // 4. Remove punctuation characters (test 04)
+    // Check that the base and source tags are equal
+    // Test 03: Base and source tags are equal for one field
+    // Test 04: Base and source tags are not equal 
+    // Note: to check this, the pattern has to allow two tags, otherwise the unequal tag does not even pass source.get(pattern)
+   
+    if (checkTags(baseFields, sourceFields) === false) {
+      debug(`Tags are not equal`);
+      return base;
+    }
     
-    const baseValues = 
+    // Test 05: Normalize subfields of both base and source fields in order:
+    // 1. Remove diacritics
+    // 2. Change to lowercase
+    // 3. Trim whitespace at ends and replace sequential whitespace with a single whitespace character
+    // 4. Remove punctuation characters
+    
+    // Miten pannaan normalisoidut valuet takaisin fieldiin oikeille paikoille? 
+    // Eli siis mappauksen logiikka "takaperin"? Jotta saadaan oikean muotoinen merged.json
+    const baseValues =
       baseFields.map(normalizeDiacritics)
       .map(changeToLowerCase)
       .map(removeWhitespace)
       .map(removePunctuation);
     debug(`baseValues: ${JSON.stringify(baseValues, undefined, 2)}`);
+    //const baseFieldsNormalized = sama rakenne kuin baseFields, mutta normalisoidut valuet
+    // Vai pitääkö koko normalisointi hoitaa baseFields-tyyppisen rakenteen sisällä (miten?)
+    // sen sijaan että irrotan values-arrayn erikseen kuten olen tässä tehnyt?
+    // Eli jotenkin päästä käsiksi suoraan [ { [ {tänne} ] } ] muuttamatta koko rakennetta?
+
     const sourceValues = 
       sourceFields.map(normalizeDiacritics)
       .map(changeToLowerCase)
@@ -89,30 +107,29 @@ export default (pattern) => (base, source) => {
     }
 
     // Base and source field tags must be equal
-    function checkTags(baseField) {
-      const areTagsEqual = sourceFields.map(sourceField => {
-        debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
-        debug(`baseField.tag: ${baseField.tag}`);
-        debug(`sourceField.tag: ${sourceField.tag}`);
-        if (baseField.tag === sourceField.tag) {
-          return true;
-        }
+    function checkTags(baseFields, sourceFields) {
+      // At this point we know that both base and source have only one field, 
+      // since they were checked for multiple fields earlier
+      const baseTag = JSON.stringify(baseFields.map(field => field.tag));
+      debug(`baseTag: ${baseTag} is ${typeof baseTag}`);
+      const sourceTag = JSON.stringify(sourceFields.map(field => field.tag));
+      debug(`sourceTag: ${sourceTag} is ${typeof sourceTag}`);
+      if (baseTag !== sourceTag) {
         return false;
-      });
-      debug(`areTagsEqual: ${areTagsEqual}`)
-      return areTagsEqual; // should return true
+      }
+      return true;
     }
     
     function normalizeDiacritics(field) {
-      // "  #?    Héllö    &* wôRld %   " --> "  #?    Hello    &* woRld %   "
       const values = field.subfields.map(subfield => subfield.value);
+      // "  #?    Héllö    &* wôRld %   " --> "  #?    Hello    &* woRld %   "
       return values.map(value => normalizeSync(value));
     }
 
     function changeToLowerCase(values) {
       // "  #?    Hello    &* woRld %   " --> "  #?    hello    &* world %   "
       return values.map(value => value.toLowerCase());
-  }
+    }
 
     function removeWhitespace(values) {
       // "  #?    hello    &* world %   " --> "#? hello &* world %"
