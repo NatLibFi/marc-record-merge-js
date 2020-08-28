@@ -1,1 +1,1 @@
-^Invalid control field, expected data field$
+Invalid control field, expected data field

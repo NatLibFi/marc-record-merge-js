@@ -63,33 +63,31 @@ export default (pattern) => (base, source) => {
     // 2. Change to lowercase
     // 3. Trim whitespace at ends and replace sequential whitespace with a single whitespace character
     // 4. Remove punctuation characters
-    
-    // Miten pannaan normalisoidut valuet takaisin fieldiin oikeille paikoille? 
-    // Eli siis mappauksen logiikka "takaperin"? Jotta saadaan oikean muotoinen merged.json
-    const baseValues =
-      baseFields.map(normalizeDiacritics)
-      .map(changeToLowerCase)
-      .map(removeWhitespace)
-      .map(removePunctuation);
-    debug(`baseValues: ${JSON.stringify(baseValues, undefined, 2)}`);
-    //const baseFieldsNormalized = sama rakenne kuin baseFields, mutta normalisoidut valuet
-    // Vai pitääkö koko normalisointi hoitaa baseFields-tyyppisen rakenteen sisällä (miten?)
-    // sen sijaan että irrotan values-arrayn erikseen kuten olen tässä tehnyt?
-    // Eli jotenkin päästä käsiksi suoraan [ { [ {tänne} ] } ] muuttamatta koko rakennetta?
 
-    const sourceValues = 
-      sourceFields.map(normalizeDiacritics)
-      .map(changeToLowerCase)
-      .map(removeWhitespace)
-      .map(removePunctuation);
-    debug(`sourceValues: ${JSON.stringify(sourceValues, undefined, 2)}`);
+    // Is it better to do all normalization in one function like this?
+    baseFields.forEach(field => field.subfields.forEach(normalizeSubfieldValue));
+    // Or each phase separately in its own function? 
+    // In the beginning this was easier for debugging, but now all phases could be put in the same function,
+    // unless there is a need to perform only some of these actions (but not all) on some kind of data.
+/*    baseFields.forEach(field => field.subfields.forEach(normalizeDiacritics));
+    baseFields.forEach(field => field.subfields.forEach(changeToLowerCase));
+    baseFields.forEach(field => field.subfields.forEach(removeWhitespace));
+    baseFields.forEach(field => field.subfields.forEach(removePunctuation)); */
+    debug(`baseFields normalized: ${JSON.stringify(baseFields, undefined, 2)}`);
+
+    sourceFields.forEach(field => field.subfields.forEach(normalizeSubfieldValue));
+    /*sourceFields.forEach(field => field.subfields.forEach(normalizeDiacritics));
+    sourceFields.forEach(field => field.subfields.forEach(changeToLowerCase));
+    sourceFields.forEach(field => field.subfields.forEach(removeWhitespace));
+    sourceFields.forEach(field => field.subfields.forEach(removePunctuation));*/
+    debug(`sourceFields normalized: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
     // Compare equality of normalized subfields:
     // 1. Default: Strict equality (subfield values and codes are equal)
     // 2. Subset comparison (equal codes, one subfield value may be a subset of the other)
 
-    //const mergedFields = baseFields; // parhaat kentät mergataan
-    //debug(`mergedFields: ${JSON.stringify(selectedFields, undefined, 2)}`);
+    const mergedFields = baseFields; // parhaat kentät mergataan
+    debug(`mergedFields: ${JSON.stringify(selectedFields, undefined, 2)}`);
 
     // Functions:
 
@@ -120,31 +118,57 @@ export default (pattern) => (base, source) => {
       return true;
     }
     
-    function normalizeDiacritics(field) {
-      const values = field.subfields.map(subfield => subfield.value);
+    // This would be the shortest version, but phases 3 and 4 are in a different order than in the specs
+    // i.e. punctuation is removed first and whitespaces after that (to get rid of potential whitespace within punctuation)
+    function normalizeSubfieldValue(subfield) {
+      const regexp = /[.,\-/#!$%\^&*;:{}=_`~()[\]]/g;
+      subfield.value = normalizeSync(subfield.value);
+      subfield.value = subfield.value.toLowerCase().replace(regexp, '').replace(/\s+/g, ' ').trim();
+      // Or keep the order in the specs and have each phase on its own row?
+      // This might be easier to read? (but whitespace removal is done twice)
+/*    subfield.value = subfield.value.toLowerCase();
+      subfield.value = subfield.value.replace(/\s+/g, ' ').trim();
+      subfield.value = subfield.value.replace(regexp, '').replace(/\s+/g, ' ').trim();*/
+      return subfield;
+    }
+
+    /*function normalizeDiacritics(subfield) {
       // "  #?    Héllö    &* wôRld %   " --> "  #?    Hello    &* woRld %   "
-      return values.map(value => normalizeSync(value));
+      subfield.value = normalizeSync(subfield.value);
+      return subfield;
     }
 
-    function changeToLowerCase(values) {
+    function changeToLowerCase(subfield) {
       // "  #?    Hello    &* woRld %   " --> "  #?    hello    &* world %   "
-      return values.map(value => value.toLowerCase());
+      subfield.value = subfield.value.toLowerCase();
+      return subfield;
     }
 
-    function removeWhitespace(values) {
+    function removeWhitespace(subfield) {
       // "  #?    hello    &* world %   " --> "#? hello &* world %"
-      return values.map(value => value.replace(/\s+/g, ' ').trim());    
+      subfield.value = subfield.value.replace(/\s+/g, ' ').trim();
+      return subfield;    
      }
 
-    function removePunctuation(values) {
+    function removePunctuation(subfield) {
       // "#? hello &* world %" --> "hello world"
       const regexp = /[.,\-/#!$%\^&*;:{}=_`~()[\]]/g;
       // Whitespace removed again at the end to get rid of possible new whitespace caused by removing punctuation marks
       // Without this, "#? hello &* world %" would be returned here as " hello  world "
-      return values.map(value => value.replace(regexp, '').replace(/\s+/g, ' ').trim());    
-    }
+      subfield.value = subfield.value.replace(regexp, '').replace(/\s+/g, ' ').trim();
+      return subfield;
+    }*/
 
-  return mergedFields;
+  function compareEquality(baseFields, sourceFields) {
+    // something
+  }
+  // equality comparison function
+  // calculate the difference of subfields
+  // check if they are a subset of each other
+
+  //const mergedFields = sourceFields.filter(compareEquality);
+  // return mergedFields;
+  return base; // This is returned by selectFields
   }
 };
 

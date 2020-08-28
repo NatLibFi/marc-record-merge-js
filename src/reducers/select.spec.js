@@ -25,6 +25,7 @@
 * for the JavaScript code in this file.
 *
 */
+import createDebugLogger from 'debug';
 import chai from 'chai';
 import fs from 'fs';
 import path, { resolve } from 'path';
@@ -35,6 +36,7 @@ import fixturesFactory, {READERS} from '@natlibfi/fixura';
 MarcRecord.setValidationOptions({subfieldValues: false});
 
 describe('reducers/select', () => {
+  const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const {expect} = chai;
   const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'select');
 
@@ -45,28 +47,14 @@ describe('reducers/select', () => {
       const sourceTest = new MarcRecord(getFixture('source.json'));
       const patternTest = new RegExp(getFixture({components: ['pattern.txt'], reader: READERS.TEXT}), 'u');
       const expectedRecord = getFixture('merged.json');
-      const expectedError = getFixture('expected-error.txt');
+      const expectedError = getFixture({components: ['expected-error.txt'], reader: READERS.TEXT});
       if (expectedError) {
-        expect(createReducer).to.throw(Error, 'control field');
+        debug(`Handling expectedError`);
+        expect(() => createReducer.to.throw(Error, 'control field'));
+        return;
       }
       const mergedRecord = createReducer(patternTest)(baseTest, sourceTest);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
-      
-      // Kokeilin tätäkin rakennetta, mutta tällä menee epäilyttävän liukkaasti kaikki testit läpi,
-      // nekin joiden ei vielä pitäisi (03 ja 05, joiden pitäisi palauttaa mergedFields, jota en ole vielä tehnyt loppuun)
-      /*try {
-        const mergedRecord = createReducer(patternTest)(baseTest, sourceTest);
-        expect(mergedRecord.toObject()).to.eql(expectedRecord);
-      }
-      catch {
-        const expectedError = getFixture('expected-error.txt');
-        if (expectedError) {
-          //expect(createReducer).to.throw();
-          expect (checkFieldType).to.throw(Error, 'control field');
-          // https://tips.tutorialhorizon.com/2017/09/08/mochachai-assert-thrown-error/
-          //expect(() => createReducer.to.throw(Error, 'control field'));
-        }
-      }*/
     });
   });
 });
