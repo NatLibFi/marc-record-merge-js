@@ -131,8 +131,8 @@ export default (pattern) => (base, source) => {
             return;
           }
           // If neither value is a subset of the other, use the longer string
-          if (baseSubfield.value.length > sourceSubfield.value.length) {
-            debug(`baseSubfield.value is longer`);
+          if (baseSubfield.value.length >= sourceSubfield.value.length) {
+            debug(`baseSubfield.value is longer or the values are equally long`);
             baseSubfield.value = baseSubfield.value;
             return;
           }
@@ -141,11 +141,6 @@ export default (pattern) => (base, source) => {
             baseSubfield.value = sourceSubfield.value;
             return;
           }
-          // If the values happen to be exactly the same length (although not equal), 
-          // use baseSubfield.value
-          debug(`values are equally long`);
-          baseSubfield.value = baseSubfield.value;
-          return;  
         }
         // If subfield codes are not equal, values are not even compared 
         // because different codes have different meanings in MARC
