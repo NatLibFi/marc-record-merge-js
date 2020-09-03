@@ -28,7 +28,7 @@
 import createDebugLogger from 'debug';
 import chai from 'chai';
 import fs from 'fs';
-import path, { resolve } from 'path';
+import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './select';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';

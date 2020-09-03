@@ -39,14 +39,13 @@ export default (pattern) => (base, source) => {
     // Test 01: The field is a control field (contains 'value')
     checkFieldType(baseFields);
     checkFieldType(sourceFields);
-      
+
     // Test 02: If there are multiple fields, the base field is returned unmodified
     if (baseFields.length > 1 || sourceFields.length > 1) {
       debug(`Multiple fields in base or source`);
       return base;
     }
-    // Now that there is only one field in both baseFields and sourceFields, 
-    // the arrays can be destructured into variables
+    // Now that there is only one field in both baseFields and sourceFields, the arrays can be destructured into variables
     const [baseField] = baseFields;
     debug(`baseField destructured: ${JSON.stringify(baseField, undefined, 2)}`);
     const [sourceField] = sourceFields;
@@ -56,32 +55,51 @@ export default (pattern) => (base, source) => {
     // Test 03: Base and source tags are equal for one field (continue to comparison of contents)
     // Test 04: Base and source tags are not equal (base field returned unmodified)
     // Note: to check this, the pattern has to allow two tags, otherwise the unequal tag does not even pass source.get(pattern)
-    if ((baseField.tag === sourceField.tag) === false) {
+    if (baseField.tag === sourceField.tag === false) {
       debug(`Tags are not equal`);
       return base;
     }
-    
+    const baseSubs = baseField.subfields;
+    const sourceSubs = sourceField.subfields;
+
     // Test 05: Normalize subfield values
-    baseField.subfields.forEach(normalizeSubfieldValue);
+    baseSubs.forEach(normalizeSubfieldValue);
     debug(`baseField normalized: ${JSON.stringify(baseField, undefined, 2)}`);
-    sourceField.subfields.forEach(normalizeSubfieldValue);
+    sourceSubs.forEach(normalizeSubfieldValue);
     debug(`sourceField normalized: ${JSON.stringify(sourceField, undefined, 2)}`);
 
     // Compare equality of normalized subfields
     // Test 06: Two subfields, both equal
     // Test 07: Two subfields, same codes, values are mutual subsets
-    // Test 08: Two subfields, one equal, one not (how should this work? should this use copy.js?)
+    // Test 08: Two subfields, one is a subset, one has a different code
     // Test 09: Two subfields, same codes, values are not subsets
+    // Test 10: sourceField is a proper superset of baseField
+
+    // Calculate difference between subfields in base and source
+    baseSubs.forEach(compareEquality);
+    debug(`baseField after compareEquality: ${JSON.stringify(baseField, undefined, 2)}`);
     
-    baseField.subfields.forEach(compareEquality);
-    debug(`baseField after merge: ${JSON.stringify(baseField, undefined, 2)}`);
+    // Check whether sourceField.subfields is a proper superset of baseField.subfields
+    // If source has more subfields than base
+    if (sourceSubs.length > baseSubs.length) {
+      // and every base subfield has an equivalent in source 
+      // (at this point equality comparison has been done and baseField is modified)
+      // https://stackoverflow.com/questions/53606337/check-if-array-contains-all-elements-of-another-array
+      // But does this not work for object arrays?
+      const checkSuperset = (sourceSubs, baseSubs) => baseSubs.every(subfield => sourceSubs.includes(subfield));
+      debug(`checkSuperset is ${JSON.stringify(checkSuperset)}`); // this shows undefined
+      if (checkSuperset(sourceSubs, baseSubs) === true) {
+        // then return the source field as is, since it contains all of base and more
+        return source;
+      }
+    }
 
     // Functions:
 
     function checkFieldType(fields) {
       const checkedFields = fields.map(field => {
         // Control fields are not handled here
-        if ('value' in field) {
+        if ('value' in field) { // eslint-disable-line functional/no-conditional-statement
           throw new Error('Invalid control field, expected data field');
         }
         // Data fields are passed on
@@ -89,20 +107,25 @@ export default (pattern) => (base, source) => {
       });
       return checkedFields;
     }
- 
+
     function normalizeSubfieldValue(subfield) {
-      const regexp = /[.,\-/#!$%\^&*;:{}=_`~()[\]]/g;
+      // Regexp options: g: global search, u: unicode
+      const punctuation = /[.,\-/#!$%^&*;:{}=_`~()[\]]/gu;
+      /* eslint-disable */
       subfield.value = normalizeSync(subfield.value);
       subfield.value = subfield.value.toLowerCase();
-      subfield.value = subfield.value.replace(/\s+/g, ' ').trim();
-      subfield.value = subfield.value.replace(regexp, '').replace(/\s+/g, ' ').trim();
+      subfield.value = subfield.value.replace(/\s+/gu, ' ').trim();
+      subfield.value = subfield.value.replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
+      /* eslint-enable */
       return subfield;
     }
 
     function compareEquality(baseSubfield) {
-      sourceField.subfields.forEach(compareSubfields);
-      
-      function compareSubfields(sourceSubfield) {
+      //sourceField.subfields.forEach(compareSubfields);
+      sourceSubs.forEach(strictEquality);
+      sourceSubs.forEach(compareSubfieldValues);
+
+      function strictEquality(sourceSubfield) {
         debug(`baseSubfield.code is ${JSON.stringify(baseSubfield.code, undefined, 2)}`);
         debug(`baseSubfield.value is ${JSON.stringify(baseSubfield.value, undefined, 2)}`);
         debug(`sourceSubfield.code is ${JSON.stringify(sourceSubfield.code, undefined, 2)}`);
@@ -110,45 +133,32 @@ export default (pattern) => (base, source) => {
         // If both subfield codes and values are equal
         if (sourceSubfield.code === baseSubfield.code && sourceSubfield.value === baseSubfield.value) {
           debug(`subfields are equal`);
-          // Since the values are equal, either could be assigned as the new value.
-          // This assignment is not even necessary since baseSubfield keeps its old value 
-          // but it may be more clear to read like this than having just an empty if block
-          baseSubfield.value = baseSubfield.value;
+          // Since the values are equal, either could be assigned as the new value
+          // This assignment is not even necessary since baseSubfield keeps its old value
+          // But it may be more clear to read like this than having just an empty if block
+          baseSubfield.value = baseSubfield.value; // eslint-disable-line
           return;
         }
+      }
+      function compareSubfieldValues(sourceSubfield) {
         // If subfield codes are equal but values are not, compare the values
-        if (sourceSubfield.code === baseSubfield.code) {
+        if (sourceSubfield.code === baseSubfield.code && sourceSubfield.value !== baseSubfield.value) {
           // Check whether one value is a subset of the other and use the longer=better value
           if (sourceSubfield.value.indexOf(baseSubfield.value) !== -1) {
-            debug(`baseSubfield.value is a subset of sourceSubfield.value`);
-            baseSubfield.value = sourceSubfield.value;
+            debug(`${baseSubfield.value} is a subset of ${sourceSubfield.value}`);
+            baseSubfield.value = sourceSubfield.value; // eslint-disable-line
             return;
           }
           if (baseSubfield.value.indexOf(sourceSubfield.value) !== -1) {
-            debug(`sourceSubfield.value is a subset of baseSubfield.value`);
+            debug(`${sourceSubfield.value} is a subset of ${baseSubfield.value}`);
             // Same as above, keep this for clarity
-            baseSubfield.value = baseSubfield.value;
-            return;
-          }
-          // If neither value is a subset of the other, use the longer string
-          if (baseSubfield.value.length >= sourceSubfield.value.length) {
-            debug(`baseSubfield.value is longer or the values are equally long`);
-            baseSubfield.value = baseSubfield.value;
-            return;
-          }
-          if (sourceSubfield.value.length > baseSubfield.value.length) {
-            debug(`sourceSubfield.value is longer`);
-            baseSubfield.value = sourceSubfield.value;
+            baseSubfield.value = baseSubfield.value; // eslint-disable-line
             return;
           }
         }
-        // If subfield codes are not equal, values are not even compared 
-        // because different codes have different meanings in MARC
-        debug(`subfields are not equal, nothing is returned`);
-        return;
       }
-    } 
-  return base; // This is returned by selectFields
+    }
+    return base; // The (modified) base record is returned by selectFields
   }
 };
 
