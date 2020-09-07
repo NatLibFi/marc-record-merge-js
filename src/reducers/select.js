@@ -73,25 +73,36 @@ export default (pattern) => (base, source) => {
     // Test 07: Two subfields, same codes, values are mutual subsets
     // Test 08: Two subfields, one is a subset, one has a different code
     // Test 09: Two subfields, same codes, values are not subsets
-    // Test 10: sourceField is a proper superset of baseField
 
-    // Calculate difference between subfields in base and source
-    baseSubs.forEach(compareEquality);
-    debug(`baseField after compareEquality: ${JSON.stringify(baseField, undefined, 2)}`);
-    
-    // Check whether sourceField.subfields is a proper superset of baseField.subfields
+    // First compare strict equality (default)
+    // This does not modify anything, base is returned at the end
+    baseSubs.forEach(compareStrictEquality);
+    debug(`baseField after compareStrictEquality: ${JSON.stringify(baseField, undefined, 2)}`);
+
+    // Then compare subsets
+    // This modifies base subfield values, base is returned at the end
+    baseSubs.forEach(compareSubsets);
+    debug(`baseField after compareSubsets: ${JSON.stringify(baseField, undefined, 2)}`);
+
+    // Test 10: sourceField is a proper superset of baseField (subfields a and b are equal, c is new)
+    // Test 11: sourceField is not a proper superset of baseField (different values in a and b, also new subfield c)
+    // Test 12: sourceField is not a proper superset of baseField (subfield a is equal, b is different, also new subfield c)
+
     // If source has more subfields than base
     if (sourceSubs.length > baseSubs.length) {
-      // and every base subfield has an equivalent in source 
-      // (at this point equality comparison has been done and baseField is modified)
-      // https://stackoverflow.com/questions/53606337/check-if-array-contains-all-elements-of-another-array
-      // But does this not work for object arrays?
-      const checkSuperset = (sourceSubs, baseSubs) => baseSubs.every(subfield => sourceSubs.includes(subfield));
-      debug(`checkSuperset is ${JSON.stringify(checkSuperset)}`); // this shows undefined
-      if (checkSuperset(sourceSubs, baseSubs) === true) {
-        // then return the source field as is, since it contains all of base and more
+      // And if strict equality is true for all base subfields
+      const result = baseSubs.map(compareStrictEquality);
+      debug(`result: ${JSON.stringify(result, undefined, 2)}`);
+      if (result.every(element => element === true)) {
+        // Source is returned since it contains all of base and more
+        debug(`source is a superset of base`);
         return source;
       }
+      // If source is not a proper superset of base, return base
+      // In test 11 base has already been modified by compareSubsets, is this correct?
+      // Or should this return the original unmodified base?
+      debug(`source is not a superset of base`);
+      return base;
     }
 
     // Functions:
@@ -120,10 +131,9 @@ export default (pattern) => (base, source) => {
       return subfield;
     }
 
-    function compareEquality(baseSubfield) {
-      //sourceField.subfields.forEach(compareSubfields);
-      sourceSubs.forEach(strictEquality);
-      sourceSubs.forEach(compareSubfieldValues);
+    function compareStrictEquality(baseSubfield) {
+      const trueArray = sourceSubs.map(strictEquality);
+      //sourceSubs.forEach(strictEquality);
 
       function strictEquality(sourceSubfield) {
         debug(`baseSubfield.code is ${JSON.stringify(baseSubfield.code, undefined, 2)}`);
@@ -137,9 +147,20 @@ export default (pattern) => (base, source) => {
           // This assignment is not even necessary since baseSubfield keeps its old value
           // But it may be more clear to read like this than having just an empty if block
           baseSubfield.value = baseSubfield.value; // eslint-disable-line
-          return;
+          return true;
         }
+        return false;
       }
+      debug(`trueArray: ${JSON.stringify(trueArray, undefined, 2)}`);
+      if (trueArray.every(element => element === false)){
+        return false;
+      }
+      return true;
+    }
+
+    function compareSubsets(baseSubfield) {
+      sourceSubs.forEach(compareSubfieldValues);
+
       function compareSubfieldValues(sourceSubfield) {
         // If subfield codes are equal but values are not, compare the values
         if (sourceSubfield.code === baseSubfield.code && sourceSubfield.value !== baseSubfield.value) {
@@ -155,10 +176,21 @@ export default (pattern) => (base, source) => {
             baseSubfield.value = baseSubfield.value; // eslint-disable-line
             return;
           }
+          // If neither value is a subset of the other, use the longer string
+          if (baseSubfield.value.length >= sourceSubfield.value.length) {
+            debug(`baseSubfield.value is longer or the values are equally long`);
+            baseSubfield.value = baseSubfield.value; // eslint-disable-line
+            return;
+          }
+          if (sourceSubfield.value.length > baseSubfield.value.length) {
+            debug(`sourceSubfield.value is longer`);
+            baseSubfield.value = sourceSubfield.value; // eslint-disable-line
+            return;
+          }
         }
       }
     }
-    return base; // The (modified) base record is returned by selectFields
+    return base; // The (possibly modified) base record is returned by selectFields
   }
 };
 
