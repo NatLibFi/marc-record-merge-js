@@ -12,11 +12,11 @@
             "subfields": [
                 {
                     "code": "a",
-                    "value": "hello world"
+                    "value": "Héllõ  .,-/   Wörld .,-/#!$%^&*;:{}=_`~()[]"
                 },
                 {
                     "code": "b",
-                    "value": "boo"
+                    "value": "Boo"
                 }
             ]
         }

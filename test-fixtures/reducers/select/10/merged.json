@@ -12,15 +12,15 @@
             "subfields": [
                 {
                     "code": "a",
-                    "value": "hello world"
+                    "value": "Héllõ  .,-/   Wörld .,-/#!$%^&*;:{}=_`~()[]"
                 },
                 {
                     "code": "b",
-                    "value": "csrnuuoe enkayggtw"
+                    "value": "  çšŕ#!$%ňŭųœ       #!$%ËÑĶãýğĝŧŵ"
                 },
                 {
                     "code": "c",
-                    "value": "and now for something completely different"
+                    "value": "And now for something completely different"
                 }
             ]
         }

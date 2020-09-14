@@ -12,7 +12,7 @@
             "subfields": [
                 {
                     "code": "a",
-                    "value": "hello world"
+                    "value": "Hello world"
                 }
             ]
         },
