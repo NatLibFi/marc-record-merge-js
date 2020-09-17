@@ -27,7 +27,6 @@
 */
 import createDebugLogger from 'debug';
 import {normalizeSync} from 'normalize-diacritics';
-import clonedeep from 'lodash/clonedeep';
 
 export default (pattern) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
@@ -59,22 +58,19 @@ export default (pattern) => (base, source) => {
       return base;
     }
     const baseSubs = baseField.subfields;
-    debug(`baseSubs: ${JSON.stringify(baseSubs, undefined, 2)}`);
     const sourceSubs = sourceField.subfields;
-    debug(`sourceSubs: ${JSON.stringify(baseSubs, undefined, 2)}`);
 
+    // Use .map, destructure code and value, and return a new object which has the same code and a new value for value
     // Test 05: Normalize subfield values (base and source are equal) --> return base
-    // Use clonedeep to make independent copies of the baseSubs and sourceSubs arrays
-    // These copies can be modified by normalization without affecting the original base and source
-    // Mapping baseSubsNormalized = baseSubs.map(normalizeSubfieldValue) does not work, it modifies the originals
-    const baseSubsNormalized = clonedeep(baseSubs);
-    baseSubsNormalized.forEach(normalizeSubfieldValue);
+    const baseSubsNormalized = baseSubs.map(({code, value}) => {
+      return {code, value: normalizeSubfieldValue(value)}
+    });
     debug(`baseSubsNormalized: ${JSON.stringify(baseSubsNormalized, undefined, 2)}`);
-    debug(`base after baseSubsNormalized: ${JSON.stringify(base, undefined, 2)}`);
-    const sourceSubsNormalized = clonedeep(sourceSubs);
-    sourceSubsNormalized.forEach(normalizeSubfieldValue);
+
+    const sourceSubsNormalized = sourceSubs.map(({code, value}) => {
+      return {code, value: normalizeSubfieldValue(value)}
+    });
     debug(`sourceSubsNormalized: ${JSON.stringify(sourceSubsNormalized, undefined, 2)}`);
-    debug(`source after sourceSubsNormalized: ${JSON.stringify(source, undefined, 2)}`);
 
     // Compare equality of normalized subfields
     // Test 06: Two subfields, both equal --> return base
@@ -86,47 +82,50 @@ export default (pattern) => (base, source) => {
     // Test 12: sourceField is a proper superset of baseField (base values a and b are subsets of source values a and b, c is new in source) --> return source
     // Test 13: Opposite of test 12, baseField is a proper superset of sourceField --> return base
 
+    // Filter out equal subfields (exactly equal code and value)
+    const equalSubs = baseSubsNormalized.filter(compareStrictEquality);
+    debug(`equalSubs: ${JSON.stringify(equalSubs, undefined, 2)}`);
+
+    // Subset comparison
+    const subsetComparison = baseSubsNormalized.filter(compareSubsets);
+    debug(`subsetComparison: ${JSON.stringify(subsetComparison, undefined, 2)}`);
+
+    // About the if blocks below: Can these be under the same block or would it better to divide this into:
+    // if (sourceSubsNormalized.length === baseSubsNormalized.length && baseSubsNormalized.length === equalSubs.length)
+    // and
+    // if (sourceSubsNormalized.length === baseSubsNormalized.length && baseSubsNormalized.length >= equalSubs.length)
+    // Or should these also be made into functions?
+
     // If source and base have the same number of subfields
     if (sourceSubsNormalized.length === baseSubsNormalized.length) {
-      // First compare strict equality (default)
-      const strictEqualityComparison = baseSubsNormalized.map(compareStrictEquality);
-      debug(`strictEqualityComparison: ${JSON.stringify(strictEqualityComparison, undefined, 2)}`);
-      if (strictEqualityComparison.every(element => element === true)) {
+      // First compare strict equality
+      if (baseSubsNormalized.length === equalSubs.length) {
         debug(`All subfields are equal`);
-        debug(`base is: ${JSON.stringify(base, undefined, 2)}`);
+      // If all subfields are equal, return base (or source? does it matter?)
         return base;
-        // Might just as well return source here, since source and base are identical?
-        // Then the same equality and subset comparison logic could be used regardless of whether source and base have the same number of subfields or source has more
-        // I.e. just one if block: if (sourceSubsNormalized.length >= baseSubsNormalized.length) (it works at least for these test cases)
       }
       // Then compare subsets of subfield values
-      if (strictEqualityComparison.some(element => element === false)) {
-        debug(`in subset comparison`);
-        const subsetComparison = baseSubsNormalized.map(compareSubsets);
-        debug(`subsetComparison: ${JSON.stringify(subsetComparison, undefined, 2)}`);
-        if (subsetComparison.every(element => element === true)) {
+      if (baseSubsNormalized.length >= equalSubs.length) {
+        //const subsetComparison = baseSubsNormalized.map(compareSubsets);
+        if (baseSubsNormalized.length === subsetComparison.length) {
           debug(`All base subfields are subsets of source subfields`);
           return source;
         }
       }
     }
 
-    // If source has more subfields than base
+    // If source has more subfields than base (proper superset comparison)
+    // (If base has more subfields than source, the case is not separately covered here and the code returns the original base, since it is already better than source)
     if (sourceSubsNormalized.length > baseSubsNormalized.length) {
-      // First compare strict equality (default)
-      const strictEqualityLongerSource = baseSubsNormalized.map(compareStrictEquality);
-      debug(`strictEqualityLongerSource: ${JSON.stringify(strictEqualityLongerSource, undefined, 2)}`);
-      if (strictEqualityLongerSource.every(element => element === true)) {
+      // First compare strict equality: all base subfields are equal to some source subfields
+      if (baseSubsNormalized.length === equalSubs.length) {
         debug(`Source is a superset of base`);
         debug(`source is: ${JSON.stringify(source, undefined, 2)}`);
         return source;
       }
       // Then compare subsets of subfield values
-      if (strictEqualityLongerSource.some(element => element === false)) {
-        debug(`in subset comparison`);
-        const subsetLongerSource = baseSubsNormalized.map(compareSubsets);
-        debug(`subsetLongerSource: ${JSON.stringify(subsetLongerSource, undefined, 2)}`);
-        if (subsetLongerSource.every(element => element === true)) {
+      if (baseSubsNormalized.length >= equalSubs.length) {
+        if (baseSubsNormalized.length === subsetComparison.length) {
           debug(`All base subfields are subsets of source subfields`);
           return source;
         }
@@ -147,16 +146,10 @@ export default (pattern) => (base, source) => {
       return checkedFields;
     }
 
-    function normalizeSubfieldValue(subfield) {
+    function normalizeSubfieldValue(value) {
       // Regexp options: g: global search, u: unicode
       const punctuation = /[.,\-/#!$%^&*;:{}=_`~()[\]]/gu;
-      /* eslint-disable */
-      subfield.value = normalizeSync(subfield.value);
-      subfield.value = subfield.value.toLowerCase();
-      subfield.value = subfield.value.replace(/\s+/gu, ' ').trim();
-      subfield.value = subfield.value.replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
-      /* eslint-enable */
-      return subfield;
+      return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
     }
 
     function compareStrictEquality(baseSubfield) {
