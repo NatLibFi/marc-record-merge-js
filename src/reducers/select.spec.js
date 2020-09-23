@@ -55,7 +55,7 @@ describe('reducers/select', () => {
         expect(() => createReducer.to.throw(Error, 'control field'));
         return;
       }
-      const mergedRecord = createReducer({pattern: patternTest})(baseTest, sourceTest);
+      const mergedRecord = createReducer({pattern: patternTest, equalityFunction})(baseTest, sourceTest);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
 
       function getEqualityFunction() {
