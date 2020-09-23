@@ -30,7 +30,7 @@ import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './select';
+import createReducer, {subsetEquality} from './select';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
@@ -48,13 +48,20 @@ describe('reducers/select', () => {
       const patternTest = new RegExp(getFixture({components: ['pattern.txt'], reader: READERS.TEXT}), 'u');
       const expectedRecord = getFixture('merged.json');
       const expectedError = getFixture({components: ['expected-error.txt'], reader: READERS.TEXT});
+      const equalityFunction = getEqualityFunction();
+
       if (expectedError) {
         debug(`Handling expectedError`);
         expect(() => createReducer.to.throw(Error, 'control field'));
         return;
       }
-      const mergedRecord = createReducer(patternTest)(baseTest, sourceTest);
+      const mergedRecord = createReducer({pattern: patternTest})(baseTest, sourceTest);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
+
+      function getEqualityFunction() {
+        const functionName = getFixture({components: ['equalityFunction.txt'], reader: READERS.TEXT});
+        return functionName === 'subsetEquality' ? subsetEquality : undefined;
+      }
     });
   });
 });

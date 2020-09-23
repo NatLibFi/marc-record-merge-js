@@ -27,11 +27,16 @@
 */
 import createDebugLogger from 'debug';
 import {normalizeSync} from 'normalize-diacritics';
-//export function strictEquality() { ... }
-//export function subsetEquality() { ... }
 
-//export default ({pattern, equalityFunction = strictEquality}) => (base, source) => {
-export default (pattern) => (base, source) => {
+export function strictEquality(subfieldA, subfieldB) {
+  return subfieldA.code === subfieldB.code && subfieldA.value === subfieldB.value;
+}
+
+export function subsetEquality(subfieldA, subfieldB) {
+  // todo
+}
+
+export default ({pattern, equalityFunction = strictEquality}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const baseFields = base.get(pattern);
   const sourceFields = source.get(pattern);
@@ -83,6 +88,16 @@ export default (pattern) => (base, source) => {
     // Test 13: Opposite of test 12, baseField is a proper superset of sourceField --> return base
 
     // Filter out equal subfields (exactly equal code and value)
+    const equalSubfieldsBase = baseSubsNormalized.filter(baseSubfield => {
+      return sourceSubsNormalized.some(sourceSubfield => {
+        return equalityFunction(baseSubfield, sourceSubfield);
+      });
+    });
+
+    const equalSubfieldsSource = sourceSubsNormalized.filter(sourceSubfield => {
+      return baseSubsNormalized.some(baseSubfield => equalityFunction(baseSubfield, sourceSubfield));
+    });
+
     const equalSubfields = baseSubsNormalized.filter(isStrictEqualityTrue);
     debug(`equalSubfields: ${JSON.stringify(equalSubfields, undefined, 2)}`);
 
@@ -100,6 +115,20 @@ export default (pattern) => (base, source) => {
     subsetEqualitySuperset(baseSubsNormalized, sourceSubsNormalized);
 
     // Functions:
+/*
+    {
+      leader: 'adsadsasd',
+      fields: [
+        {},
+        {}
+        [}]
+      ]
+    }
+*/
+
+    const index = base.fields.findIndex(field => field === baseField);
+    base.removeField(baseField);
+    ///base.fields.splice();
 
     function checkFieldType(fields) {
       const checkedFields = fields.map(field => {
@@ -124,16 +153,6 @@ export default (pattern) => (base, source) => {
       // I.e. every time that one baseSubfield is compared with all sourceSubfields
       const compareSubfieldStrict = sourceSubsNormalized.map(checkStrictEquality);
 
-      function checkStrictEquality(sourceSubfield) {
-        // If both subfield codes and values are equal, return true
-        if (sourceSubfield.code === baseSubfield.code && sourceSubfield.value === baseSubfield.value) {
-          debug(`baseSubfield ${baseSubfield.code} and sourceSubfield ${sourceSubfield.code} are equal`);
-          return true;
-        }
-        // Otherwise return false
-        debug(`baseSubfield ${baseSubfield.code} and sourceSubfield ${sourceSubfield.code} are NOT equal`);
-        return false;
-      }
       debug(`compareSubfieldStrict: ${JSON.stringify(compareSubfieldStrict, undefined, 2)}`);
 
       /* If all elements of compareSubfieldStrict are false,
@@ -147,6 +166,17 @@ export default (pattern) => (base, source) => {
       the baseSubfield being compared is equal to one of the sourceSubfields
       and isStrictEqualityTrue returns true */
       return true;
+
+      function checkStrictEquality(sourceSubfield) {
+        // If both subfield codes and values are equal, return true
+        if (sourceSubfield.code === baseSubfield.code && sourceSubfield.value === baseSubfield.value) {
+          debug(`baseSubfield ${baseSubfield.code} and sourceSubfield ${sourceSubfield.code} are equal`);
+          return true;
+        }
+        // Otherwise return false
+        debug(`baseSubfield ${baseSubfield.code} and sourceSubfield ${sourceSubfield.code} are NOT equal`);
+        return false;
+      }
     }
 
     function isSubsetEqualityTrue(baseSubfield) {
