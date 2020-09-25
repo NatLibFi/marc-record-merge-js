@@ -27,11 +27,19 @@
 */
 import createDebugLogger from 'debug';
 import {normalizeSync} from 'normalize-diacritics';
-//export function strictEquality() { ... }
-//export function subsetEquality() { ... }
 
-//export default ({pattern, equalityFunction = strictEquality}) => (base, source) => {
-export default (pattern) => (base, source) => {
+export function strictEquality(subfieldA, subfieldB) {
+  return subfieldA.code === subfieldB.code
+  && subfieldA.value === subfieldB.value;
+}
+
+export function subsetEquality(subfieldA, subfieldB) {
+  return subfieldA.code === subfieldB.code
+  && subfieldA.value !== subfieldB.value // values not exactly equal
+  && subfieldA.value.indexOf(subfieldB.value) !== -1; // but not unequal either
+}
+
+export default ({pattern, equalityFunction = strictEquality}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const baseFields = base.get(pattern);
   const sourceFields = source.get(pattern);
@@ -82,22 +90,39 @@ export default (pattern) => (base, source) => {
     // Test 12: sourceField is a proper superset of baseField (base values a and b are subsets of source values a and b, c is new in source) --> return source
     // Test 13: Opposite of test 12, baseField is a proper superset of sourceField --> return base
 
-    // Filter out equal subfields (exactly equal code and value)
-    const equalSubfields = baseSubsNormalized.filter(isStrictEqualityTrue);
-    debug(`equalSubfields: ${JSON.stringify(equalSubfields, undefined, 2)}`);
+    // Equality comparison
+    const equalSubfieldsBase = baseSubsNormalized.filter(baseSubfield => {
+      return sourceSubsNormalized.some(sourceSubfield => {
+        return equalityFunction(baseSubfield, sourceSubfield);
+      });
+    });
+    debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
+
+    const equalSubfieldsSource = sourceSubsNormalized.filter(sourceSubfield => {
+      return baseSubsNormalized.some(baseSubfield => equalityFunction(baseSubfield, sourceSubfield));
+    });
+    debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
 
     // Subset comparison
-    const equalSubsets = baseSubsNormalized.filter(isSubsetEqualityTrue);
-    debug(`equalSubsets: ${JSON.stringify(equalSubsets, undefined, 2)}`);
+    const equalSubsetsBase = baseSubsNormalized.filter(baseSubfield => {
+      return sourceSubsNormalized.some(sourceSubfield => {
+        return equalityFunction(baseSubfield, sourceSubfield);
+      });
+    });
+    debug(`equalSubsetsBase: ${JSON.stringify(equalSubsetsBase, undefined, 2)}`);
 
-    // Run the equality functions in this order of priority
-    // How can this be done in a functional way?
-    // This way it does not take the return values (base or source) from the functions
-    // but goes all the way down to "Return original base" in every case
-    strictEquality(baseSubsNormalized, sourceSubsNormalized);
-    subsetEquality(baseSubsNormalized, sourceSubsNormalized);
-    strictEqualitySuperset(baseSubsNormalized, sourceSubsNormalized);
-    subsetEqualitySuperset(baseSubsNormalized, sourceSubsNormalized);
+    const equalSubsetsSource = sourceSubsNormalized.filter(sourceSubfield => {
+      return baseSubsNormalized.some(baseSubfield => equalityFunction(baseSubfield, sourceSubfield));
+    });
+    debug(`equalSubsetsSource: ${JSON.stringify(equalSubsetsSource, undefined, 2)}`);
+
+
+    // Replace the old field in base with the new field from source
+    // This modifies the base record
+    const index = base.fields.findIndex(field => field === baseField);
+    base.removeField(baseField);
+    base.fields.splice(index, 0, sourceField);
+    debug(`base after splice: ${JSON.stringify(base, undefined, 2)}`);
 
     // Functions:
 
@@ -119,10 +144,24 @@ export default (pattern) => (base, source) => {
       return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
     }
 
-    function isStrictEqualityTrue(baseSubfield) {
+   /*  function strictEquality(baseSubfield) {
       // CompareSubfieldStrict is filled with boolean values for every iteration of the function
       // I.e. every time that one baseSubfield is compared with all sourceSubfields
       const compareSubfieldStrict = sourceSubsNormalized.map(checkStrictEquality);
+
+      debug(`compareSubfieldStrict: ${JSON.stringify(compareSubfieldStrict, undefined, 2)}`);
+
+      /* If all elements of compareSubfieldStrict are false,
+      the baseSubfield being compared is not equal to any of the sourceSubfields
+      and isStrictEqualityTrue returns false */
+      /*if (compareSubfieldStrict.every(element => element === false)) {
+        return false;
+      }
+
+      /* If compareSubfieldStrict contains at least one element that is true,
+      the baseSubfield being compared is equal to one of the sourceSubfields
+      and isStrictEqualityTrue returns true */
+      /*return true;
 
       function checkStrictEquality(sourceSubfield) {
         // If both subfield codes and values are equal, return true
@@ -134,22 +173,9 @@ export default (pattern) => (base, source) => {
         debug(`baseSubfield ${baseSubfield.code} and sourceSubfield ${sourceSubfield.code} are NOT equal`);
         return false;
       }
-      debug(`compareSubfieldStrict: ${JSON.stringify(compareSubfieldStrict, undefined, 2)}`);
-
-      /* If all elements of compareSubfieldStrict are false,
-      the baseSubfield being compared is not equal to any of the sourceSubfields
-      and isStrictEqualityTrue returns false */
-      if (compareSubfieldStrict.every(element => element === false)) {
-        return false;
-      }
-
-      /* If compareSubfieldStrict contains at least one element that is true,
-      the baseSubfield being compared is equal to one of the sourceSubfields
-      and isStrictEqualityTrue returns true */
-      return true;
     }
 
-    function isSubsetEqualityTrue(baseSubfield) {
+    function subsetEquality(baseSubfield) {
       const compareSubfieldSubset = sourceSubsNormalized.map(checkSubsets);
 
       function checkSubsets(sourceSubfield) {
@@ -170,53 +196,11 @@ export default (pattern) => (base, source) => {
       // If compareSubfieldSubset has at least one element that is true, the baseSubfield being compared is a subset of one of the sourceSubfields
       // And isSubsetEqualityTrue returns true
       return true;
-    }
-
-    function strictEquality(baseSubsNormalized, sourceSubsNormalized) {
-      // If source and base have the same number of subfields
-      // Compare strict equality
-      debug(`running strictEquality`);
-      if (sourceSubsNormalized.length === baseSubsNormalized.length && baseSubsNormalized.length === equalSubfields.length) {
-        debug(`All subfields are equal`);
-        return base;
-      }
-    }
-
-    function strictEqualitySuperset(baseSubsNormalized, sourceSubsNormalized) {
-      // If source has more subfields than base
-      // Compare partial strict equality: all base subfields are exactly equal to some source subfields
-      if (sourceSubsNormalized.length > baseSubsNormalized.length && baseSubsNormalized.length === equalSubfields.length) {
-        debug(`Source is a superset of base`);
-        return source;
-      }
-    }
-
-    function subsetEquality(baseSubsNormalized, sourceSubsNormalized) {
-      // If source and base have the same number of subfields
-      // Compare subset equality in subfield values
-      debug(`running subsetEquality`);
-      if (sourceSubsNormalized.length === baseSubsNormalized.length && baseSubsNormalized.length >= equalSubfields.length) {
-        if (baseSubsNormalized.length === equalSubsets.length) {
-          debug(`All base subfields are subsets of source subfields`);
-          return source;
-        }
-      }
-    }
-
-    function subsetEqualitySuperset(baseSubsNormalized, sourceSubsNormalized) {
-      // If source has more subfields than base
-      // Compare subset equality in subfield values
-      if (sourceSubsNormalized.length > baseSubsNormalized.length && baseSubsNormalized.length >= equalSubfields.length) {
-        if (baseSubsNormalized.length === equalSubsets.length) {
-          debug(`All base subfields are subsets of source subfields`);
-          return source;
-        }
-      }
-    }
+    } */
 
     // If none of these cases apply, return the original base
-    debug(`Return original base`);
-    return base;
+    //debug(`Return original base`);
+    //return base;
   }
 };
 
