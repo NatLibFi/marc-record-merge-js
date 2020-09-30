@@ -28,6 +28,7 @@
 import createDebugLogger from 'debug';
 import {normalizeSync} from 'normalize-diacritics';
 
+// these functions return either true or false
 export function strictEquality(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code
   && subfieldA.value === subfieldB.value;
@@ -99,7 +100,9 @@ export default ({pattern, equalityFunction = strictEquality}) => (base, source) 
     debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
 
     const equalSubfieldsSource = sourceSubsNormalized.filter(sourceSubfield => {
-      return baseSubsNormalized.some(baseSubfield => equalityFunction(baseSubfield, sourceSubfield));
+      return baseSubsNormalized.some(baseSubfield => {
+        return equalityFunction(baseSubfield, sourceSubfield);
+      });
     });
     debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
 
@@ -112,10 +115,11 @@ export default ({pattern, equalityFunction = strictEquality}) => (base, source) 
     debug(`equalSubsetsBase: ${JSON.stringify(equalSubsetsBase, undefined, 2)}`);
 
     const equalSubsetsSource = sourceSubsNormalized.filter(sourceSubfield => {
-      return baseSubsNormalized.some(baseSubfield => equalityFunction(baseSubfield, sourceSubfield));
+      return baseSubsNormalized.some(baseSubfield => {
+        return equalityFunction(baseSubfield, sourceSubfield);
+      });
     });
     debug(`equalSubsetsSource: ${JSON.stringify(equalSubsetsSource, undefined, 2)}`);
-
 
     // Replace the old field in base with the new field from source
     // This modifies the base record
@@ -123,6 +127,7 @@ export default ({pattern, equalityFunction = strictEquality}) => (base, source) 
     base.removeField(baseField);
     base.fields.splice(index, 0, sourceField);
     debug(`base after splice: ${JSON.stringify(base, undefined, 2)}`);
+    return base;
 
     // Functions:
 
@@ -144,6 +149,7 @@ export default ({pattern, equalityFunction = strictEquality}) => (base, source) 
       return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
     }
 
+    // These are no longer needed?
    /*  function strictEquality(baseSubfield) {
       // CompareSubfieldStrict is filled with boolean values for every iteration of the function
       // I.e. every time that one baseSubfield is compared with all sourceSubfields
