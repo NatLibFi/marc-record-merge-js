@@ -92,6 +92,7 @@ export default ({pattern, equalityFunction = strictEquality}) => (base, source) 
     // Test 13: Opposite of test 12, baseField is a proper superset of sourceField --> return base
 
     // Equality comparison
+    // How should these const variables be used?
     const equalSubfieldsBase = baseSubsNormalized.filter(baseSubfield => {
       return sourceSubsNormalized.some(sourceSubfield => {
         return equalityFunction(baseSubfield, sourceSubfield);
@@ -209,4 +210,3 @@ export default ({pattern, equalityFunction = strictEquality}) => (base, source) 
     //return base;
   }
 };
-
