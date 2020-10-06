@@ -29,16 +29,18 @@ import createDebugLogger from 'debug';
 import {normalizeSync} from 'normalize-diacritics';
 
 // The equalityFunction can be either strictEquality or subsetEquality
-// It returns either true or false
+// Returns true or false
 export function strictEquality(subfieldA, subfieldB) {
-  return subfieldA.code === subfieldB.code
-  && subfieldA.value === subfieldB.value;
+  return subfieldA.code === subfieldB.code &&
+  subfieldA.value === subfieldB.value;
 }
 
 export function subsetEquality(subfieldA, subfieldB) {
-  return subfieldA.code === subfieldB.code
-  && subfieldA.value !== subfieldB.value // values not exactly equal
-  && subfieldB.value.indexOf(subfieldA.value) !== -1; // but not unequal either
+  // eslint error message: Unexpected mix of '&&' and '||'
+  /* eslint-disable */
+  return subfieldA.code === subfieldB.code &&
+  subfieldA.value.indexOf(subfieldB.value) !== -1 || subfieldB.value.indexOf(subfieldA.value) !== -1;
+  /* eslint-enable */
 }
 
 export default ({pattern, equalityFunction = strictEquality}) => (base, source) => {
@@ -63,8 +65,7 @@ export default ({pattern, equalityFunction = strictEquality}) => (base, source) 
     const [sourceField] = sourceFields;
 
     // Check that the base and source tags are equal
-    // Test 03: Base and source tags are equal for one field
-    // (continue to normalization and comparison of contents --> contents are equal --> return base)
+    // Test 03: Base and source tags are equal for one field --> return base)
     // Test 04: Base and source tags are not equal --> return base
     // Note: to check this, the pattern has to allow two tags, otherwise the unequal tag does not even pass source.get(pattern)
     if (baseField.tag === sourceField.tag === false) {
@@ -77,89 +78,94 @@ export default ({pattern, equalityFunction = strictEquality}) => (base, source) 
     // Use .map, destructure code and value, and return a new object which has the same code and a new value for value
     // Test 05: Normalize subfield values (base and source are equal) --> return base
     const baseSubsNormalized = baseSubs.map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
-    debug(`baseSubsNormalized: ${JSON.stringify(baseSubsNormalized, undefined, 2)}`);
+    // Debug(`baseSubsNormalized: ${JSON.stringify(baseSubsNormalized, undefined, 2)}`);
 
     const sourceSubsNormalized = sourceSubs.map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
-    debug(`sourceSubsNormalized: ${JSON.stringify(sourceSubsNormalized, undefined, 2)}`);
+    // Debug(`sourceSubsNormalized: ${JSON.stringify(sourceSubsNormalized, undefined, 2)}`);
 
     // Compare equality of normalized subfields
     // Test 06: Two subfields, both equal --> return base
-    // Test 07: Two subfields, same codes, values of source are subsets of values of base --> spliceBase
+    // Test 07: Two subfields, same codes, values of source are subsets of values of base --> replaceBasefieldWithSourcefield
     // Test 08: Two subfields, one is a subset, one has a different code --> return base
     // Test 09: Two subfields, same codes, values are not subsets --> return base
-    // Test 10: sourceField is a proper superset of baseField (subfields a and b are equal, c is new) --> spliceBase
+    // Test 10: sourceField is a proper superset of baseField (subfields a and b are equal, c is new) --> replaceBasefieldWithSourcefield
     // Test 11: sourceField is not a proper superset of baseField (different values in a and b, also new subfield c) --> return base
-    // Test 12: sourceField is a proper superset of baseField (base values a and b are subsets of source values a and b, c is new in source) --> spliceBase
+    // Test 12: sourceField is a proper superset of baseField (base values a and b are subsets of source values a and b, c is new in source) --> replaceBasefieldWithSourcefield
     // Test 13: Opposite of test 12, baseField is a proper superset of sourceField --> return base
 
     // Equality comparison
     // Returns the base subfields for which a matching source subfield is found
-    const equalSubfieldsBase = baseSubsNormalized.filter(baseSubfield => {
-      return sourceSubsNormalized.some(sourceSubfield => {
-        return equalityFunction(baseSubfield, sourceSubfield);
-      });
-    });
+    const equalSubfieldsBase = baseSubsNormalized.filter(baseSubfield => sourceSubsNormalized.some(sourceSubfield => equalityFunction(baseSubfield, sourceSubfield)));
     debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
 
     // Returns the source subfields for which a matching base subfield is found
-    const equalSubfieldsSource = sourceSubsNormalized.filter(sourceSubfield => {
-      return baseSubsNormalized.some(baseSubfield => {
-        return equalityFunction(baseSubfield, sourceSubfield);
-      });
-    });
+    const equalSubfieldsSource = sourceSubsNormalized.filter(sourceSubfield => baseSubsNormalized.some(baseSubfield => equalityFunction(sourceSubfield, baseSubfield)));
     debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
 
     // Subset comparison
     // Returns the base subfields for which base subfield values are subsets of source subfield values
     // In this case source is better
-    const equalSubsetsBase = baseSubsNormalized.filter(baseSubfield => {
-      return sourceSubsNormalized.some(sourceSubfield => {
-        return equalityFunction(baseSubfield, sourceSubfield);
-      });
-    });
+    const equalSubsetsBase = baseSubsNormalized.filter(baseSubfield => sourceSubsNormalized.some(sourceSubfield => equalityFunction(baseSubfield, sourceSubfield)));
     debug(`equalSubsetsBase: ${JSON.stringify(equalSubsetsBase, undefined, 2)}`);
 
     // Returns the source subfields for which source subfield values are subsets of base subfield values
     // In this case base is better
-    const equalSubsetsSource = sourceSubsNormalized.filter(sourceSubfield => {
-      return baseSubsNormalized.some(baseSubfield => {
-        return equalityFunction(baseSubfield, sourceSubfield);
-      });
-    });
+    const equalSubsetsSource = sourceSubsNormalized.filter(sourceSubfield => baseSubsNormalized.some(baseSubfield => equalityFunction(sourceSubfield, baseSubfield)));
     debug(`equalSubsetsSource: ${JSON.stringify(equalSubsetsSource, undefined, 2)}`);
 
     // How many equal subfields are there in source for base and vice versa
+
+    // If the number of equal subfields is less than the number of original base subfields
+    // (there is the same number of subfields in base and source, but they are not equal, test case 08)
+    // Return original base
+    if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length < baseSubs.length) {
+      debug(`Subfields are not equal`);
+      return base;
+    }
+
+    // Both base and source have the same number of subfields
     if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length === equalSubfieldsSource.length) {
-      // calculate which have "better" subfields and select that one
-      // Base has longer/better subfields or they are the same length
-      // How to get this to understand where sourceSubfield comes from?
-      // It seems like the content of the strictEquality function has to be repeated here or how should this be done?
-      if (baseSubsNormalized.forEach(baseSubfield =>
-        baseSubfield.code === sourceSubfield.code
-        && (baseSubfield.value.indexOf(sourceSubfield.value) !== -1)
-        || baseSubfield.value === sourceSubfield.value)) {
-        // Return original base
+      debug(`Testing for equal subfields`);
+      // Calculate the number of characters in each normalized subfield values and sum them.
+      // The field that has a larger value is selected.
+      const totalSubfieldLengthBase = baseSubsNormalized
+        .map(({value}) => value.length)
+        .reduce((acc, value) => acc + value);
+      const totalSubfieldLengthSource = sourceSubsNormalized
+        // Destructure subfield value to get length and sum up lengths with reduce
+        .map(({value}) => value.length)
+        .reduce((acc, value) => acc + value);
+
+      if (totalSubfieldLengthBase >= totalSubfieldLengthSource) {
+        debug(`Base is better`);
         return base;
       }
-      // Source has longer/better subfields
-      if (sourceSubsNormalized.forEach(sourceSubfield => sourceSubfield.code === baseSubfield.code && sourceSubfield.value.indexOf(baseSubfield.value) !== -1)) {
-        // Return base with better fields replaced from source
-        return spliceBase(base);
+      if (totalSubfieldLengthSource > totalSubfieldLengthBase) {
+        debug(`Source is better`);
+        return replaceBasefieldWithSourcefield(base);
       }
     }
 
     // Otherwise check supersets
-    // todo
+    // Source is longer = has more subfields and all base subfields are found in source
+    if (sourceSubs.length > baseSubs.length && baseSubs.length === equalSubsetsBase.length) {
+      debug(`Source is a superset of base`);
+      return replaceBasefieldWithSourcefield(base);
+    }
+
+    // If none of the above conditions are fulfilled, return the original base
+    debug(`Returning original base`);
+    return base;
 
     // Functions:
 
     // If source is better, replace the old field in base with the new field from source
-    // This function modifies the base record
-    function spliceBase(base) {
+    // This function modifies the base record, so eslint is disabled here
+    function replaceBasefieldWithSourcefield(base) {
       const index = base.fields.findIndex(field => field === baseField);
       base.removeField(baseField);
-      base.fields.splice(index, 0, sourceField);
-      debug(`base after splice: ${JSON.stringify(base, undefined, 2)}`);
+      base.fields.splice(index, 0, sourceField); // eslint-disable-line functional/immutable-data
+      debug(`Base after replacement: ${JSON.stringify(base, undefined, 2)}`);
       return base;
     }
 
