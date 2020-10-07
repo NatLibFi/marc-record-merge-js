@@ -35,9 +35,7 @@
 	"dependencies": {
 		"@natlibfi/fixura": "^2.0.0",
 		"@natlibfi/marc-record": "^6.0.0",
-		"@natlibfi/melinda-commons": "^10.0.3",
 		"debug": "^4.1.1",
-		"help": "^3.0.2",
 		"normalize-diacritics": "^2.11.1"
 	},
 	"devDependencies": {
