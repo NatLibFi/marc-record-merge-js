@@ -25,7 +25,7 @@
 * for the JavaScript code in this file.
 *
 */
-//import createDebugLogger from 'debug';
+// Import createDebugLogger from 'debug';
 import {normalizeSync} from 'normalize-diacritics';
 
 export function strictEquality(subfieldA, subfieldB) {
@@ -39,7 +39,7 @@ export function subsetEquality(subfieldA, subfieldB) {
 }
 
 export default ({pattern, equalityFunction = strictEquality}) => (base, source) => {
-  //const debug = createDebugLogger('@natlibfi/marc-record-merge');
+  // Const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const baseFields = base.get(pattern);
   const sourceFields = source.get(pattern);
   return selectFields();
@@ -74,14 +74,6 @@ export default ({pattern, equalityFunction = strictEquality}) => (base, source) 
       .filter(sourceSubfield => baseSubsNormalized
         .some(baseSubfield => equalityFunction(sourceSubfield, baseSubfield)));
 
-    const equalSubsetsBase = baseSubsNormalized
-      .filter(baseSubfield => sourceSubsNormalized
-        .some(sourceSubfield => equalityFunction(baseSubfield, sourceSubfield)));
-
-    const equalSubsetsSource = sourceSubsNormalized
-      .filter(sourceSubfield => baseSubsNormalized
-        .some(baseSubfield => equalityFunction(sourceSubfield, baseSubfield)));
-
     if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length < baseSubs.length) {
       return base;
     }
@@ -94,15 +86,12 @@ export default ({pattern, equalityFunction = strictEquality}) => (base, source) 
         .map(({value}) => value.length)
         .reduce((acc, value) => acc + value);
 
-      if (totalSubfieldLengthBase >= totalSubfieldLengthSource) {
-        return base;
-      }
       if (totalSubfieldLengthSource > totalSubfieldLengthBase) {
         return replaceBasefieldWithSourcefield(base);
       }
     }
 
-    if (sourceSubs.length > baseSubs.length && baseSubs.length === equalSubsetsBase.length) {
+    if (sourceSubs.length > baseSubs.length && equalSubfieldsBase.length === baseSubs.length) {
       return replaceBasefieldWithSourcefield(base);
     }
 
@@ -110,8 +99,7 @@ export default ({pattern, equalityFunction = strictEquality}) => (base, source) 
 
     function replaceBasefieldWithSourcefield(base) {
       const index = base.fields.findIndex(field => field === baseField);
-      base.removeField(baseField);
-      base.fields.splice(index, 0, sourceField); // eslint-disable-line functional/immutable-data
+      base.fields.splice(index, 1, sourceField); // eslint-disable-line functional/immutable-data
       return base;
     }
 
