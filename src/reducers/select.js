@@ -25,7 +25,6 @@
 * for the JavaScript code in this file.
 *
 */
-// Import createDebugLogger from 'debug';
 import {normalizeSync} from 'normalize-diacritics';
 
 export function strictEquality(subfieldA, subfieldB) {
@@ -39,84 +38,80 @@ export function subsetEquality(subfieldA, subfieldB) {
 }
 
 export default ({pattern, equalityFunction = strictEquality}) => (base, source) => {
-  // Const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const baseFields = base.get(pattern);
   const sourceFields = source.get(pattern);
-  return selectFields();
 
-  function selectFields() {
-    checkFieldType(baseFields);
-    checkFieldType(sourceFields);
+  checkFieldType(baseFields);
+  checkFieldType(sourceFields);
 
-    if (baseFields.length > 1 || sourceFields.length > 1) {
-      return base;
-    }
-    const [baseField] = baseFields;
-    const [sourceField] = sourceFields;
+  if (baseFields.length > 1 || sourceFields.length > 1) {
+    return base;
+  }
+  const [baseField] = baseFields;
+  const [sourceField] = sourceFields;
 
-    if (baseField.tag === sourceField.tag === false) {
-      return base;
-    }
-    const baseSubs = baseField.subfields;
-    const sourceSubs = sourceField.subfields;
+  if (baseField.tag === sourceField.tag === false) {
+    return base;
+  }
+  const baseSubs = baseField.subfields;
+  const sourceSubs = sourceField.subfields;
 
-    const baseSubsNormalized = baseSubs
-      .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+  const baseSubsNormalized = baseSubs
+    .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
 
-    const sourceSubsNormalized = sourceSubs
-      .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+  const sourceSubsNormalized = sourceSubs
+    .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
 
-    const equalSubfieldsBase = baseSubsNormalized
-      .filter(baseSubfield => sourceSubsNormalized
-        .some(sourceSubfield => equalityFunction(baseSubfield, sourceSubfield)));
+  const equalSubfieldsBase = baseSubsNormalized
+    .filter(baseSubfield => sourceSubsNormalized
+      .some(sourceSubfield => equalityFunction(baseSubfield, sourceSubfield)));
 
-    const equalSubfieldsSource = sourceSubsNormalized
-      .filter(sourceSubfield => baseSubsNormalized
-        .some(baseSubfield => equalityFunction(sourceSubfield, baseSubfield)));
+  const equalSubfieldsSource = sourceSubsNormalized
+    .filter(sourceSubfield => baseSubsNormalized
+      .some(baseSubfield => equalityFunction(sourceSubfield, baseSubfield)));
 
-    if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length < baseSubs.length) {
-      return base;
-    }
+  if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length < baseSubs.length) {
+    return base;
+  }
 
-    if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length === equalSubfieldsSource.length) {
-      const totalSubfieldLengthBase = baseSubsNormalized
-        .map(({value}) => value.length)
-        .reduce((acc, value) => acc + value);
-      const totalSubfieldLengthSource = sourceSubsNormalized
-        .map(({value}) => value.length)
-        .reduce((acc, value) => acc + value);
+  if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length === equalSubfieldsSource.length) {
+    const totalSubfieldLengthBase = baseSubsNormalized
+      .map(({value}) => value.length)
+      .reduce((acc, value) => acc + value);
+    const totalSubfieldLengthSource = sourceSubsNormalized
+      .map(({value}) => value.length)
+      .reduce((acc, value) => acc + value);
 
-      if (totalSubfieldLengthSource > totalSubfieldLengthBase) {
-        return replaceBasefieldWithSourcefield(base);
-      }
-    }
-
-    if (sourceSubs.length > baseSubs.length && equalSubfieldsBase.length === baseSubs.length) {
+    if (totalSubfieldLengthSource > totalSubfieldLengthBase) {
       return replaceBasefieldWithSourcefield(base);
     }
+  }
 
+  if (sourceSubs.length > baseSubs.length && equalSubfieldsBase.length === baseSubs.length) {
+    return replaceBasefieldWithSourcefield(base);
+  }
+
+  return base;
+
+  function replaceBasefieldWithSourcefield(base) {
+    const index = base.fields.findIndex(field => field === baseField);
+    base.fields.splice(index, 1, sourceField); // eslint-disable-line functional/immutable-data
     return base;
+  }
 
-    function replaceBasefieldWithSourcefield(base) {
-      const index = base.fields.findIndex(field => field === baseField);
-      base.fields.splice(index, 1, sourceField); // eslint-disable-line functional/immutable-data
-      return base;
-    }
+  function checkFieldType(fields) {
+    const checkedFields = fields.map(field => {
+      if ('value' in field) { // eslint-disable-line functional/no-conditional-statement
+        throw new Error('Invalid control field, expected data field');
+      }
+      return field;
+    });
+    return checkedFields;
+  }
 
-    function checkFieldType(fields) {
-      const checkedFields = fields.map(field => {
-        if ('value' in field) { // eslint-disable-line functional/no-conditional-statement
-          throw new Error('Invalid control field, expected data field');
-        }
-        return field;
-      });
-      return checkedFields;
-    }
-
-    function normalizeSubfieldValue(value) {
-      // Regexp options: g: global search, u: unicode
-      const punctuation = /[.,\-/#!$%^&*;:{}=_`~()[\]]/gu;
-      return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
-    }
+  function normalizeSubfieldValue(value) {
+    // Regexp options: g: global search, u: unicode
+    const punctuation = /[.,\-/#!$%^&*;:{}=_`~()[\]]/gu;
+    return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
   }
 };

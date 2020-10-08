@@ -25,7 +25,6 @@
 * for the JavaScript code in this file.
 *
 */
-// Import createDebugLogger from 'debug';
 import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
@@ -36,7 +35,6 @@ import fixturesFactory, {READERS} from '@natlibfi/fixura';
 MarcRecord.setValidationOptions({subfieldValues: false});
 
 describe('reducers/select', () => {
-  // Const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const {expect} = chai;
   const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'select');
 
