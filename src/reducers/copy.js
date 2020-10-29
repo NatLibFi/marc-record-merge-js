@@ -25,12 +25,13 @@
 * for the JavaScript code in this file.
 *
 */
-// Import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 
-export default (pattern) => (base, source) => {
-//  Const debug = createDebugLogger('@natlibfi/marc-record-merge');
-  const baseFields = base.get(pattern);
-  const sourceFields = source.get(pattern);
+export default ({tagPattern, compareTagsOnly = false, excludeSubfields}) => (base, source) => {
+  const debug = createDebugLogger('@natlibfi/marc-record-merge');
+  const baseFields = base.get(tagPattern);
+  const sourceFields = source.get(tagPattern);
+  const excludedSubfields = [...excludeSubfields]; // make array from string
   return copyFields();
 
   function copyFields() {
@@ -39,50 +40,71 @@ export default (pattern) => (base, source) => {
       sourceFields.forEach(f => base.insertField(f));
       return base;
     }
-    const filterMissing = function(sourceField) {
-      // Test 02: Identical control fields are not copied
-      if ('value' in sourceField) {
-        return baseFields.some(isIdenticalControlField) === false;
-      }
-      // Test 04: Identical data fields in base and source, not copied
-      // Test 05: Different data fields are copied from source to base
-      if ('subfields' in sourceField) {
-        return baseFields.some(isIdenticalDataField) === false;
-      }
 
-      function normalizeControlField(field) {
-        return field.value.toLowerCase().replace(/\s+/u, '');
-      }
+    const [baseField] = baseFields;
+    debug(`baseField: ${JSON.stringify(baseField, undefined, 2)}`);
+    const [sourceField] = sourceFields;
+    debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
+    debug(`compareTagsOnly: ${compareTagsOnly}`);
+    // Test 06: Compare tags to see if field is non-repeatable and don't copy, even if it is different
+    if (compareTagsOnly === false) {
+      debug(`testing`);
+        const filterMissing = function(sourceField) {
+          // Test 02: Identical control fields are not copied
+          if ('value' in sourceField) {
+            return baseFields.some(isIdenticalControlField) === false;
+          }
+          // Test 04: Identical data fields in base and source, not copied
+          // Test 05: Different data fields are copied from source to base
+          if ('subfields' in sourceField) {
+            // Exclude subfields goes here
+            // Test 07: Exclude subfields defined in excludedSubfields
+            debug(`excludedSubfields: ${JSON.stringify(excludedSubfields, undefined, 2)} ${Array.isArray(excludedSubfields)}`);
+            const sourceSubCodes = sourceField.subfields.map(subfield => subfield.code);
+            debug(`sourceSubCodes: ${JSON.stringify(sourceSubCodes, undefined, 2)}`);
+            if(sourceSubCodes.forEach(code => code in excludedSubfields)) {
+              // jätetään sourcesta pois vertailusta ne subfieldit joiden codet ovat excludeSubfields-listassa, mutta miten?
+              debug(`excluding subfields: ${excludedSubfields}`);
+              return;
+            }
 
-      function isIdenticalControlField(baseField) {
-        const normalizedBaseField = normalizeControlField(baseField);
-        const normalizedSourceField = normalizeControlField(sourceField);
-        return normalizedSourceField === normalizedBaseField;
-      }
-      function isIdenticalDataField(baseField) {
-        if (sourceField.tag === baseField.tag &&
-          sourceField.ind1 === baseField.ind1 &&
-          sourceField.ind2 === baseField.ind2 &&
-          sourceField.subfields.length === baseField.subfields.length) {
-          return baseField.subfields.every(isIdenticalSubfield);
+            return baseFields.some(isIdenticalDataField) === false;
+          }
+
+          function normalizeControlField(field) {
+            return field.value.toLowerCase().replace(/\s+/u, '');
+          }
+
+          function isIdenticalControlField(baseField) {
+            const normalizedBaseField = normalizeControlField(baseField);
+            const normalizedSourceField = normalizeControlField(sourceField);
+            return normalizedSourceField === normalizedBaseField;
+          }
+          function isIdenticalDataField(baseField) {
+            if (sourceField.tag === baseField.tag &&
+              sourceField.ind1 === baseField.ind1 &&
+              sourceField.ind2 === baseField.ind2 &&
+              sourceField.subfields.length === baseField.subfields.length) {
+              return baseField.subfields.every(isIdenticalSubfield);
+            }
+            function normalizeSubfield(subfield) {
+              return subfield.value.toLowerCase().replace(/\s+/u, '');
+            }
+            function isIdenticalSubfield(baseSub) {
+              const normBaseSub = normalizeSubfield(baseSub);
+              return sourceField.subfields.some(sourceSub => {
+                const normSourceSub = normalizeSubfield(sourceSub);
+                return normSourceSub === normBaseSub;
+              });
+            }
+          }
         }
-        function normalizeSubfield(subfield) {
-          return subfield.value.toLowerCase().replace(/\s+/u, '');
-        }
-        function isIdenticalSubfield(baseSub) {
-          const normBaseSub = normalizeSubfield(baseSub);
-          return sourceField.subfields.some(sourceSub => {
-            const normSourceSub = normalizeSubfield(sourceSub);
-            return normSourceSub === normBaseSub;
-          });
-        }
-      }
+        // Search for fields missing from base
+        const missingFields = sourceFields.filter(filterMissing);
+        // Test 03: Add missing control field to base
+        // Test 05: Add missing data field to base
+        missingFields.forEach(f => base.insertField(f));
     };
-    // Search for fields missing from base
-    const missingFields = sourceFields.filter(filterMissing);
-    // Test 03: Add missing control field to base
-    // Test 05: Add missing data field to base
-    missingFields.forEach(f => base.insertField(f));
     return base; // This is returned by copyFields
   }
 };

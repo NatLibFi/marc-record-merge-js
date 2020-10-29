@@ -29,7 +29,7 @@ import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './copy';
+import createReducer, { excludeSubfields } from './copy';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
@@ -39,14 +39,21 @@ describe('reducers/copy', () => {
   const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'copy');
 
   fs.readdirSync(fixturesPath).forEach(subDir => {
-    const {getFixture} = fixturesFactory({root: [fixturesPath, subDir], reader: READERS.JSON});
+    const {getFixture} = fixturesFactory({root: [fixturesPath, subDir], reader: READERS.JSON, failWhenNotFound: false});
     it(subDir, () => {
-      const baseTest = new MarcRecord(getFixture('base.json'));
-      const sourceTest = new MarcRecord(getFixture('source.json'));
-      const patternTest = new RegExp(getFixture({components: ['pattern.txt'], reader: READERS.TEXT}), 'u');
+      const base = new MarcRecord(getFixture('base.json'));
+      const source = new MarcRecord(getFixture('source.json'));
+      const tagPattern = new RegExp(getFixture({components: ['tagPattern.txt'], reader: READERS.TEXT}), 'u');
+      const compareTagsOnly = getCompareTagsOnly();
+      const excludeSubfields = new String(getFixture({components: ['excludeSubfields.txt'], reader: READERS.TEXT}), 'u');
       const expectedRecord = getFixture('merged.json');
-      const mergedRecord = createReducer(patternTest)(baseTest, sourceTest);
+      const mergedRecord = createReducer({tagPattern: tagPattern, compareTagsOnly, excludeSubfields})(base, source);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
+
+      function getCompareTagsOnly() {
+        const functionName = getFixture({components: ['compareTagsOnly.txt'], reader: READERS.TEXT});
+        return functionName === 'true' ? 'true' : undefined;
+      }
     });
   });
 });

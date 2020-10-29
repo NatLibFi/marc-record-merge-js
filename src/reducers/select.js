@@ -37,9 +37,9 @@ export function subsetEquality(subfieldA, subfieldB) {
   (subfieldA.value.indexOf(subfieldB.value) !== -1 || subfieldB.value.indexOf(subfieldA.value) !== -1);
 }
 
-export default ({pattern, equalityFunction = strictEquality}) => (base, source) => {
-  const baseFields = base.get(pattern);
-  const sourceFields = source.get(pattern);
+export default ({tagPattern, equalityFunction = strictEquality}) => (base, source) => {
+  const baseFields = base.get(tagPattern);
+  const sourceFields = source.get(tagPattern);
 
   checkFieldType(baseFields);
   checkFieldType(sourceFields);
