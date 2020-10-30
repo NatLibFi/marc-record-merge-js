@@ -27,11 +27,10 @@
 */
 import createDebugLogger from 'debug';
 
-export default ({tagPattern, compareTagsOnly = false, excludeSubfields}) => (base, source) => {
+export default ({tagPattern, compareTagsOnly = false, excludeSubfields = false}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const baseFields = base.get(tagPattern);
   const sourceFields = source.get(tagPattern);
-  const excludedSubfields = [...excludeSubfields]; // make array from string
   return copyFields();
 
   function copyFields() {
@@ -47,7 +46,7 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields}) => (bas
     debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
     debug(`compareTagsOnly: ${compareTagsOnly}`);
     // Test 06: Compare tags to see if field is non-repeatable and don't copy, even if it is different
-    if (compareTagsOnly === false) {
+    if (!compareTagsOnly) {
       debug(`testing`);
         const filterMissing = function(sourceField) {
           // Test 02: Identical control fields are not copied
@@ -57,17 +56,6 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields}) => (bas
           // Test 04: Identical data fields in base and source, not copied
           // Test 05: Different data fields are copied from source to base
           if ('subfields' in sourceField) {
-            // Exclude subfields goes here
-            // Test 07: Exclude subfields defined in excludedSubfields
-            debug(`excludedSubfields: ${JSON.stringify(excludedSubfields, undefined, 2)} ${Array.isArray(excludedSubfields)}`);
-            const sourceSubCodes = sourceField.subfields.map(subfield => subfield.code);
-            debug(`sourceSubCodes: ${JSON.stringify(sourceSubCodes, undefined, 2)}`);
-            if(sourceSubCodes.forEach(code => code in excludedSubfields)) {
-              // jätetään sourcesta pois vertailusta ne subfieldit joiden codet ovat excludeSubfields-listassa, mutta miten?
-              debug(`excluding subfields: ${excludedSubfields}`);
-              return;
-            }
-
             return baseFields.some(isIdenticalDataField) === false;
           }
 
@@ -90,14 +78,35 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields}) => (bas
             function normalizeSubfield(subfield) {
               return subfield.value.toLowerCase().replace(/\s+/u, '');
             }
+
             function isIdenticalSubfield(baseSub) {
               const normBaseSub = normalizeSubfield(baseSub);
-              return sourceField.subfields.some(sourceSub => {
-                const normSourceSub = normalizeSubfield(sourceSub);
-                return normSourceSub === normBaseSub;
-              });
+                // If excluded subfields have been defined for this field
+                if(excludeSubfields) {
+                  debug(`in excludeSubfields block`);
+                  const excludedSubfields = [...excludeSubfields]; // make array from string
+                  debug(`excludedSubfields: ${JSON.stringify(excludedSubfields, undefined, 2)} ${Array.isArray(excludedSubfields)}`);
+                  // Return the subfields that are not in excludedSubfields
+                  function filterExcluded(subfield) {
+                    return excludedSubfields.indexOf(subfield.code) === -1;
+                  }
+                  const includedSourceSubs = sourceField.subfields.filter(filterExcluded);
+                  debug(`includedSourceSubs: ${JSON.stringify(includedSourceSubs, undefined, 2)}`);
+                  return includedSourceSubs.some(sourceSub => {
+                    const normSourceSub = normalizeSubfield(sourceSub);
+                    return normSourceSub === normBaseSub;
+                  })
+                }
+                // If there are no excluded subfields, all subfields are compared
+                if(!excludeSubfields) {
+                  debug(`in default block`);
+                  return sourceField.subfields.some(sourceSub => {
+                    const normSourceSub = normalizeSubfield(sourceSub);
+                    return normSourceSub === normBaseSub;
+                  });
+                }
+              }
             }
-          }
         }
         // Search for fields missing from base
         const missingFields = sourceFields.filter(filterMissing);

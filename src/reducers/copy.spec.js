@@ -45,7 +45,7 @@ describe('reducers/copy', () => {
       const source = new MarcRecord(getFixture('source.json'));
       const tagPattern = new RegExp(getFixture({components: ['tagPattern.txt'], reader: READERS.TEXT}), 'u');
       const compareTagsOnly = getCompareTagsOnly();
-      const excludeSubfields = new String(getFixture({components: ['excludeSubfields.txt'], reader: READERS.TEXT}), 'u');
+      const excludeSubfields = getExcludeSubfields();
       const expectedRecord = getFixture('merged.json');
       const mergedRecord = createReducer({tagPattern: tagPattern, compareTagsOnly, excludeSubfields})(base, source);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
@@ -53,6 +53,12 @@ describe('reducers/copy', () => {
       function getCompareTagsOnly() {
         const functionName = getFixture({components: ['compareTagsOnly.txt'], reader: READERS.TEXT});
         return functionName === 'true' ? 'true' : undefined;
+      }
+      // Is this the right way to do it?
+      // I want to check whether excludeSubfields.txt exists and if it does, return its contents. If not, do nothing.
+      function getExcludeSubfields() {
+        const subfieldsToExclude = new String(getFixture({components: ['excludeSubfields.txt'], reader: READERS.TEXT}), 'u');
+        return subfieldsToExclude ? subfieldsToExclude : undefined;
       }
     });
   });
