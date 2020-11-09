@@ -52,7 +52,7 @@ describe('reducers/select', () => {
         expect(() => createReducer.to.throw(Error, 'control field'));
         return;
       }
-      const mergedRecord = createReducer({tagPattern: tagPattern, equalityFunction})(base, source);
+      const mergedRecord = createReducer({tagPattern, equalityFunction})(base, source);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
 
       function getEqualityFunction() {

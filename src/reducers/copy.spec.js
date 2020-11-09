@@ -29,7 +29,7 @@ import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer, { excludeSubfields } from './copy';
+import createReducer from './copy';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
@@ -47,17 +47,16 @@ describe('reducers/copy', () => {
       const compareTagsOnly = getCompareTagsOnly();
       const excludeSubfields = getExcludeSubfields();
       const expectedRecord = getFixture('merged.json');
-      const mergedRecord = createReducer({tagPattern: tagPattern, compareTagsOnly, excludeSubfields})(base, source);
+      const mergedRecord = createReducer({tagPattern, compareTagsOnly, excludeSubfields})(base, source);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
 
       function getCompareTagsOnly() {
         const functionName = getFixture({components: ['compareTagsOnly.txt'], reader: READERS.TEXT});
         return functionName === 'true' ? 'true' : undefined;
       }
-      // Is this the right way to do it?
-      // I want to check whether excludeSubfields.txt exists and if it does, return its contents. If not, do nothing.
+      // Check whether excludeSubfields.json exists and if it does, return its contents. If not, do nothing.
       function getExcludeSubfields() {
-        const subfieldsToExclude = new String(getFixture({components: ['excludeSubfields.txt'], reader: READERS.TEXT}), 'u');
+        const subfieldsToExclude = getFixture({components: ['excludeSubfields.json'], reader: READERS.JSON});
         return subfieldsToExclude ? subfieldsToExclude : undefined;
       }
     });
