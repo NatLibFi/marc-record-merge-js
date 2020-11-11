@@ -36,25 +36,21 @@
  * Test 07: excludeSubfields: Ignore excluded subfields in comparing identicalness
  * */
 
-import createDebugLogger from 'debug';
-
 export default ({tagPattern, compareTagsOnly = false, excludeSubfields = []}) => (base, source) => {
-  const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const baseFields = base.get(tagPattern);
-  // Debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(tagPattern);
-  // Debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
   return copyFields();
 
   function copyFields() {
-    debug(`compareTagsOnly: ${compareTagsOnly}`);
-    // If compareTagsOnly = true, only this part is run to see if the field is missing completely from Melinda (base)
+    // If compareTagsOnly = true, only this part is run
+    // Is the field missing completely from base (Melinda)?
     if (baseFields.length === 0) {
       sourceFields.forEach(f => base.insertField(f));
       return base;
     }
 
-    // If compareTagsOnly = false (default), source and base subfields are compared
+    // If compareTagsOnly = false (default)
+    // Source and base are compared for identicalness
     if (!compareTagsOnly) {
       const filterMissing = function(sourceField) {
         if ('value' in sourceField) {
@@ -74,33 +70,28 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = []}) =>
           return normalizedSourceField === normalizedBaseField;
         }
         function isIdenticalDataField(baseField) {
-          // If excluded subfields have been defined for this field
-          // They must be ignored before identicalness is compared
+          // If excluded subfields have been defined for this field, they must be ignored first
+          // (i.e. source and base fields are considered identical if all non-excluded subfields are identical)
           if (excludeSubfields.length > 0 &&
             sourceField.tag === baseField.tag &&
             sourceField.ind1 === baseField.ind1 &&
             sourceField.ind2 === baseField.ind2) {
-            debug(`with excluded subfields`);
             const excludedSubfields = excludeSubfields;
-            debug(`excludedSubfields: ${JSON.stringify(excludedSubfields, undefined, 2)}`);
             // Compare only those subfields that are not excluded
             const filterOutExcluded = (subfield) => excludedSubfields.indexOf(subfield.code) === -1;
             const baseSubsToCompare = baseField.subfields.filter(filterOutExcluded);
-            debug(`baseSubsToCompare: ${JSON.stringify(baseSubsToCompare, undefined, 2)}`);
             return baseSubsToCompare.every(isIdenticalSubfield);
           }
-          // If there are no excluded subfields
+          // If there are no excluded subfields (default case)
           if (sourceField.tag === baseField.tag &&
               sourceField.ind1 === baseField.ind1 &&
               sourceField.ind2 === baseField.ind2 &&
               sourceField.subfields.length === baseField.subfields.length) {
-            debug(`without excluded subfields`);
             return baseField.subfields.every(isIdenticalSubfield);
           }
           function normalizeSubfield(subfield) {
             return subfield.value.toLowerCase().replace(/\s+/u, '');
           }
-
           function isIdenticalSubfield(baseSub) {
             const normBaseSub = normalizeSubfield(baseSub);
             return sourceField.subfields.some(sourceSub => {
@@ -115,7 +106,6 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = []}) =>
       missingFields.forEach(f => base.insertField(f));
       return base;
     }
-    debug(`base to return: ${JSON.stringify(base, undefined, 2)}`);
     return base;
   }
 };
