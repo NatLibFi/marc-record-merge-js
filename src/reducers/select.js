@@ -25,7 +25,6 @@
 * for the JavaScript code in this file.
 *
 */
-
 /**
  * Test 01: The field is a control field (contains 'value') --> error message
  * Test 02: If there are multiple fields, return base
