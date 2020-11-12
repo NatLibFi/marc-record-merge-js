@@ -31,8 +31,8 @@
  * Test 02: If there are multiple fields, return base
  * Test 03: Base and source tags are equal for one field --> return base
  * Test 04: Base and source tags are not equal --> return base
- *  Note: to check this, the pattern has to allow two tags,
- *  otherwise the unequal tag does not even pass source.get(pattern)
+ *  Note: to test for this, tagPattern has to allow two tags,
+ *  otherwise the unequal tag does not even pass source.get(tagPattern)
  * Test 05: Normalize subfield values (base and source are equal) --> return base
  * Test 06: Two subfields, both equal --> return base
  * Test 07: Two subfields, same codes, values of source are subsets of values of base --> replaceBasefieldWithSourcefield
@@ -45,6 +45,7 @@
  */
 
 import {normalizeSync} from 'normalize-diacritics';
+import createDebugLogger from 'debug';
 
 export function strictEquality(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code &&
@@ -57,19 +58,26 @@ export function subsetEquality(subfieldA, subfieldB) {
 }
 // EqualityFunction can be either strictEquality or subsetEquality
 export default ({tagPattern, equalityFunction = strictEquality}) => (base, source) => {
+  const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const baseFields = base.get(tagPattern);
   const sourceFields = source.get(tagPattern);
+  const fieldTag = sourceFields.map(field => field.tag);
+  debug(`Comparing field ${fieldTag}`);
 
   checkFieldType(baseFields);
   checkFieldType(sourceFields);
 
   if (baseFields.length > 1 || sourceFields.length > 1) {
+    debug(`Multiple fields in base or source`);
+    debug(`No changes to base`);
     return base;
   }
   const [baseField] = baseFields;
   const [sourceField] = sourceFields;
 
   if (baseField.tag === sourceField.tag === false) {
+    debug(`Base tag ${baseField.tag} is not equal to source tag ${sourceField.tag}`);
+    debug(`No changes to base`);
     return base;
   }
   const baseSubs = baseField.subfields;
@@ -81,19 +89,24 @@ export default ({tagPattern, equalityFunction = strictEquality}) => (base, sourc
   const sourceSubsNormalized = sourceSubs
     .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
 
+  // Returns the base subfields for which a matching source subfield is found
   const equalSubfieldsBase = baseSubsNormalized
     .filter(baseSubfield => sourceSubsNormalized
       .some(sourceSubfield => equalityFunction(baseSubfield, sourceSubfield)));
 
+  // Returns the source subfields for which a matching base subfield is found
   const equalSubfieldsSource = sourceSubsNormalized
     .filter(sourceSubfield => baseSubsNormalized
       .some(baseSubfield => equalityFunction(sourceSubfield, baseSubfield)));
 
   if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length < baseSubs.length) {
+    debug(`Base and source subfields are not equal`);
+    debug(`No changes to base`);
     return base;
   }
 
   if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length === equalSubfieldsSource.length) {
+    debug(`Checking subfield equality`);
     const totalSubfieldLengthBase = baseSubsNormalized
       .map(({value}) => value.length)
       .reduce((acc, value) => acc + value);
@@ -110,11 +123,13 @@ export default ({tagPattern, equalityFunction = strictEquality}) => (base, sourc
     return replaceBasefieldWithSourcefield(base);
   }
 
+  debug(`No changes to base`);
   return base;
 
   function replaceBasefieldWithSourcefield(base) {
     const index = base.fields.findIndex(field => field === baseField);
     base.fields.splice(index, 1, sourceField); // eslint-disable-line functional/immutable-data
+    debug(`Source field is longer, replacing base with source`);
     return base;
   }
 

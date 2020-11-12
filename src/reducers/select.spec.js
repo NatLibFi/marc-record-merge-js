@@ -31,10 +31,12 @@ import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer, {subsetEquality} from './select';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
+// Import createDebugLogger from 'debug';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
 describe('reducers/select', () => {
+  // Const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const {expect} = chai;
   const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'select');
 
@@ -48,6 +50,7 @@ describe('reducers/select', () => {
       const expectedError = getFixture({components: ['expected-error.txt'], reader: READERS.TEXT});
       const equalityFunction = getEqualityFunction();
 
+      // Bypass expected error in testing
       if (expectedError) {
         expect(() => createReducer.to.throw(Error, 'control field'));
         return;
@@ -55,6 +58,7 @@ describe('reducers/select', () => {
       const mergedRecord = createReducer({tagPattern, equalityFunction})(base, source);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
 
+      // Choose which equality function to use
       function getEqualityFunction() {
         const functionName = getFixture({components: ['equalityFunction.txt'], reader: READERS.TEXT});
         return functionName === 'subsetEquality' ? subsetEquality : undefined;

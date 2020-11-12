@@ -31,10 +31,12 @@ import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './copy';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
+// Import createDebugLogger from 'debug';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
 describe('reducers/copy', () => {
+  // Const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const {expect} = chai;
   const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'copy');
 
@@ -50,6 +52,7 @@ describe('reducers/copy', () => {
       const mergedRecord = createReducer({tagPattern, compareTagsOnly, excludeSubfields})(base, source);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
 
+      // Non-repeatable MARC fields are copied from source only if they are missing from base
       function getCompareTagsOnly() {
         const functionName = getFixture({components: ['compareTagsOnly.txt'], reader: READERS.TEXT});
         return functionName === 'true' ? 'true' : undefined;

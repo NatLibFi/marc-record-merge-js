@@ -35,28 +35,36 @@
  * Test 06: compareTagsOnly: Compare tags to see if field is non-repeatable and don't copy, even if it is different
  * Test 07: excludeSubfields: Ignore excluded subfields in comparing identicalness
  * */
+import createDebugLogger from 'debug';
 
 export default ({tagPattern, compareTagsOnly = false, excludeSubfields = []}) => (base, source) => {
+  const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const baseFields = base.get(tagPattern);
   const sourceFields = source.get(tagPattern);
   return copyFields();
 
   function copyFields() {
-    // If compareTagsOnly = true, only this part is run
-    // Is the field missing completely from base (Melinda)?
+    const fieldTag = sourceFields.map(field => field.tag);
+    debug(`Comparing field ${fieldTag}`);
+    // If compareTagsOnly = true, only this part is run (for non-repeatable fields)
+    // Is the field missing completely from base?
     if (baseFields.length === 0) {
+      debug(`Missing field ${fieldTag} copied from source to base`);
       sourceFields.forEach(f => base.insertField(f));
       return base;
     }
 
     // If compareTagsOnly = false (default)
-    // Source and base are compared for identicalness
+    // Source and base are also compared for identicalness
+    // Non-identical repeatable fields are copied from source to base as duplicates
     if (!compareTagsOnly) {
       const filterMissing = function(sourceField) {
         if ('value' in sourceField) {
+          debug(`Checking control field ${sourceField.tag} for identicalness`);
           return baseFields.some(isIdenticalControlField) === false;
         }
         if ('subfields' in sourceField) {
+          debug(`Checking data field ${sourceField.tag} for identicalness`);
           return baseFields.some(isIdenticalDataField) === false;
         }
 
@@ -77,6 +85,7 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = []}) =>
             sourceField.ind1 === baseField.ind1 &&
             sourceField.ind2 === baseField.ind2) {
             const excludedSubfields = excludeSubfields;
+            debug(`Subfield(s) ${excludedSubfields} excluded from identicalness comparison`);
             // Compare only those subfields that are not excluded
             const filterOutExcluded = (subfield) => excludedSubfields.indexOf(subfield.code) === -1;
             const baseSubsToCompare = baseField.subfields.filter(filterOutExcluded);
@@ -104,8 +113,17 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = []}) =>
       // Search for fields missing from base
       const missingFields = sourceFields.filter(filterMissing);
       missingFields.forEach(f => base.insertField(f));
-      return base;
+      if (missingFields.length > 0) {
+        const missingTag = missingFields.map(field => field.tag);
+        debug(`Field ${missingTag} copied from source to base`);
+        return base;
+      }
+      if (missingFields.length === 0) {
+        debug(`No missing fields found`);
+        return base;
+      }
     }
+    debug(`No missing fields found`);
     return base;
   }
 };
