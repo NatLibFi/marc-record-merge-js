@@ -34,18 +34,31 @@
  * Test 05: Different data fields are copied from source to base
  * Test 06: compareTagsOnly: Compare tags to see if field is non-repeatable and don't copy, even if it is different
  * Test 07: excludeSubfields: Ignore excluded subfields in comparing identicalness
+ * Test 08: dropSubfields: These subfields are dropped from the source field before copying
  * */
 import createDebugLogger from 'debug';
 
 export default ({tagPattern, compareTagsOnly = false, excludeSubfields = []}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const baseFields = base.get(tagPattern);
+  //debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(tagPattern);
+  //debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
   return copyFields();
 
   function copyFields() {
     const fieldTag = sourceFields.map(field => field.tag);
     debug(`Comparing field ${fieldTag}`);
+
+    // If there are subfields to drop from source before copying
+    /*if (dropSubfields.length > 0) {
+      const droppedSubfields = dropSubfields;
+      debug(`droppedSubfields: ${JSON.stringify(droppedSubfields, undefined, 2)}`);
+      const filterOutDropped = (subfield) => droppedSubfields.indexOf(subfield.code) === -1;
+      const sourceFieldsAfterDrop = sourceFields.subfields.filter(filterOutDropped);
+      debug(`sourceFieldsAfterDrop: ${JSON.stringify(sourceFieldsAfterDrop, undefined, 2)}`);
+      return;
+    }*/
     // If compareTagsOnly = true, only this part is run (for non-repeatable fields)
     // Is the field missing completely from base?
     if (baseFields.length === 0) {
