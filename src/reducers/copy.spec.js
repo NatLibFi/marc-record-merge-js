@@ -48,10 +48,10 @@ describe('reducers/copy', () => {
       const tagPattern = new RegExp(getFixture({components: ['tagPattern.txt'], reader: READERS.TEXT}), 'u');
       const compareTagsOnly = getCompareTagsOnly();
       const excludeSubfields = getExcludeSubfields();
-      //const dropSubfields = getDropSubfields();
+      const dropSubfields = getDropSubfields();
       const expectedRecord = getFixture('merged.json');
-      //const mergedRecord = createReducer({tagPattern, compareTagsOnly, excludeSubfields, dropSubfields})(base, source);
-      const mergedRecord = createReducer({tagPattern, compareTagsOnly, excludeSubfields})(base, source);
+      const mergedRecord = createReducer({tagPattern, compareTagsOnly, excludeSubfields, dropSubfields})(base, source);
+      //const mergedRecord = createReducer({tagPattern, compareTagsOnly, excludeSubfields})(base, source);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
 
       // Non-repeatable MARC fields are copied from source only if they are missing from base
@@ -66,10 +66,10 @@ describe('reducers/copy', () => {
       }
 
       // Check whether dropSubfields.json exists and if it does, return its contents. If not, do nothing.
-      /*function getDropSubfields() {
+      function getDropSubfields() {
         const subfieldsToDrop = getFixture({components: ['dropSubfields.json'], reader: READERS.JSON});
         return subfieldsToDrop ? subfieldsToDrop : undefined;
-      }*/
+      }
     });
   });
 });
