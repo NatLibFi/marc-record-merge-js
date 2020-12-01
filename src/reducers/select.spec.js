@@ -31,12 +31,10 @@ import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer, {subsetEquality} from './select';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
-// Import createDebugLogger from 'debug';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
 describe('reducers/select', () => {
-  // Const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const {expect} = chai;
   const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'select');
 

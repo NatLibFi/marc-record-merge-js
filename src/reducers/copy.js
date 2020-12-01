@@ -41,10 +41,8 @@ import createDebugLogger from 'debug';
 export default ({tagPattern, compareTagsOnly = false, excludeSubfields = [], dropSubfields = []}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const baseFields = base.get(tagPattern);
-  debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   // Check whether there are subfields to drop from source before copying
   const sourceFields = checkDropSubfields(source.get(tagPattern));
-  debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
   return copyFields();
 
   function copyFields() {
@@ -89,11 +87,9 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = [], dro
             sourceField.tag === baseField.tag &&
             sourceField.ind1 === baseField.ind1 &&
             sourceField.ind2 === baseField.ind2) {
-            const excludedSubfields = excludeSubfields;
-            debug(`Subfield(s) ${excludedSubfields} excluded from identicalness comparison`);
+            debug(`Subfield(s) ${excludeSubfields} excluded from identicalness comparison`);
             // Compare only those subfields that are not excluded
-            const baseSubsToCompare = baseField.subfields.filter(subfield => excludedSubfields.indexOf(subfield.code) === -1);
-            debug(`baseSubsToCompare: ${JSON.stringify(baseSubsToCompare, undefined, 2)}`);
+            const baseSubsToCompare = baseField.subfields.filter(subfield => excludeSubfields.indexOf(subfield.code) === -1);
             return baseSubsToCompare.every(isIdenticalSubfield);
           }
           // If there are no excluded subfields (default case)
@@ -132,16 +128,10 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = [], dro
     return base;
   }
 
-  // https://stackoverflow.com/questions/38375646/filtering-array-of-objects-with-arrays-based-on-nested-value
   function checkDropSubfields(fields) {
-    //debug(`fields ${JSON.stringify(fields, undefined, 2)}`);
     if (dropSubfields.length > 0) {
-        debug(`Subfields ${dropSubfields} dropped from source field`);
-        const fieldsAfterDrop = fields.map((field) => {
-        return {...field, subfields: field.subfields.filter((subfield) => dropSubfields.indexOf(subfield.code) === -1)};
-      });
-      //debug(`fieldsAfterDrop: ${JSON.stringify(fieldsAfterDrop, undefined, 2)}`);
-      return fieldsAfterDrop;
+      debug(`Subfield(s) ${dropSubfields} dropped from source field before copying`);
+      return fields.map((field) => ({...field, subfields: field.subfields.filter((subfield) => dropSubfields.indexOf(subfield.code) === -1)}));
     }
     debug(`No subfields to drop`);
     return fields;
