@@ -31,7 +31,7 @@
  * Test 02: Identical control fields are not copied
  * Test 03: Add missing control field to base
  * Test 04: Identical data fields in base and source, not copied
- * Test 05: Different data fields are copied from source to base
+ * Test 05: Different data fields are copied from source to base (multiple fields)
  * Test 06: compareTagsOnly: Compare tags to see if field is non-repeatable and don't copy, even if it is different
  * Test 07: excludeSubfields: Ignore excluded subfields in comparing identicalness
  * Test 08: dropSubfields: Drop subfields from source before copying

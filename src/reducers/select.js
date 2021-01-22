@@ -41,6 +41,7 @@
  * Test 11: sourceField is not a proper superset of baseField (different values in a and b, also new subfield c) --> return base
  * Test 12: sourceField is a proper superset of baseField (base values a and b are subsets of source values a and b, c is new in source) --> replaceBasefieldWithSourcefield
  * Test 13: Opposite of test 12, baseField is a proper superset of sourceField --> return base
+ * Test 14: Normalization test with Cyrillic characters
  */
 
 import {normalizeSync} from 'normalize-diacritics';
@@ -92,11 +93,13 @@ export default ({tagPattern, equalityFunction = strictEquality}) => (base, sourc
   const equalSubfieldsBase = baseSubsNormalized
     .filter(baseSubfield => sourceSubsNormalized
       .some(sourceSubfield => equalityFunction(baseSubfield, sourceSubfield)));
+  debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
 
   // Returns the source subfields for which a matching base subfield is found
   const equalSubfieldsSource = sourceSubsNormalized
     .filter(sourceSubfield => baseSubsNormalized
       .some(baseSubfield => equalityFunction(sourceSubfield, baseSubfield)));
+  debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
 
   if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length < baseSubs.length) {
     debug(`Base and source subfields are not equal`);
@@ -144,7 +147,7 @@ export default ({tagPattern, equalityFunction = strictEquality}) => (base, sourc
 
   function normalizeSubfieldValue(value) {
     // Regexp options: g: global search, u: unicode
-    const punctuation = /[.,\-/#!$%^&*;:{}=_`~()[\]]/gu;
+    const punctuation = /[.,\-/#!?$%^&*;:{}=_`~()[\]]/gu;
     return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
   }
 };
