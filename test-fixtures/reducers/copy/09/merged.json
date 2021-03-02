@@ -1,0 +1,100 @@
+{
+    "leader": "01331cam a22003494i 4500",
+    "fields": [
+        {
+            "tag": "001",
+            "value": "007346734"
+        },
+        {
+            "tag": "010",
+            "ind1": " ",
+            "ind2": " ",
+            "subfields": [
+                {
+                    "code": "a",
+                    "value": "010a_base"
+                },
+                {
+                    "code": "b",
+                    "value": "010b_base"
+                }
+            ]
+        },
+        {
+            "tag": "260",
+            "ind1": " ",
+            "ind2": " ",
+            "subfields": [
+                {
+                    "code": "a",
+                    "value": "[Åbo] :"
+                },
+                {
+                    "code": "b",
+                    "value": "[Åbo akademi],"
+                },
+                {
+                    "code": "c",
+                    "value": "1985."
+                }
+            ]
+        },
+        {
+            "tag": "260",
+            "ind1": " ",
+            "ind2": " ",
+            "subfields": [
+                {
+                    "code": "a",
+                    "value": "Västerås :"
+                },
+                {
+                    "code": "b",
+                    "value": "Byggpaul,"
+                },
+                {
+                    "code": "c",
+                    "value": "cop. 1985."
+                }
+            ]
+        },
+        {
+            "tag": "264",
+            "ind1": " ",
+            "ind2": " ",
+            "subfields": [
+                {
+                    "code": "a",
+                    "value": "[Stockholm] :"
+                },
+                {
+                    "code": "b",
+                    "value": "Rabén & Sjögren,"
+                },
+                {
+                    "code": "c",
+                    "value": "1982."
+                }
+            ]
+        },
+        {
+            "tag": "264",
+            "ind1": " ",
+            "ind2": " ",
+            "subfields": [
+                {
+                    "code": "a",
+                    "value": "Hki :"
+                },
+                {
+                    "code": "b",
+                    "value": "Maanmittaushallitus :"
+                },
+                {
+                    "code": "c",
+                    "value": "1988."
+                }
+            ]
+        }
+    ]
+}

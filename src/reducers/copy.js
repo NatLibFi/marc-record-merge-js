@@ -32,9 +32,10 @@
  * Test 03: Add missing control field to base
  * Test 04: Identical data fields in base and source, not copied
  * Test 05: Different data fields are copied from source to base (multiple fields)
- * Test 06: compareTagsOnly: Compare tags to see if field is non-repeatable and don't copy, even if it is different
+ * Test 06: compareTagsOnly: Field is copied from source only if it is missing in base, a different instance is not copied
  * Test 07: excludeSubfields: Ignore excluded subfields in comparing identicalness
  * Test 08: dropSubfields: Drop subfields from source before copying
+ * Test 09: compareTagsOnly for repeatable fields, 2x each 260/264
  * */
 import createDebugLogger from 'debug';
 
@@ -46,20 +47,20 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = [], dro
   return copyFields();
 
   function copyFields() {
-    const fieldTag = sourceFields.map(field => field.tag);
-    debug(`Comparing field ${fieldTag}`);
+    const sourceTags = sourceFields.map(field => field.tag);
+    sourceTags.forEach(tag => debug(`Comparing field ${tag}`));
 
-    // If compareTagsOnly = true, only this part is run (for non-repeatable fields)
-    // Is the field missing completely from base?
+    // If compareTagsOnly = true, only this part is run
+    // The field is copied from source only if it is missing completely from base
     if (baseFields.length === 0) {
-      debug(`Missing field ${fieldTag} copied from source to base`);
+      sourceTags.forEach(tag => debug(`Missing field ${tag} copied from source to base`));
       sourceFields.forEach(f => base.insertField(f));
       return base;
     }
 
     // If compareTagsOnly = false (default)
     // Source and base are also compared for identicalness
-    // Non-identical repeatable fields are copied from source to base as duplicates
+    // Non-identical fields are copied from source to base as duplicates
     if (!compareTagsOnly) {
       const filterMissing = function(sourceField) {
         if ('value' in sourceField) {
@@ -87,7 +88,7 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = [], dro
             sourceField.tag === baseField.tag &&
             sourceField.ind1 === baseField.ind1 &&
             sourceField.ind2 === baseField.ind2) {
-            debug(`Subfield(s) ${excludeSubfields} excluded from identicalness comparison`);
+            excludeSubfields.forEach(sub => debug(`Subfield ${sub} excluded from identicalness comparison`));
             // Compare only those subfields that are not excluded
             const baseSubsToCompare = baseField.subfields.filter(subfield => excludeSubfields.indexOf(subfield.code) === -1);
             return baseSubsToCompare.every(isIdenticalSubfield);
@@ -115,8 +116,8 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = [], dro
       const missingFields = sourceFields.filter(filterMissing);
       missingFields.forEach(f => base.insertField(f));
       if (missingFields.length > 0) {
-        const missingTag = missingFields.map(field => field.tag);
-        debug(`Field ${missingTag} copied from source to base`);
+        const missingTags = missingFields.map(field => field.tag);
+        missingTags.forEach(tag => debug(`Field ${tag} copied from source to base`));
         return base;
       }
       if (missingFields.length === 0) {
@@ -130,7 +131,7 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = [], dro
 
   function checkDropSubfields(fields) {
     if (dropSubfields.length > 0) {
-      debug(`Subfield(s) ${dropSubfields} dropped from source field before copying`);
+      dropSubfields.forEach(sub => debug(`Subfield ${sub} dropped from source field before copying`));
       return fields.map((field) => ({...field, subfields: field.subfields.filter((subfield) => dropSubfields.indexOf(subfield.code) === -1)}));
     }
     debug(`No subfields to drop`);
