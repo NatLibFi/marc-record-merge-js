@@ -28,4 +28,4 @@
 import copy from './copy';
 import select, {strictEquality, subsetEquality} from './select';
 
-export {copy, select, strictEquality, subsetEquality};
+export default {copy, select, strictEquality, subsetEquality};
