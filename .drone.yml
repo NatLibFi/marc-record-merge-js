@@ -18,15 +18,15 @@ steps:
   - name: install
     image: node:12
     environment:
-      NPM_CONFIG_IGNORE_SCRIPTS: true      
+      NPM_CONFIG_IGNORE_SCRIPTS: true
     commands:
-      - npm ci
+      - npm install --no-optional
 
   - name: test
     image: node:12
     commands:
       - npm test
-  
+
   - name: check-coverage
     image: node:12
     commands:
@@ -50,7 +50,7 @@ steps:
       token:
         from_secret: npm_token
     when:
-      event: tag 
+      event: tag
 ---
 kind: pipeline
 type: docker
