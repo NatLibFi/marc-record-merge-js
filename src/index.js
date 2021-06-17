@@ -30,7 +30,7 @@ import * as Reducers from './reducers';
 import {MarcRecord} from '@natlibfi/marc-record';
 
 export {Reducers};
-export default ({base, source, reducers}) => {
-  const sourceRecord = MarcRecord.clone(source);
-  return reducers.reduce((baseRecord, reducer) => reducer(baseRecord, sourceRecord), MarcRecord.clone(base));
+export default ({base, source, reducers, baseValidators = {}, sourceValidators = {}}) => {
+  const sourceRecord = MarcRecord.clone(source, sourceValidators);
+  return reducers.reduce((baseRecord, reducer) => reducer(baseRecord, sourceRecord), MarcRecord.clone(base, baseValidators));
 };
