@@ -26,8 +26,6 @@
 *
 */
 import copy from './copy';
-import select, {strictEquality, subsetEquality} from'./select'
+import select, {strictEquality, subsetEquality} from './select';
 
-export {copy, select, strictEquality,subsetEquality};
-
-
+export {copy, select, strictEquality, subsetEquality};
