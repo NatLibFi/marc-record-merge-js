@@ -1,0 +1,6 @@
+{
+    "description": "Copy fields 010 compare with indicators",
+    "tagPatternRegExp": "^010$",
+    "compareWithoutIndicators": false,
+    "enabled": true
+}

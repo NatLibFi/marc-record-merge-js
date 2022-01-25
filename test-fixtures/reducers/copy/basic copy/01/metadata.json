@@ -1,0 +1,5 @@
+{
+    "description": "If base does not contain the field at all, it is copied from source to base",
+    "tagPatternRegExp": "^010$",
+    "enabled": true
+}

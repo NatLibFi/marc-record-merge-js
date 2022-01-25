@@ -1,0 +1,6 @@
+{
+    "description": "Copy fields 010 identical",
+    "tagPatternRegExp": "^010$",
+    "mustBeIdentical": true,
+    "enabled": true
+}

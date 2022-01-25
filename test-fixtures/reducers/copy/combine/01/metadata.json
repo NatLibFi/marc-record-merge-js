@@ -1,0 +1,6 @@
+{
+    "description": "Copy fields 010 and combine subfields a and b",
+    "tagPatternRegExp": "^010$",
+    "combine": ["a","b"],
+    "enabled": true
+}
