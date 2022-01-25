@@ -1,0 +1,5 @@
+{
+    "description": "Copy field 010",
+    "tagPatternRegExp": "^010$",
+    "enabled": true
+}

@@ -1,0 +1,6 @@
+{
+    "description": "Copy field 018",
+    "tagPatternRegExp": "^018$",
+    "compareTagsOnly": true,
+    "enabled": true
+}

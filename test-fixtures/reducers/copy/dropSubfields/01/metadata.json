@@ -1,0 +1,6 @@
+{
+    "description": "Copy fields 010 drop subfields c & d",
+    "tagPatternRegExp": "^010$",
+    "dropSubfields": ["c", "d"],
+    "enabled": true
+}

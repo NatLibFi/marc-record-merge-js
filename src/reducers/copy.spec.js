@@ -25,48 +25,33 @@
 * for the JavaScript code in this file.
 *
 */
-import chai from 'chai';
-import fs from 'fs';
-import path from 'path';
+
+import {expect} from 'chai';
+import {READERS} from '@natlibfi/fixura';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './copy';
-import fixturesFactory, {READERS} from '@natlibfi/fixura';
+import generateTests from '@natlibfi/fixugen';
 
-MarcRecord.setValidationOptions({subfieldValues: false});
-
-describe('reducers/copy', () => {
-  const {expect} = chai;
-  const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'copy');
-
-  fs.readdirSync(fixturesPath).forEach(subDir => {
-    const {getFixture} = fixturesFactory({root: [fixturesPath, subDir], reader: READERS.JSON, failWhenNotFound: false});
-    it(subDir, () => {
-      const base = new MarcRecord(getFixture('base.json'));
-      const source = new MarcRecord(getFixture('source.json'));
-      const tagPattern = new RegExp(getFixture({components: ['tagPattern.txt'], reader: READERS.TEXT}), 'u');
-      const compareTagsOnly = getCompareTagsOnly();
-      const excludeSubfields = getExcludeSubfields();
-      const dropSubfields = getDropSubfields();
-      const expectedRecord = getFixture('merged.json');
-      const mergedRecord = createReducer({tagPattern, compareTagsOnly, excludeSubfields, dropSubfields})(base, source);
-      expect(mergedRecord.toObject()).to.eql(expectedRecord);
-
-      // Non-repeatable MARC fields are copied from source only if they are missing from base
-      function getCompareTagsOnly() {
-        const functionName = getFixture({components: ['compareTagsOnly.txt'], reader: READERS.TEXT});
-        return functionName === 'true' ? 'true' : undefined;
-      }
-      // Check whether excludeSubfields.json exists and if it does, return its contents. If not, do nothing.
-      function getExcludeSubfields() {
-        const subfieldsToExclude = getFixture({components: ['excludeSubfields.json'], reader: READERS.JSON});
-        return subfieldsToExclude ? subfieldsToExclude : undefined;
-      }
-
-      // Check whether dropSubfields.json exists and if it does, return its contents. If not, do nothing.
-      function getDropSubfields() {
-        const subfieldsToDrop = getFixture({components: ['dropSubfields.json'], reader: READERS.JSON});
-        return subfieldsToDrop ? subfieldsToDrop : undefined;
-      }
-    });
-  });
+generateTests({
+  callback,
+  path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'copy'],
+  useMetadataFile: true,
+  recurse: true,
+  fixura: {
+    reader: READERS.JSON,
+    failWhenNotFound: false
+  }
 });
+
+function callback({getFixture, tagPatternRegExp, compareTagsOnly = false, excludeSubfields = undefined, dropSubfields = undefined, enabled = true}) {
+  if (!enabled) {
+    console.log('TEST DISABLED!'); // eslint-disable-line no-console
+    return;
+  }
+  const base = new MarcRecord(getFixture('base.json'));
+  const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
+  const tagPattern = new RegExp(tagPatternRegExp, 'u');
+  const expectedRecord = getFixture('merged.json');
+  const mergedRecord = createReducer({tagPattern, compareTagsOnly, excludeSubfields, dropSubfields})(base, source);
+  expect(mergedRecord.toObject()).to.eql(expectedRecord);
+}

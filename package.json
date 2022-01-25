@@ -33,6 +33,7 @@
 		"watch:test": "cross-env DEBUG=1 NODE_ENV=test nodemon -w src -w test-fixtures --exec 'npm run test:dev'"
 	},
 	"dependencies": {
+		"@natlibfi/fixugen": "^1.0.2",
 		"@natlibfi/fixura": "^2.1.3",
 		"@natlibfi/marc-record": "^6.1.1",
 		"debug": "^4.3.1",

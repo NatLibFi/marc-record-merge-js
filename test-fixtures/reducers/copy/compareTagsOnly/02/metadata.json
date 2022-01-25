@@ -1,0 +1,6 @@
+{
+    "description": "Copy fields 260 or 264",
+    "tagPatternRegExp": "^(260|264)$",
+    "compareTagsOnly": true,
+    "enabled": true
+}

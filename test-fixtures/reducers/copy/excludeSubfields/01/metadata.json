@@ -1,0 +1,9 @@
+{
+    "description": "Copy fields 010 exclude subfields c & d",
+    "tagPatternRegExp": "^010$",
+    "excludeSubfields": [
+        "c",
+        "d"
+    ],
+    "enabled": true
+}
