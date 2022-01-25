@@ -43,15 +43,25 @@ generateTests({
   }
 });
 
-function callback({getFixture, tagPatternRegExp, compareTagsOnly = false, excludeSubfields = undefined, dropSubfields = undefined, enabled = true}) {
+function callback({
+  getFixture,
+  tagPatternRegExp,
+  compareTagsOnly = false,
+  compareWithoutIndicators = false,
+  mustBeIdentical = false,
+  combine = undefined,
+  excludeSubfields = undefined,
+  dropSubfields = undefined,
+  enabled = true
+}) {
   if (!enabled) {
     console.log('TEST DISABLED!'); // eslint-disable-line no-console
     return;
   }
-  const base = new MarcRecord(getFixture('base.json'));
+  const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
   const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
   const tagPattern = new RegExp(tagPatternRegExp, 'u');
   const expectedRecord = getFixture('merged.json');
-  const mergedRecord = createReducer({tagPattern, compareTagsOnly, excludeSubfields, dropSubfields})(base, source);
+  const mergedRecord = createReducer({tagPattern, compareTagsOnly, compareWithoutIndicators, combine, mustBeIdentical, excludeSubfields, dropSubfields})(base, source);
   expect(mergedRecord.toObject()).to.eql(expectedRecord);
 }

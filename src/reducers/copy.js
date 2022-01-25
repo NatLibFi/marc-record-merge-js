@@ -26,21 +26,11 @@
 *
 */
 
-/**
- * Test 01: If base does not contain the field at all, it is copied from source to base
- * Test 02: Identical control fields are not copied
- * Test 03: Add missing control field to base
- * Test 04: Identical data fields in base and source, not copied
- * Test 05: Different data fields are copied from source to base (multiple fields)
- * Test 06: compareTagsOnly: Field is copied from source only if it is missing in base, a different instance is not copied
- * Test 07: excludeSubfields: Ignore excluded subfields in comparing identicalness
- * Test 08: dropSubfields: Drop subfields from source before copying
- * Test 09: compareTagsOnly for repeatable fields, 2x each 260/264
- * */
 import createDebugLogger from 'debug';
 
-export default ({tagPattern, compareTagsOnly = false, excludeSubfields = [], dropSubfields = []}) => (base, source) => {
+export default ({tagPattern, compareTagsOnly = false, compareWithoutIndicators = false, mustBeIdentical = false, combine = [], excludeSubfields = [], dropSubfields = []}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
+  debug(`Copy options: ${tagPattern}, ${compareTagsOnly}, ${compareWithoutIndicators}, ${mustBeIdentical}, [${combine}], [${excludeSubfields}], [${dropSubfields}]`);
   const baseFields = base.get(tagPattern);
   // Check whether there are subfields to drop from source before copying
   const sourceFields = checkDropSubfields(source.get(tagPattern));
@@ -62,7 +52,7 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = [], dro
     // Source and base are also compared for identicalness
     // Non-identical fields are copied from source to base as duplicates
     if (!compareTagsOnly) {
-      const filterMissing = function(sourceField) {
+      const filterMissing = function (sourceField) {
         if ('value' in sourceField) {
           debug(`Checking control field ${sourceField.tag} for identicalness`);
           return baseFields.some(isIdenticalControlField) === false;
@@ -95,9 +85,9 @@ export default ({tagPattern, compareTagsOnly = false, excludeSubfields = [], dro
           }
           // If there are no excluded subfields (default case)
           if (sourceField.tag === baseField.tag &&
-              sourceField.ind1 === baseField.ind1 &&
-              sourceField.ind2 === baseField.ind2 &&
-              sourceField.subfields.length === baseField.subfields.length) {
+            sourceField.ind1 === baseField.ind1 &&
+            sourceField.ind2 === baseField.ind2 &&
+            sourceField.subfields.length === baseField.subfields.length) {
             return baseField.subfields.every(isIdenticalSubfield);
           }
           function normalizeSubfield(subfield) {

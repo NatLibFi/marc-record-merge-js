@@ -1,5 +1,5 @@
 {
-    "description": "Copy fields 010 exclude subfields c & d",
+    "description": "Ignore excluded subfields in comparing identicalness",
     "tagPatternRegExp": "^010$",
     "excludeSubfields": [
         "c",

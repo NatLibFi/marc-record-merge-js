@@ -1,5 +1,5 @@
 {
-    "description": "Copy fields 260 or 264",
+    "description": "for repeatable fields, 2x each 260/264",
     "tagPatternRegExp": "^(260|264)$",
     "compareTagsOnly": true,
     "enabled": true
