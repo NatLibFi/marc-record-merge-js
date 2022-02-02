@@ -34,18 +34,30 @@ export default ({tagPattern, compareTagsOnly = false, compareWithoutIndicators =
   const baseFields = base.get(tagPattern);
   // Check whether there are subfields to drop from source before copying
   const sourceFields = checkDropSubfields(source.get(tagPattern));
+  //debug(`*** MOI! baseFields: `, baseFields);
+  debug(`***     base: `, base);
+  debug(`***     source: `, source);
   return copyFields();
+
 
   function copyFields() {
     const sourceTags = sourceFields.map(field => field.tag);
     sourceTags.forEach(tag => debug(`Comparing field ${tag}`));
+
+    /*
+    if (combine.length > 0) {
+      debug(`*** NOW Copy options: ${tagPattern}, ${compareTagsOnly}, ${compareWithoutIndicators}, ${mustBeIdentical}, [${combine}], [${excludeSubfields}], [${dropSubfields}]`);
+      combine.forEach(row => debug(` ### combine ${row} <- `));
+      return [];
+    }
+    */
 
     // If compareTagsOnly = true, only this part is run
     // The field is copied from source only if it is missing completely from base
     if (baseFields.length === 0) {
       sourceTags.forEach(tag => debug(`Missing field ${tag} copied from source to base`));
       sourceFields.forEach(f => base.insertField(f));
-      return base;
+      return true;
     }
 
     // If compareTagsOnly = false (default)

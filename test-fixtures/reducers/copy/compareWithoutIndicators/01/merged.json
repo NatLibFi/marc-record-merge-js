@@ -12,26 +12,26 @@
             "subfields": [
                 {
                     "code": "a",
-                    "value": "##2002021346"
+                    "value": "foo"
                 },
                 {
                     "code": "b",
-                    "value": "##2002021356"
+                    "value": "bar"
                 }
             ]
         },
         {
             "tag": "010",
-            "ind1": " ",
-            "ind2": " ",
+            "ind1": "1",
+            "ind2": "2",
             "subfields": [
                 {
-                    "code": "d",
-                    "value": "##2002021357"
+                    "code": "a",
+                    "value": "foo"
                 },
                 {
-                    "code": "e",
-                    "value": "##2002021359"
+                    "code": "b",
+                    "value": "bar"
                 }
             ]
         }

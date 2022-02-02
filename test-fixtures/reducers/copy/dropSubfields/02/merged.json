@@ -17,6 +17,14 @@
                 {
                     "code": "9",
                     "value": "FENNI<PASS>"
+                },
+                {
+                    "code": "9",
+                    "value": "TESTI<KEEP>"
+                },
+                {
+                    "code": "9",
+                    "value": "MALLI<PASS>"
                 }
             ]
         }
