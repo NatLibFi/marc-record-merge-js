@@ -31,8 +31,9 @@ import {READERS} from '@natlibfi/fixura';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './copy';
 import generateTests from '@natlibfi/fixugen';
+
 import createDebugLogger from 'debug'; // <---
-const debug = createDebugLogger('@natlibfi/marc-record-merge'); // <---
+const debug = createDebugLogger('@natlibfi/marc-record-merge/copy.spec.js'); // <---
 
 generateTests({
   callback,
@@ -64,10 +65,14 @@ function callback({
   const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
   const tagPattern = new RegExp(tagPatternRegExp, 'u');
   const expectedRecord = getFixture('merged.json');
-  const mergedRecord = createReducer({tagPattern, compareTagsOnly, compareWithoutIndicators, combine, mustBeIdentical, excludeSubfields, dropSubfields})(base, source);
-  //debug(`***     mergedRecord: `, mergedRecord); //<--
-  debug(`***     mergedRecord,Strfy: `, JSON.stringify(mergedRecord.toObject())); //<--
-  //debug(`***     expectedRecord: `, expectedRecord); //<--
-  debug(`***     expectedRecord,Strfy: `, JSON.stringify(expectedRecord)); //<--
-  expect(mergedRecord.toObject()).to.eql(expectedRecord);
+  try {
+    const mergedRecord = createReducer({tagPattern, compareTagsOnly, compareWithoutIndicators, combine, mustBeIdentical, excludeSubfields, dropSubfields})(base, source);
+    //debug(`***     mergedRecord: `, mergedRecord); //<--
+    debug(`***     mergedRecord,Strfy: `, JSON.stringify(mergedRecord.toObject())); //<--
+    //debug(`***     expectedRecord: `, expectedRecord); //<--
+    debug(`***     expectedRecord,Strfy: `, JSON.stringify(expectedRecord)); //<--
+    expect(mergedRecord.toObject()).to.eql(expectedRecord);
+  } catch (error) {
+    debug('error');
+  }
 }
