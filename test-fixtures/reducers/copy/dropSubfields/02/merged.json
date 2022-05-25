@@ -6,6 +6,40 @@
             "value": "007346734"
         },
         {
+            "tag": "010",
+            "ind1": " ",
+            "ind2": " ",
+            "subfields": [
+                {
+                    "code": "a",
+                    "value": "##2002021346"
+                },
+                {
+                    "code": "b",
+                    "value": "##2002021356"
+                }
+            ]
+        },
+        {
+            "tag": "010",
+            "ind1": " ",
+            "ind2": " ",
+            "subfields": [
+                {
+                    "code": "c",
+                    "value": "##2002021348"
+                },
+                {
+                    "code": "d",
+                    "value": "##2002021358"
+                },
+                {
+                    "code": "f",
+                    "value": "##2002021361"
+                }
+            ]
+        },
+        {
             "tag": "250",
             "ind1": "0",
             "ind2": " ",
@@ -17,14 +51,6 @@
                 {
                     "code": "9",
                     "value": "FENNI<PASS>"
-                },
-                {
-                    "code": "9",
-                    "value": "TESTI<KEEP>"
-                },
-                {
-                    "code": "9",
-                    "value": "MALLI<PASS>"
                 }
             ]
         }

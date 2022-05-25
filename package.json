@@ -13,46 +13,49 @@
 		"type": "git",
 		"url": "git@github.com:natlibfi/marc-record-merge-js.git"
 	},
-	"license": "LGPL-3.0+",
+	"license": "MIT",
 	"version": "6.0.0-beta.2",
 	"main": "./dist/index.js",
 	"engines": {
-		"node": ">=12"
+		"node": ">=14"
 	},
+	"type": "commonjs",
 	"scripts": {
 		"prepare": "npm run build",
 		"prepublishOnly": "npm run build:transpile",
 		"lint": "eslint ./src",
 		"lint:dev": "eslint ./src --fix",
-		"test:base": "cross-env NODE_ENV=test nyc mocha --require @babel/register",
-		"test": "npm run lint && npm run test:base -- src/**/*.spec.js",
-		"test:dev": "npm run lint:dev && npm run test:base -- src/**/*.spec.js && npm run coverage",
-		"coverage": "nyc check-coverage --per-file",
+		"test:base": "cross-env NODE_ENV=test mocha --require @babel/register --reporter-option maxDiffSize=15000 src/reducers/*.spec.js",
+		"test": "npm run lint && npm run test:base",
+		"test:dev": "npm run lint:dev && npm run coverage",
+		"coverage": "npm run coverage:unit && npm run coverage:report",
+		"coverage:unit": "nyc --silent npm run test:base",
+		"coverage:report": "nyc report --reporter=text",
 		"build:transpile": "babel src --copy-files --source-maps --delete-dir-on-start --out-dir=dist",
 		"build": "npm run build:transpile",
-		"watch:test": "cross-env DEBUG=1 NODE_ENV=test nodemon -w src -w test-fixtures --exec 'npm run test:dev'"
+		"dev:test": "cross-env DEBUG=@natlibfi/* NODE_ENV=test nodemon -w src -w test-fixtures --exec 'clear && npm run test:dev'"
 	},
 	"dependencies": {
 		"@natlibfi/fixugen": "^1.0.2",
-		"@natlibfi/fixura": "^2.1.3",
-		"@natlibfi/marc-record": "^6.1.1",
-		"debug": "^4.3.1",
+		"@natlibfi/fixura": "^2.2.1",
+		"@natlibfi/marc-record": "^7.1.0-alpha.1",
+		"debug": "^4.3.4",
 		"normalize-diacritics": "^2.13.2"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.14.5",
-		"@babel/core": "^7.14.6",
-		"@babel/eslint-parser": "^7.14.5",
-		"@babel/preset-env": "^7.14.5",
-		"@babel/register": "^7.14.5",
-		"@natlibfi/eslint-config-melinda-backend": "^1.0.6",
-		"babel-plugin-istanbul": "^6.0.0",
+		"@babel/cli": "^7.17.10",
+		"@babel/core": "^7.18.0",
+		"@babel/eslint-parser": "^7.17.0",
+		"@babel/preset-env": "^7.18.0",
+		"@babel/register": "^7.17.7",
+		"@natlibfi/eslint-config-melinda-backend": "^2.0.0",
+		"babel-plugin-istanbul": "^6.1.1",
 		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.3.4",
 		"cross-env": "^7.0.3",
-		"eslint": "^7.28.0",
-		"mocha": "^9.0.0",
-		"nodemon": "^2.0.7",
+		"eslint": "^8.16.0",
+		"mocha": "^10.0.0",
+		"nodemon": "^2.0.16",
 		"nyc": "^15.1.0"
 	},
 	"eslintConfig": {
@@ -66,7 +69,7 @@
 				"@babel/preset-env",
 				{
 					"targets": {
-						"node": "12"
+						"node": "14"
 					}
 				}
 			]

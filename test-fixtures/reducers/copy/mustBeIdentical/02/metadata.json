@@ -1,6 +1,0 @@
-{
-    "description": "Copy fields 010 not indetical",
-    "tagPatternRegExp": "^010$",
-    "mustBeIdentical": false,
-    "enabled": true
-}
