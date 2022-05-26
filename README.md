@@ -46,7 +46,7 @@ If source subfields are subset of base subfields this option says if it is copie
 
 ### excludeSubfields (Defaults [ ])
 ```
-{tagPattern: /010/u, subfieldsMustBeIdentical: ['a']}
+{tagPattern: /010/u, excludeSubfields: ['a']}
 ```
 
 When base and source fields are compared, excluded subfields are ignored
