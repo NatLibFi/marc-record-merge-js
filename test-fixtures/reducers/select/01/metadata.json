@@ -1,0 +1,5 @@
+{
+  "description": "The field is a control field (contains 'value') --> error message",
+  "tagPatternRegExp": "^010$",
+  "expectedError": "Invalid control field, expected data field"
+}

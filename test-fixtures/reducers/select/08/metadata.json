@@ -1,0 +1,4 @@
+{
+  "description": "Two subfields, one is a subset, one has a different code --> return base",
+  "tagPatternRegExp": "^010"
+}

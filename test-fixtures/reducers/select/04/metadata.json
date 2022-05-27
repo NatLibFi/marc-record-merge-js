@@ -1,0 +1,5 @@
+{
+  "description": "Base and source tags are not equal --> return base",
+  "note": "to test for this, tagPattern has to allow two tags, otherwise the unequal tag does not even pass source.get(tagPattern)",
+  "tagPatternRegExp": "^(010|020)$"
+}

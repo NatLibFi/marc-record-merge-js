@@ -1,0 +1,6 @@
+{
+    "description": "Copy fields 250 drop subfields all 9 - Does not copy 250 with no subfields left",
+    "tagPatternRegExp": "^250$",
+    "dropSubfields": [{"code": "9"}],
+    "disabled": false
+}
