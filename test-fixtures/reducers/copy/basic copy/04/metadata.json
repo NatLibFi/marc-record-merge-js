@@ -1,5 +1,5 @@
 {
     "description": "Identical data fields in base and source, not copied",
     "tagPatternRegExp": "^010$",
-    "enabled": true
+    "disabled": false
 }

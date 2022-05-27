@@ -2,5 +2,5 @@
     "description": "Field is copied from source only if it is missing in base, a different instance is not copied",
     "tagPatternRegExp": "^018$",
     "compareTagsOnly": true,
-    "enabled": true
+    "disabled": false
 }

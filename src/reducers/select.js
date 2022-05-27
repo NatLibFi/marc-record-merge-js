@@ -1,22 +1,3 @@
-/**
- * Test 01: The field is a control field (contains 'value') --> error message
- * Test 02: If there are multiple fields, return base
- * Test 03: Base and source tags are equal for one field --> return base
- * Test 04: Base and source tags are not equal --> return base
- *  Note: to test for this, tagPattern has to allow two tags,
- *  otherwise the unequal tag does not even pass source.get(tagPattern)
- * Test 05: Normalize subfield values (base and source are equal) --> return base
- * Test 06: Two subfields, both equal --> return base
- * Test 07: Two subfields, same codes, values of source are subsets of values of base --> replaceBasefieldWithSourcefield
- * Test 08: Two subfields, one is a subset, one has a different code --> return base
- * Test 09: Two subfields, same codes, values are not subsets --> return base
- * Test 10: sourceField is a proper superset of baseField (subfields a and b are equal, c is new) --> replaceBasefieldWithSourcefield
- * Test 11: sourceField is not a proper superset of baseField (different values in a and b, also new subfield c) --> return base
- * Test 12: sourceField is a proper superset of baseField (base values a and b are subsets of source values a and b, c is new in source) --> replaceBasefieldWithSourcefield
- * Test 13: Opposite of test 12, baseField is a proper superset of sourceField --> return base
- * Test 14: Normalization test with Cyrillic characters
- */
-
 import {normalizeSync} from 'normalize-diacritics';
 import createDebugLogger from 'debug';
 
@@ -31,7 +12,7 @@ export function subsetEquality(subfieldA, subfieldB) {
 }
 // EqualityFunction can be either strictEquality or subsetEquality
 export default ({tagPattern, equalityFunction = strictEquality}) => (base, source) => {
-  const debug = createDebugLogger('@natlibfi/marc-record-merge');
+  const debug = createDebugLogger('@natlibfi/marc-record-merge:select');
   const baseFields = base.get(tagPattern);
   const sourceFields = source.get(tagPattern);
   const fieldTag = sourceFields.map(field => field.tag);

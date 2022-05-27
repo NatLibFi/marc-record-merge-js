@@ -27,12 +27,13 @@ function callback({
   copyUnless = undefined,
   excludeSubfields = undefined,
   dropSubfields = undefined,
-  enabled = true
+  disabled = false
 }) {
-  if (!enabled) {
+  if (disabled) {
     console.log('TEST DISABLED!'); // eslint-disable-line no-console
     return;
   }
+
   const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
   const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
   const tagPattern = new RegExp(tagPatternRegExp, 'u');

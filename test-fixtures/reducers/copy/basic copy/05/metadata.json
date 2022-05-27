@@ -1,5 +1,5 @@
 {
     "description": "Different data fields are copied from source to base (multiple fields)",
     "tagPatternRegExp": "^010$",
-    "enabled": true
+    "disabled": false
 }

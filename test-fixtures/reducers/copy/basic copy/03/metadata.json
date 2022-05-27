@@ -1,5 +1,5 @@
 {
     "description": "Add missing control field to base",
     "tagPatternRegExp": "^001$",
-    "enabled": true
+    "disabled": false
 }
