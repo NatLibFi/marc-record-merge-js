@@ -64,9 +64,9 @@ Drops subfields 9's that have "FENNI<KEEP>" from all fields tagged 010
 
 
 ```
-{tagPattern: /010/u, dropSubfields: [{"code": "9", "condition": "unless", "value": "^FENNI<(?<option>KEEP|PASS)>$"}]}
+{tagPattern: /010/u, dropSubfields: [{"code": "9", "condition": "unless", "value": "^FENNI<(?<option>KEEP|DROP)>$"}]}
 ```
-Drops all subfield 9's unless they have "FENNI<KEEP>" or "FENNI<PASS>" from all fields tagged 010
+Drops all subfield 9's unless they have "FENNI<KEEP>" or "FENNI<DROP>" from all fields tagged 010
 
 
 When comparing or copying field dropped fields are ignored
