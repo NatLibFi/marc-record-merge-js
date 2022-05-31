@@ -4,8 +4,8 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './copy';
 import generateTests from '@natlibfi/fixugen';
 
-// import createDebugLogger from 'debug'; // <---
-// const debug = createDebugLogger('@natlibfi/marc-record-merge/copy.spec.js'); // <---
+//import createDebugLogger from 'debug'; // <---
+//const debug = createDebugLogger('@natlibfi/marc-record-merge/copy.spec.js'); // <---
 
 generateTests({
   callback,
@@ -41,7 +41,7 @@ function callback({
 
   const mergedRecord = createReducer({tagPattern, compareTagsOnly, compareWithoutIndicators, copyUnless, subfieldsMustBeIdentical, excludeSubfields, dropSubfields})(base, source);
   //debug(`***     mergedRecord: `, mergedRecord); //<--
-  //debug(`***     mergedRecord,Strfy: `, JSON.stringify(mergedRecord.toObject())); //<--
+  //debug(`***     mergedRecord,Strfy: `, JSON.stringify(mergedRecord)); //<--
   //debug(`***     expectedRecord: `, expectedRecord); //<--
   //debug(`***     expectedRecord,Strfy: `, JSON.stringify(expectedRecord)); //<--
   expect(mergedRecord).to.eql(expectedRecord);
