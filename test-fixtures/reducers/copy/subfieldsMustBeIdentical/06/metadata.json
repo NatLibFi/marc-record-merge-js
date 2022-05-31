@@ -1,6 +1,5 @@
 {
     "description": "subfieldsMustBeIdentical: false - base subfields are subset of source subfields",
     "tagPatternRegExp": "^010$",
-    "subfieldsMustBeIdentical": false,
-    "disabled": false
+    "subfieldsMustBeIdentical": false
 }

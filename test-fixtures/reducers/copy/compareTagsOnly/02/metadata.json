@@ -1,6 +1,5 @@
 {
     "description": "for repeatable fields, 2x each 260/264",
     "tagPatternRegExp": "^(260|264)$",
-    "compareTagsOnly": true,
-    "disabled": false
+    "compareTagsOnly": true
 }

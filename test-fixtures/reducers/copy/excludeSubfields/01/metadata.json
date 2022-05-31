@@ -1,9 +1,8 @@
 {
-    "description": "Ignore excluded subfields in comparing identicalness",
+    "description": "Ignore subfields c and d in comparing identicalness - ignore one field",
     "tagPatternRegExp": "^010$",
     "excludeSubfields": [
         "c",
         "d"
-    ],
-    "disabled": false
+    ]
 }

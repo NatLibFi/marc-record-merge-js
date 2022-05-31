@@ -30,13 +30,14 @@
 		"test:dev": "npm run lint:dev && npm run coverage",
 		"coverage": "npm run coverage:unit && npm run coverage:report",
 		"coverage:unit": "nyc --silent npm run test:base",
-		"coverage:report": "nyc report --reporter=text",
+		"coverage:report": "nyc report",
 		"build:transpile": "babel src --copy-files --source-maps --delete-dir-on-start --out-dir=dist",
 		"build": "npm run build:transpile",
-		"dev:test": "cross-env DEBUG=@natlibfi/* NODE_ENV=test nodemon -w src -w test-fixtures --exec 'clear && npm run test:dev'"
+		"dev:test": "cross-env NODE_ENV=test nodemon -w src -w test-fixtures --exec 'clear && npm run test:dev'",
+		"dev:test:debug": "cross-env DEBUG=@natlibfi/* NODE_ENV=test nodemon -w src -w test-fixtures --exec 'clear && npm run test:dev'"
 	},
 	"dependencies": {
-		"@natlibfi/fixugen": "^1.0.2",
+		"@natlibfi/fixugen": "1.1.0-alpha.3",
 		"@natlibfi/fixura": "^2.2.1",
 		"@natlibfi/marc-record": "^7.1.0-alpha.1",
 		"debug": "^4.3.4",
@@ -68,9 +69,7 @@
 			[
 				"@babel/preset-env",
 				{
-					"targets": {
-						"node": "14"
-					}
+					"targets": "maintained node versions"
 				}
 			]
 		],
@@ -89,8 +88,7 @@
 			"*/**/*.spec.js"
 		],
 		"reporter": [
-			"lcov",
-			"html"
+			"text"
 		],
 		"require": [
 			"@babel/register"
