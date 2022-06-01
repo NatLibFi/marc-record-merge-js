@@ -37,9 +37,9 @@
 		"dev:test:debug": "cross-env DEBUG=@natlibfi/* NODE_ENV=test nodemon -w src -w test-fixtures --exec 'clear && npm run test:dev'"
 	},
 	"dependencies": {
-		"@natlibfi/fixugen": "1.1.0-alpha.3",
+		"@natlibfi/fixugen": "1.1.0",
 		"@natlibfi/fixura": "^2.2.1",
-		"@natlibfi/marc-record": "^7.1.0-alpha.1",
+		"@natlibfi/marc-record": "^7.1.0-alpha.2",
 		"debug": "^4.3.4",
 		"normalize-diacritics": "^2.13.2"
 	},
