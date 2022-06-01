@@ -1,0 +1,4 @@
+{
+    "description": "Different data fields are copied from source to base (Ind2 diff, multiple fields in base)",
+    "tagPatternRegExp": "^010$"
+}

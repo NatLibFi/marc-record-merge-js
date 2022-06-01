@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 /* eslint-disable no-unused-vars */
 
 import {MarcRecord} from '@natlibfi/marc-record';
@@ -72,6 +73,7 @@ export default ({
 
     function checkCompareFields(baseCompareFields, sourceComapareField) {
       const [baseCompareField, ...rest] = baseCompareFields;
+      debugCompare(`Comparing ${JSON.stringify(sourceComapareField)} to ${JSON.stringify(baseCompareField)}}`);
       if (baseCompareField === undefined) {
         return true;
       }
