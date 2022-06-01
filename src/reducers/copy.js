@@ -35,7 +35,8 @@ export default ({
   debug(`Base fields: `, baseFields);
   debug(`Source fields: `, sourceFields);
 
-  const compareResultFields = compareFields(sourceFields, baseFields);
+  const baseCompareFields = baseFields.map(baseField => createCompareField(baseField));
+  const compareResultFields = compareFields(sourceFields, baseCompareFields);
   const droppedUnwantedSubfield = checkDropSubfields(compareResultFields);
   const droppedUnwantedFields = checkCopyUnlessFields(droppedUnwantedSubfield);
   debug('Fields to be copied');
@@ -46,60 +47,66 @@ export default ({
   return baseRecord.toObject();
   //return copyFields(baseFields, sourceFields);
 
-  function compareFields(sourceFields, baseFields, uniqFields = []) {
+  function compareFields(sourceFields, baseCompareFields, uniqFields = []) {
     const [sourceField, ...rest] = sourceFields;
     if (sourceField === undefined) {
       return uniqFields;
     }
 
-    if (baseFields.length === 0) {
-      return compareFields(rest, baseFields, [...uniqFields, sourceField]);
+    if (baseCompareFields.length === 0) {
+      return compareFields(rest, baseCompareFields, [...uniqFields, sourceField]);
     }
 
     // Source and base are also compared for identicalness
     // Non-identical fields are copied from source to base as duplicates
-    const sourceComapareField = createCompareField(sourceField);
-    const baseCompareFields = baseFields.map(baseField => createCompareField(baseField));
-
-    const unique = checkCompareFields(baseCompareFields, sourceComapareField);
+    const sourceCompareField = createCompareField(sourceField);
+    const unique = checkCompareFields(baseCompareFields, sourceCompareField);
 
     debugCompare(`${JSON.stringify(sourceField)} ${unique ? 'is UNIQUE' : 'not UNIQUE'}`);
 
     if (unique) {
-      return compareFields(rest, baseFields, [...uniqFields, sourceField]);
+      return compareFields(rest, baseCompareFields, [...uniqFields, sourceField]);
     }
 
-    return compareFields(rest, baseFields, uniqFields);
+    return compareFields(rest, baseCompareFields, uniqFields);
 
-    function checkCompareFields(baseCompareFields, sourceComapareField) {
-      const [baseCompareField, ...rest] = baseCompareFields;
-      debugCompare(`Comparing ${JSON.stringify(sourceComapareField)} to ${JSON.stringify(baseCompareField)}}`);
-      if (baseCompareField === undefined) {
-        return true;
-      }
+    function checkCompareFields(baseCompareFields, sourceCompareField) {
+      let unique = true; // eslint-disable-line functional/no-let
 
-      if (sourceComapareField.value !== baseCompareField.value) {
-        debugCompare(`Value is different ${sourceComapareField.value} !== ${baseCompareField.value}`);
-        return true;
-      }
+      baseCompareFields.forEach(baseCompareField => {
+        debugCompare(`Comparing ${JSON.stringify(sourceCompareField)} to ${JSON.stringify(baseCompareField)}}`);
 
-      if (sourceComapareField.ind1 !== baseCompareField.ind1) {
-        debugCompare(`Ind1 is different ${sourceComapareField.ind1} !== ${baseCompareField.ind1}`);
-        return true;
-      }
+        if (sourceCompareField.value !== baseCompareField.value) {
+          debugCompare(`Value is different ${sourceCompareField.value} !== ${baseCompareField.value}`);
+          return;
+        }
 
-      if (sourceComapareField.ind2 !== baseCompareField.ind2) {
-        debugCompare(`Ind2 is different ${sourceComapareField.ind2} !== ${baseCompareField.ind2}`);
-        return true;
-      }
+        if (sourceCompareField.ind1 !== baseCompareField.ind1) {
+          debugCompare(`Ind1 is different ${sourceCompareField.ind1} !== ${baseCompareField.ind1}`);
+          return;
+        }
 
-      if ('subfields' in sourceComapareField) {
-        const allFound = checkSubfields(sourceComapareField.subfields, baseCompareField.subfields);
-        debugCompare(`Subfields are different ${!allFound}`);
-        return allFound ? false : checkCompareFields(rest, sourceComapareField);
-      }
+        if (sourceCompareField.ind2 !== baseCompareField.ind2) {
+          debugCompare(`Ind2 is different ${sourceCompareField.ind2} !== ${baseCompareField.ind2}`);
+          return;
+        }
 
-      return false;
+        if ('subfields' in sourceCompareField) {
+          const allFound = checkSubfields(sourceCompareField.subfields, baseCompareField.subfields);
+          debugCompare(`Subfields are different ${!allFound}`);
+          if (!allFound) {
+            return;
+          }
+
+          unique = false;
+          return;
+        }
+
+        unique = false;
+        return;
+      });
+
+      return unique;
     }
 
     function checkSubfields(sourceSubfields, baseSubfields) {

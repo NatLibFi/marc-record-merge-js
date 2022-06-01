@@ -35,14 +35,14 @@ When base and source fields are compared, indicator differences are ignored
 ```
 
 If source subfields are subset of base subfields this option says if it is copied
-| subfieldsMustBeIdentical | base        | source      | copy  |
-|--------------------------|-------------|-------------|-------|
-| true or false            | a$foo       | a$foo       | false |
-| true or false            | a$foo       | b$bar       | true  |
-| true                     | a$foo       | a$foo,b$bar | true  |
-| false                    | a$foo       | a$foo,b$bar | true  |
-| true                     | a$foo,b$bar | a$foo       | true  |
-| false                    | a$foo,b$bar | a$foo       | false |
+| subfieldsMustBeIdentical | base          | source        | copy  |
+|--------------------------|---------------|---------------|-------|
+| true or false            | $a foo        | $a foo        | false |
+| true or false            | $a foo        | $b bar        | true  |
+| true                     | $a foo        | $a foo,$b bar | true  |
+| false                    | $a foo        | $a foo,$b bar | true  |
+| true                     | $a foo,$b bar | $a foo        | true  |
+| false                    | $a foo,$b bar | $a foo        | false |
 
 ### excludeSubfields (Defaults [ ])
 ```
