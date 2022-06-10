@@ -41,7 +41,7 @@
 		"@natlibfi/fixura": "^2.2.1",
 		"@natlibfi/marc-record": "^7.1.0-alpha.2",
 		"debug": "^4.3.4",
-		"normalize-diacritics": "^2.13.2"
+		"normalize-diacritics": "2.14.0"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.17.10",
