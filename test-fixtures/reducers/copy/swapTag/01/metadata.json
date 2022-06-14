@@ -1,0 +1,6 @@
+{
+    "description": "Swap tag from 100 to 700 if copied: swapped",
+    "tagPatternRegExp": "^100$",
+    "swapTag": [{"from": "^100$", "to": "700"}],
+    "only": false
+}

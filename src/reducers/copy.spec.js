@@ -27,19 +27,21 @@ function callback({
   copyUnless = undefined,
   excludeSubfields = undefined,
   dropSubfields = undefined,
-  disabled = false
+  swapSubfieldCode = [],
+  swapTag = [],
+  doNotCopyIfFieldPresent = false
 }) {
-  if (disabled) {
-    console.log('TEST DISABLED!'); // eslint-disable-line no-console
-    return;
-  }
-
   const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
   const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
   const tagPattern = new RegExp(tagPatternRegExp, 'u');
   const expectedRecord = getFixture('merged.json');
 
-  const mergedRecord = createReducer({tagPattern, compareTagsOnly, compareWithoutIndicators, copyUnless, subfieldsMustBeIdentical, excludeSubfields, dropSubfields})(base, source);
+  const mergedRecord = createReducer({
+    tagPattern, compareTagsOnly, compareWithoutIndicators,
+    copyUnless, subfieldsMustBeIdentical, excludeSubfields,
+    dropSubfields, swapSubfieldCode, swapTag,
+    doNotCopyIfFieldPresent
+  })(base, source);
   //debug(`***     mergedRecord: `, mergedRecord); //<--
   //debug(`***     mergedRecord,Strfy: `, JSON.stringify(mergedRecord)); //<--
   //debug(`***     expectedRecord: `, expectedRecord); //<--

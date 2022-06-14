@@ -22,6 +22,13 @@ const copyReducerConfigs = [
 
 If base has field with that tag source field is ignored
 
+### doNotCopyIfFieldPresent (Defaults false)
+```
+{tagPattern: /010/u, doNotCopyIfFieldPresent: "^011$"}
+```
+
+If base has field with that tag 011 source field is ignored
+
 ### compareWithoutIndicators (Defaults false)
 ```
 {tagPattern: /010/u, compareWithoutIndicators: false}
@@ -50,6 +57,13 @@ If source subfields are subset of base subfields this option says if it is copie
 ```
 
 When base and source fields are compared, excluded subfields are ignored
+
+### swapSubfieldCode (Defaults [ ])
+```
+{tagPattern: /010/u, swapSubfieldCode: [{"from": "a", "to": "b"}]}
+```
+
+When source fields are copied, subfields are checkked and if subfield.code match to 'from' value is that code swapped to 'to' value
 
 ### dropSubfields (Defaults [ ])
 ```

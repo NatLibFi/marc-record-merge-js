@@ -1,0 +1,6 @@
+{
+    "description": "Copy field 010 if f100 not present: f100 present",
+    "tagPatternRegExp": "^010$",
+    "doNotCopyIfFieldPresent": "^100$",
+    "only": false
+}

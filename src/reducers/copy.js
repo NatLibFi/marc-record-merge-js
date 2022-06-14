@@ -13,7 +13,10 @@ export default ({
   dropSubfields = [],
   copyUnless = [],
   baseValidators = {subfieldValues: false},
-  sourceValidators = {subfieldValues: false}
+  sourceValidators = {subfieldValues: false},
+  swapTag = [],
+  swapSubfieldCode = [],
+  doNotCopyIfFieldPresent = false
 }) => (base, source) => {
   const baseRecord = new MarcRecord(base, baseValidators);
   const sourceRecord = new MarcRecord(source, sourceValidators);
@@ -31,6 +34,11 @@ export default ({
 
   const baseFields = baseRecord.get(tagPattern);
   const sourceFields = sourceRecord.get(tagPattern);
+  const doNotCopy = doNotCopyIfFieldPresent ? baseRecord.get(doNotCopyIfFieldPresent).length > 0 : false;
+
+  if (doNotCopy) {
+    return baseRecord.toObject();
+  }
 
   debug(`Base fields: `, baseFields);
   debug(`Source fields: `, sourceFields);
@@ -39,11 +47,13 @@ export default ({
   const compareResultFields = compareFields(sourceFields, baseCompareFields);
   const droppedUnwantedSubfield = checkDropSubfields(compareResultFields);
   const droppedUnwantedFields = checkCopyUnlessFields(droppedUnwantedSubfield);
+  const swappedSubfields = checkSwapSubfieldCodes(droppedUnwantedFields);
+  const swappedTags = checkSwapTag(swappedSubfields);
   debug('Fields to be copied');
-  debug(JSON.stringify(droppedUnwantedFields));
+  debug(JSON.stringify(swappedTags));
 
   // Add fields to base;
-  droppedUnwantedFields.forEach(field => baseRecord.insertField(field));
+  swappedTags.forEach(field => baseRecord.insertField(field));
   return baseRecord.toObject();
   //return copyFields(baseFields, sourceFields);
 
@@ -149,6 +159,44 @@ export default ({
       function normalizeSubfieldValue(value) {
         return value.toLowerCase().replace(/\s+/ug, '');
       }
+    }
+  }
+
+  function checkSwapTag(fields) {
+    if (swapTag.length > 0) {
+      return fields.map(field => ({...field, tag: swapTagsFunc(field.tag)}));
+    }
+
+    return fields;
+
+    function swapTagsFunc(tag) {
+      const [foundRule] = swapTag.filter(rule => new RegExp(rule.from, 'u').test(tag));
+
+      if (foundRule === undefined) {
+        return tag;
+      }
+
+      return foundRule.to;
+    }
+  }
+
+  function checkSwapSubfieldCodes(fields) {
+    if (swapSubfieldCode.length > 0) {
+      return fields.map(field => ({...field, subfields: swapSubfieldCodesFunc(field.subfields)}));
+    }
+
+    return fields;
+
+    function swapSubfieldCodesFunc(subfields) {
+      return subfields.map(sub => {
+        const [foundRule] = swapSubfieldCode.filter(rule => rule.from === sub.code);
+
+        if (foundRule === undefined) {
+          return sub;
+        }
+
+        return {code: foundRule.to, value: sub.value};
+      });
     }
   }
 
