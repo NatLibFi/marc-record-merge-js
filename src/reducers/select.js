@@ -1,20 +1,23 @@
 import {normalizeSync} from 'normalize-diacritics';
 import createDebugLogger from 'debug';
+import {MarcRecord} from '@natlibfi/marc-record';
 
 export function strictEquality(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code &&
-  subfieldA.value === subfieldB.value;
+    subfieldA.value === subfieldB.value;
 }
 
 export function subsetEquality(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code &&
-  (subfieldA.value.indexOf(subfieldB.value) !== -1 || subfieldB.value.indexOf(subfieldA.value) !== -1);
+    (subfieldA.value.indexOf(subfieldB.value) !== -1 || subfieldB.value.indexOf(subfieldA.value) !== -1);
 }
 // EqualityFunction can be either strictEquality or subsetEquality
 export default ({tagPattern, equalityFunction = strictEquality}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge:select');
-  const baseFields = base.get(tagPattern);
-  const sourceFields = source.get(tagPattern);
+  const baseRecord = new MarcRecord(base, {subfieldValues: false});
+  const sourceRecord = new MarcRecord(source, {subfieldValues: false});
+  const baseFields = baseRecord.get(tagPattern);
+  const sourceFields = sourceRecord.get(tagPattern);
   const fieldTag = sourceFields.map(field => field.tag);
   debug(`Comparing field ${fieldTag}`);
 
