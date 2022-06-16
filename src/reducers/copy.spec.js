@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {READERS} from '@natlibfi/fixura';
-import {MarcRecord} from '@natlibfi/marc-record';
+//import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './copy';
 import generateTests from '@natlibfi/fixugen';
 
@@ -31,12 +31,16 @@ function callback({
   swapTag = [],
   doNotCopyIfFieldPresent = false
 }) {
-  const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
-  const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
+
+  const base = getFixture('base.json');
+  const source = getFixture('source.json');
+
+  //  const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
+  //  const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
   const tagPattern = new RegExp(tagPatternRegExp, 'u');
   const expectedRecord = getFixture('merged.json');
 
-  const mergedRecord = createReducer({
+  const merged = createReducer({
     tagPattern, compareTagsOnly, compareWithoutIndicators,
     copyUnless, subfieldsMustBeIdentical, excludeSubfields,
     dropSubfields, swapSubfieldCode, swapTag,
@@ -46,5 +50,7 @@ function callback({
   //debug(`***     mergedRecord,Strfy: `, JSON.stringify(mergedRecord)); //<--
   //debug(`***     expectedRecord: `, expectedRecord); //<--
   //debug(`***     expectedRecord,Strfy: `, JSON.stringify(expectedRecord)); //<--
-  expect(mergedRecord).to.eql(expectedRecord);
+  expect(merged.constructor.name).not.to.eql('MarcRecord');
+  expect(merged.constructor.name).to.eql('Object');
+  expect(merged).to.eql(expectedRecord);
 }
