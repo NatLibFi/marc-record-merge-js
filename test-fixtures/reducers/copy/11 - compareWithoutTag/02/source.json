@@ -10,17 +10,20 @@
             "ind1": " ",
             "ind2": " ",
             "subfields": [
-                {"code": "a", "value": "original"}
+                {
+                    "code": "a",
+                    "value": "test"
+                }
             ]
         },
         {
-            "tag": "100",
+            "tag": "700",
             "ind1": " ",
             "ind2": " ",
             "subfields": [
                 {
                     "code": "a",
-                    "value": "test"
+                    "value": "test2"
                 }
             ]
         }

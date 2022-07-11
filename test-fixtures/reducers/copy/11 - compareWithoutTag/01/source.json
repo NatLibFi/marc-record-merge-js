@@ -15,17 +15,6 @@
                     "value": "test"
                 }
             ]
-        },
-        {
-            "tag": "700",
-            "ind1": " ",
-            "ind2": " ",
-            "subfields": [
-                {
-                    "code": "a",
-                    "value": "test"
-                }
-            ]
         }
     ]
 }
