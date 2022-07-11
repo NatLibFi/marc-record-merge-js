@@ -28,8 +28,12 @@ function callback({
     console.log('TEST DISABLED!'); // eslint-disable-line no-console
     return;
   }
-  const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
-  const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
+  //  const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
+  //  const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
+
+  const base = getFixture('base.json');
+  const source = getFixture('source.json');
+
   const tagPattern = new RegExp(tagPatternRegExp, 'u');
   const expectedRecord = getFixture('merged.json');
   const equalityFunction = useSubsetEquality ? subsetEquality : undefined;
@@ -41,5 +45,5 @@ function callback({
   }
 
   const mergedRecord = createReducer({tagPattern, equalityFunction})(base, source);
-  expect(mergedRecord.toObject()).to.eql(expectedRecord);
+  expect(mergedRecord).to.eql(expectedRecord);
 }

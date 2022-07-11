@@ -46,5 +46,7 @@ function callback({
   //debug(`***     mergedRecord,Strfy: `, JSON.stringify(mergedRecord)); //<--
   //debug(`***     expectedRecord: `, expectedRecord); //<--
   //debug(`***     expectedRecord,Strfy: `, JSON.stringify(expectedRecord)); //<--
-  expect(mergedRecord).to.eql(expectedRecord);
+  expect(merged.constructor.name).not.to.eql('MarcRecord');
+  expect(merged.constructor.name).to.eql('Object');
+  expect(merged).to.eql(expectedRecord);
 }
