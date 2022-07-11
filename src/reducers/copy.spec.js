@@ -36,7 +36,7 @@ function callback({
   const tagPattern = new RegExp(tagPatternRegExp, 'u');
   const expectedRecord = getFixture('merged.json');
 
-  const mergedRecord = createReducer({
+  const merged = createReducer({
     tagPattern, compareTagsOnly, compareWithoutTag, compareWithoutIndicators,
     copyUnless, subfieldsMustBeIdentical, excludeSubfields,
     dropSubfields, swapSubfieldCode, swapTag,
