@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 import {READERS} from '@natlibfi/fixura';
-import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './copy';
 import generateTests from '@natlibfi/fixugen';
 
@@ -22,6 +21,7 @@ function callback({
   getFixture,
   tagPatternRegExp,
   compareTagsOnly = false,
+  compareWithoutTag = false,
   compareWithoutIndicators = false,
   subfieldsMustBeIdentical = false,
   copyUnless = undefined,
@@ -31,13 +31,13 @@ function callback({
   swapTag = [],
   doNotCopyIfFieldPresent = false
 }) {
-  const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
-  const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
+  const base = getFixture('base.json');
+  const source = getFixture('source.json');
   const tagPattern = new RegExp(tagPatternRegExp, 'u');
   const expectedRecord = getFixture('merged.json');
 
   const mergedRecord = createReducer({
-    tagPattern, compareTagsOnly, compareWithoutIndicators,
+    tagPattern, compareTagsOnly, compareWithoutTag, compareWithoutIndicators,
     copyUnless, subfieldsMustBeIdentical, excludeSubfields,
     dropSubfields, swapSubfieldCode, swapTag,
     doNotCopyIfFieldPresent

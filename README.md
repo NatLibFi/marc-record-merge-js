@@ -36,6 +36,14 @@ If base has field with that tag 011 source field is ignored
 
 When base and source fields are compared, indicator differences are ignored
 
+### compareWithoutTag (Defaults false)
+```
+{tagPattern: /^(100|700)$/u, compareWithoutTag: false}
+{tagPattern: /^(100|700)$/u, compareWithoutTag: false, swapTag: [{"from": "^100$", "to": "700"}]}
+```
+
+When base and source fields are compared, tag differences are ignored
+
 ### subfieldsMustBeIdentical (Defaults true)
 ```
 {tagPattern: /010/u, subfieldsMustBeIdentical: true}
@@ -57,6 +65,14 @@ If source subfields are subset of base subfields this option says if it is copie
 ```
 
 When base and source fields are compared, excluded subfields are ignored
+
+### swapTag (Defaults [ ])
+```
+{tagPattern: /^100$/u, swapTag: [{"from": "^100$", "to": "700"}]}
+{tagPattern: /^(100|700)$/u, compareWithoutTag: false, swapTag: [{"from": "^100$", "to": "700"}]}
+```
+
+When fields are copied, tags are swapped. From is Regexp filter and to is string value.
 
 ### swapSubfieldCode (Defaults [ ])
 ```

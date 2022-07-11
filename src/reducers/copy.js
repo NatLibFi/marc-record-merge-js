@@ -7,6 +7,7 @@ import createDebugLogger from 'debug';
 export default ({
   tagPattern,
   compareTagsOnly = false,
+  compareWithoutTag = false,
   compareWithoutIndicators = false,
   subfieldsMustBeIdentical = true,
   excludeSubfields = [],
@@ -43,19 +44,20 @@ export default ({
   debug(`Base fields: `, baseFields);
   debug(`Source fields: `, sourceFields);
 
+  // Logic steps
   const baseCompareFields = baseFields.map(baseField => createCompareField(baseField));
   const compareResultFields = compareFields(sourceFields, baseCompareFields);
   const droppedUnwantedSubfield = checkDropSubfields(compareResultFields);
   const droppedUnwantedFields = checkCopyUnlessFields(droppedUnwantedSubfield);
   const swappedSubfields = checkSwapSubfieldCodes(droppedUnwantedFields);
   const swappedTags = checkSwapTag(swappedSubfields);
+  const uniqueFields = [...new Set(swappedTags.map(field => JSON.stringify(field)))].map(field => JSON.parse(field));
   debug('Fields to be copied');
-  debug(JSON.stringify(swappedTags));
+  debug(JSON.stringify(uniqueFields));
 
   // Add fields to base;
-  swappedTags.forEach(field => baseRecord.insertField(field));
+  uniqueFields.forEach(field => baseRecord.insertField(field));
   return baseRecord.toObject();
-  //return copyFields(baseFields, sourceFields);
 
   function compareFields(sourceFields, baseCompareFields, uniqFields = []) {
     const [sourceField, ...rest] = sourceFields;
@@ -130,6 +132,7 @@ export default ({
     }
   }
 
+  // compare objects have only fields that matter in comparing
   function createCompareField(field) {
     if (compareTagsOnly) {
       return {tag: field.tag};
@@ -140,9 +143,11 @@ export default ({
     }
 
     const [filteredField] = checkDropSubfields([field]);
+    const [foundRule] = swapTag.filter(rule => new RegExp(rule.from, 'u').test(field.tag));
+    const replacementTag = foundRule ? foundRule.to : undefined;
 
     const params = [
-      {name: 'tag', value: field.tag},
+      {name: 'tag', value: compareWithoutTag ? replacementTag : field.tag},
       {name: 'ind1', value: compareWithoutIndicators ? undefined : field.ind1},
       {name: 'ind2', value: compareWithoutIndicators ? undefined : field.ind2},
       {name: 'subfields', value: createCompareSubfields(filteredField.subfields)}
@@ -237,95 +242,3 @@ export default ({
     return fields;
   }
 };
-
-// function copyFields() { //eslint-disable-line no-unused-vars
-//   const sourceTags = sourceFields.map(field => field.tag);
-//   sourceTags.forEach(tag => debug(`Comparing field ${tag}`));
-
-//   /*
-//   if (combine.length > 0) {
-//     debug(`*** NOW Copy options: ${tagPattern}, ${compareTagsOnly}, ${compareWithoutIndicators}, ${subfieldsMustBeIdentical}, [${combine}], [${excludeSubfields}], [${dropSubfields}]`);
-//     combine.forEach(row => debug(` ### combine ${row} <- `));
-//     return [];
-//   }
-//   */
-
-//   // If compareTagsOnly = true, only this part is run
-//   // The field is copied from source only if it is missing completely from base
-//   if (compareTagsOnly && baseFields.length === 0) {
-//     sourceTags.forEach(tag => debug(`Missing field ${tag} copied from source to base`));
-//     sourceFields.forEach(f => base.insertField(f));
-//     return true;
-//   }
-
-//   // If compareTagsOnly = false (default)
-//   // Source and base are also compared for identicalness
-//   // Non-identical fields are copied from source to base as duplicates
-//   if (!compareTagsOnly) {
-//     const filterMissing = function (sourceField) {
-//       if ('value' in sourceField) {
-//         debug(`Checking control field ${sourceField.tag} for identicalness`);
-//         return baseFields.some(isIdenticalControlField) === false;
-//       }
-//       if ('subfields' in sourceField) {
-//         debug(`Checking data field ${sourceField.tag} for identicalness`);
-//         return baseFields.some(isIdenticalDataField) === false;
-//       }
-
-//       function normalizeControlField(field) {
-//         return field.value.toLowerCase().replace(/\s+/u, '');
-//       }
-
-//       function isIdenticalControlField(baseField) {
-//         const normalizedBaseField = normalizeControlField(baseField);
-//         const normalizedSourceField = normalizeControlField(sourceField);
-//         return normalizedSourceField === normalizedBaseField;
-//       }
-
-//       function isIdenticalDataField(baseField) {
-//         // If excluded subfields have been defined for this field, they must be ignored first
-//         // (i.e. source and base fields are considered identical if all non-excluded subfields are identical)
-//         if (excludeSubfields.length > 0 &&
-//           sourceField.tag === baseField.tag &&
-//           sourceField.ind1 === baseField.ind1 &&
-//           sourceField.ind2 === baseField.ind2) {
-//           excludeSubfields.forEach(sub => debug(`Subfield ${sub} excluded from identicalness comparison`));
-//           // Compare only those subfields that are not excluded
-//           const baseSubsToCompare = baseField.subfields.filter(subfield => excludeSubfields.indexOf(subfield.code) === -1);
-//           return baseSubsToCompare.every(isIdenticalSubfield);
-//         }
-//         // If there are no excluded subfields (default case)
-//         if (sourceField.tag === baseField.tag &&
-//           sourceField.ind1 === baseField.ind1 &&
-//           sourceField.ind2 === baseField.ind2 &&
-//           sourceField.subfields.length === baseField.subfields.length) {
-//           return baseField.subfields.every(isIdenticalSubfield);
-//         }
-//         function normalizeSubfield(subfield) {
-//           return subfield.value.toLowerCase().replace(/\s+/u, '');
-//         }
-//         function isIdenticalSubfield(baseSub) {
-//           const normBaseSub = normalizeSubfield(baseSub);
-//           return sourceField.subfields.some(sourceSub => {
-//             const normSourceSub = normalizeSubfield(sourceSub);
-//             return normSourceSub === normBaseSub;
-//           });
-//         }
-//       }
-//     };
-//     // Search for fields missing from base
-//     const missingFields = sourceFields.filter(filterMissing);
-//     missingFields.forEach(f => base.insertField(f));
-//     if (missingFields.length > 0) {
-//       const missingTags = missingFields.map(field => field.tag);
-//       missingTags.forEach(tag => debug(`Field ${tag} copied from source to base`));
-//       return base;
-//     }
-//     if (missingFields.length === 0) {
-//       debug(`No missing fields found`);
-//       return base;
-//     }
-//   }
-//   debug(`No missing fields found`);
-//   return base;
-// }

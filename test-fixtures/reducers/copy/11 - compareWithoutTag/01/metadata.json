@@ -1,0 +1,7 @@
+{
+    "description": "compare fields 100 and 700, compareWithoutTag, if copied: swapTag 700: copy source 700 just once",
+    "tagPatternRegExp": "^(?<tags>100|700)$",
+    "compareWithoutTag": true,
+    "swapTag": [{"from": "^100$", "to": "700"}],
+    "only": false
+}
