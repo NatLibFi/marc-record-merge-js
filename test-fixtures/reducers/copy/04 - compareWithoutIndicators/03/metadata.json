@@ -1,0 +1,5 @@
+{
+    "description": "Copy fields 730: omit ind 1 from comparison - same field no copy",
+    "tagPatternRegExp": "^730$",
+    "compareWithoutIndicator1": true
+}
