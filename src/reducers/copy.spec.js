@@ -23,6 +23,8 @@ function callback({
   compareTagsOnly = false,
   compareWithoutTag = false,
   compareWithoutIndicators = false,
+  compareWithoutIndicator1 = false,
+  compareWithoutIndicator2 = false,
   subfieldsMustBeIdentical = false,
   copyUnless = undefined,
   excludeSubfields = undefined,
@@ -37,7 +39,7 @@ function callback({
   const expectedRecord = getFixture('merged.json');
 
   const merged = createReducer({
-    tagPattern, compareTagsOnly, compareWithoutTag, compareWithoutIndicators,
+    tagPattern, compareTagsOnly, compareWithoutTag, compareWithoutIndicators, compareWithoutIndicator1, compareWithoutIndicator2,
     copyUnless, subfieldsMustBeIdentical, excludeSubfields,
     dropSubfields, swapSubfieldCode, swapTag,
     doNotCopyIfFieldPresent

@@ -9,6 +9,8 @@ export default ({
   compareTagsOnly = false,
   compareWithoutTag = false,
   compareWithoutIndicators = false,
+  compareWithoutIndicator1 = false,
+  compareWithoutIndicator2 = false,
   subfieldsMustBeIdentical = true,
   excludeSubfields = [],
   dropSubfields = [],
@@ -25,9 +27,14 @@ export default ({
   const debug = createDebugLogger('@natlibfi/marc-record-merge');
   const debugOptions = createDebugLogger('@natlibfi/marc-record-merge:compare-options');
   const debugCompare = createDebugLogger('@natlibfi/marc-record-merge:compare');
+
+  const ignoreInd1 = compareWithoutIndicators || compareWithoutIndicator1;
+  const ignoreInd2 = compareWithoutIndicators || compareWithoutIndicator2;
+
   debugOptions(`Tag Pattern: ${tagPattern}`);
   debugOptions(`Compare tags only: ${compareTagsOnly}`);
-  debugOptions(`Compare without indicators ${compareWithoutIndicators}`);
+  debugOptions(`Omit indicator 1 from comparison: ${ignoreInd1}`);
+  debugOptions(`Omit indicator 2 from comparison: ${ignoreInd2}`);
   debugOptions(`Copy if identical: ${subfieldsMustBeIdentical}`);
   debugOptions(`Exclude subfields: [${excludeSubfields}]`);
   debugOptions(`Drop subfields [${dropSubfields}]`);
@@ -40,7 +47,7 @@ export default ({
   if (doNotCopy) {
     return baseRecord.toObject();
   }
-
+  debug(`FFS: ${compareWithoutIndicator1}, ${compareWithoutIndicators}, ${ignoreInd1}`);
   debug(`Base fields: `, baseFields);
   debug(`Source fields: `, sourceFields);
 
@@ -132,7 +139,7 @@ export default ({
     }
   }
 
-  // compare objects have only fields that matter in comparing
+  // compare objects have only fields that matter in comparison
   function createCompareField(field) {
     if (compareTagsOnly) {
       return {tag: field.tag};
@@ -148,8 +155,8 @@ export default ({
 
     const params = [
       {name: 'tag', value: compareWithoutTag ? replacementTag : field.tag},
-      {name: 'ind1', value: compareWithoutIndicators ? undefined : field.ind1},
-      {name: 'ind2', value: compareWithoutIndicators ? undefined : field.ind2},
+      {name: 'ind1', value: ignoreInd1 ? undefined : field.ind1},
+      {name: 'ind2', value: ignoreInd2 ? undefined : field.ind2},
       {name: 'subfields', value: createCompareSubfields(filteredField.subfields)}
     ].map(param => [param.name, param.value]);
 
