@@ -12,10 +12,31 @@ export function subsetEquality(subfieldA, subfieldB) {
     (subfieldA.value.indexOf(subfieldB.value) !== -1 || subfieldB.value.indexOf(subfieldA.value) !== -1);
 }
 // EqualityFunction can be either strictEquality or subsetEquality
-export default ({tagPattern, equalityFunction = strictEquality}) => (base, source) => {
+
+export default ({
+  tagPattern,
+  equalityFunction = strictEquality,
+  baseValidators = {subfieldValues: false},
+  sourceValidators = {subfieldValues: false}
+// eslint-disable-next-line max-statements
+}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge:select');
-  const baseRecord = new MarcRecord(base, {subfieldValues: false});
-  const sourceRecord = new MarcRecord(source, {subfieldValues: false});
+
+  const {baseRecord, sourceRecord} = getRecordsFromParameters(base, source, baseValidators, sourceValidators);
+
+  function getRecordsFromParameters(base, source, baseValidators, sourceValidators) {
+    // records if we got an object ({base, source}) as a parameter
+    if (source === undefined && base.base !== undefined && base.source !== undefined) {
+      const baseRecord = new MarcRecord(base.base, baseValidators);
+      const sourceRecord = new MarcRecord(base.source, sourceValidators);
+      return {baseRecord, sourceRecord};
+    }
+    // records if we got an non-object (base, source) as a parameter
+    const baseRecord = new MarcRecord(base, baseValidators);
+    const sourceRecord = new MarcRecord(source, sourceValidators);
+    return {baseRecord, sourceRecord};
+  }
+
   const baseFields = baseRecord.get(tagPattern);
   const sourceFields = sourceRecord.get(tagPattern);
   const fieldTag = sourceFields.map(field => field.tag);
@@ -27,7 +48,7 @@ export default ({tagPattern, equalityFunction = strictEquality}) => (base, sourc
   if (baseFields.length > 1 || sourceFields.length > 1) {
     debug(`Multiple fields in base or source`);
     debug(`No changes to base`);
-    return base;
+    return baseRecord.toObject();
   }
   const [baseField] = baseFields;
   const [sourceField] = sourceFields;
@@ -35,7 +56,7 @@ export default ({tagPattern, equalityFunction = strictEquality}) => (base, sourc
   if (baseField.tag === sourceField.tag === false) {
     debug(`Base tag ${baseField.tag} is not equal to source tag ${sourceField.tag}`);
     debug(`No changes to base`);
-    return base;
+    return baseRecord.toObject();
   }
   const baseSubs = baseField.subfields;
   const sourceSubs = sourceField.subfields;
@@ -61,7 +82,7 @@ export default ({tagPattern, equalityFunction = strictEquality}) => (base, sourc
   if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length < baseSubs.length) {
     debug(`Base and source subfields are not equal`);
     debug(`No changes to base`);
-    return base;
+    return baseRecord.toObject();
   }
 
   if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length === equalSubfieldsSource.length) {
@@ -74,16 +95,16 @@ export default ({tagPattern, equalityFunction = strictEquality}) => (base, sourc
       .reduce((acc, value) => acc + value);
 
     if (totalSubfieldLengthSource > totalSubfieldLengthBase) {
-      return replaceBasefieldWithSourcefield(base);
+      return replaceBasefieldWithSourcefield(baseRecord.toObject());
     }
   }
 
   if (sourceSubs.length > baseSubs.length && equalSubfieldsBase.length === baseSubs.length) {
-    return replaceBasefieldWithSourcefield(base);
+    return replaceBasefieldWithSourcefield(baseRecord.toObject());
   }
 
   debug(`No changes to base`);
-  return base;
+  return baseRecord.toObject();
 
   function replaceBasefieldWithSourcefield(base) {
     const index = base.fields.findIndex(field => field === baseField);

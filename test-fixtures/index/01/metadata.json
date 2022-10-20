@@ -1,0 +1,8 @@
+{
+  "description":"Reducers should run after each another - two reducers",
+  "reducerConfigs": [
+    {"tagPattern": "/010/u", "compareTagsOnly": true},
+    {"tagPattern": "/33./u"}
+
+  ]
+}
