@@ -21,12 +21,29 @@ export default ({
   swapSubfieldCode = [],
   doNotCopyIfFieldPresent = false
 }) => (base, source) => {
-  const baseRecord = new MarcRecord(base, baseValidators);
-  const sourceRecord = new MarcRecord(source, sourceValidators);
 
-  const debug = createDebugLogger('@natlibfi/marc-record-merge');
+  const debug = createDebugLogger('@natlibfi/marc-record-merge:copy');
+  const debugData = debug.extend('data');
   const debugOptions = createDebugLogger('@natlibfi/marc-record-merge:compare-options');
   const debugCompare = createDebugLogger('@natlibfi/marc-record-merge:compare');
+
+  debugData(`base: ${JSON.stringify(base)}`);
+  debugData(`source: ${JSON.stringify(source)}`);
+
+  const {baseRecord, sourceRecord} = getRecordsFromParameters(base, source, baseValidators, sourceValidators);
+
+  function getRecordsFromParameters(base, source, baseValidators, sourceValidators) {
+    // records if we got an object ({base, source}) as a parameter
+    if (source === undefined && base.base !== undefined && base.source !== undefined) {
+      const baseRecord = new MarcRecord(base.base, baseValidators);
+      const sourceRecord = new MarcRecord(base.source, sourceValidators);
+      return {baseRecord, sourceRecord};
+    }
+    // records if we got an non-object (base, source) as a parameter
+    const baseRecord = new MarcRecord(base, baseValidators);
+    const sourceRecord = new MarcRecord(source, sourceValidators);
+    return {baseRecord, sourceRecord};
+  }
 
   const ignoreInd1 = compareWithoutIndicators || compareWithoutIndicator1;
   const ignoreInd2 = compareWithoutIndicators || compareWithoutIndicator2;
@@ -64,6 +81,8 @@ export default ({
 
   // Add fields to base;
   uniqueFields.forEach(field => baseRecord.insertField(field));
+  debugData(`baseRecord before return: ${JSON.stringify(baseRecord)}`);
+  //return baseRecord;
   return baseRecord.toObject();
 
   function compareFields(sourceFields, baseCompareFields, uniqFields = []) {

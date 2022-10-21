@@ -1,0 +1,7 @@
+{
+  "description":"Reducers should run after each another - single reducer",
+  "reducerConfigs": [
+    {"tagPattern": "/33./u"}
+  ],
+  "skip": false
+}
