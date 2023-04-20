@@ -115,7 +115,7 @@ export default ({
 
   function checkFieldType(fields) {
     const checkedFields = fields.map(field => {
-      if ('value' in field) { // eslint-disable-line functional/no-conditional-statement
+      if ('value' in field) { // eslint-disable-line functional/no-conditional-statements
         throw new Error('Invalid control field, expected data field');
       }
       return field;
