@@ -1,0 +1,5 @@
+{
+    "description": "Drop subfields from source before copying",
+    "tagPatternRegExp": "^010$",
+    "dropSubfields": ["c", "d"]
+}

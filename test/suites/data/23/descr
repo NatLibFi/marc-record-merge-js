@@ -1,1 +1,0 @@
-should use field from other record if the preferred record is proper subset. Note that only fields that have been marked in config will be handled.

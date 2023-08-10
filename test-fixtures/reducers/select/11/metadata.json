@@ -1,0 +1,4 @@
+{
+  "description": "SourceField is not a proper superset of baseField (different values in a and b, also new subfield c) --> return base",
+  "tagPatternRegExp": "^010$"
+}

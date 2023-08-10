@@ -1,0 +1,6 @@
+{
+    "description": "compare fields 100 and 700, compareWithoutTag, adds missing 700 from source to base",
+    "tagPatternRegExp": "^(?<tags>100|700)$",
+    "compareWithoutTag": true,
+    "only": false
+}

@@ -1,0 +1,5 @@
+{
+    "description": "Copy fields 250 drop subfields 9 TESTI<KEEP> and 9 MALLI<DROP>",
+    "tagPatternRegExp": "^250$",
+    "dropSubfields": [{"code": "9", "value": "TESTI<KEEP>"}, {"code": "9", "value": "MALLI<DROP>"}]
+}

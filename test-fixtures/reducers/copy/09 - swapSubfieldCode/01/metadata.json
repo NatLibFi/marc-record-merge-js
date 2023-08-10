@@ -1,0 +1,6 @@
+{
+    "description": "Swap subfield code from a to b if copied: swapped",
+    "tagPatternRegExp": "^010$",
+    "swapSubfieldCode": [{"from": "a", "to": "b"}],
+    "only": false
+}

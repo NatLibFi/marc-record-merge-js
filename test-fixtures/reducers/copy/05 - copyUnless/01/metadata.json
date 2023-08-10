@@ -1,0 +1,5 @@
+{
+    "description": "Copy fields unless contains subfields - {code: 9, value: MALLI<DROP>}",
+    "tagPatternRegExp": "^010$",
+    "copyUnless": [{"code": "9", "value": "MALLI<DROP>"}]
+}

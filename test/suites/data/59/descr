@@ -1,1 +1,0 @@
-SelectBetter option should not create a copy of non-identical fields and it should use the one in preferred if neither is subset.

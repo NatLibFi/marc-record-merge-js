@@ -1,0 +1,5 @@
+{
+  "description": "Two subfields, same codes, values of source are subsets of values of base --> replaceBasefieldWithSourcefield",
+  "tagPatternRegExp": "^010$",
+  "useSubsetEquality": true
+}

@@ -1,0 +1,4 @@
+{
+  "description": "Normalization test with Cyrillic characters",
+  "tagPatternRegExp": "^010$"
+}

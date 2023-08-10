@@ -1,0 +1,5 @@
+{
+  "description": "SourceField is a proper superset of baseField (subfields a and b are equal, c is new) --> replaceBasefieldWithSourcefield",
+  "tagPatternRegExp": "^010$",
+  "useSubsetEquality": true
+}

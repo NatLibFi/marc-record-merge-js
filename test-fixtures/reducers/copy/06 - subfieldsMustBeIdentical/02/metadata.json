@@ -1,0 +1,5 @@
+{
+    "description": "subfieldsMustBeIdentical: true - fields 010 identical => fields are not copied",
+    "tagPatternRegExp": "^010$",
+    "subfieldsMustBeIdentical": true
+}

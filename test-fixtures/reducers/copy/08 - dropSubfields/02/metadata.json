@@ -1,0 +1,5 @@
+{
+    "description": "Copy fields 250 drop subfields 9 unless FENNI<KEEP> or FENNI<DROP>",
+    "tagPatternRegExp": "^250$",
+    "dropSubfields": [{"code": "9", "condition": "unless", "value": "^FENNI<(?<option>KEEP|DROP)>$"}]
+}

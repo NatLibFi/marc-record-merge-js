@@ -1,59 +1,103 @@
 {
-  "name": "@natlibfi/marc-record-merge",
-  "description": "A configurable Javascript module for merging MARC records",
-  "author": {
-    "name": "The National Library of Finland"
-  },
-  "keywords": [
-    "marc",
-    "record",
-    "merge",
-    "merging",
-    "combine",
-    "combining",
-    "bibliography",
-    "bibliographic",
-    "catalog",
-    "library",
-    "libraries"
-  ],
-  "homepage": "https://github.com/NatLibFi/marc-record-merge",
-  "bugs": {
-    "url": "https://github.com/NatLibFi/marc-record-merge/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:NatLibFi/marc-record-merge.git"
-  },
-  "license": "AGPL-3.0",
-  "version": "5.0.0",
-  "main": "./lib/main.js",
-  "scripts": {
-    "lint": "jshint .",
-    "test": "istanbul cover _mocha test/nodejs/*.spec.js",
-    "test:watch": "mocha test/nodejs/*.spec.js -w",
-    "test-browser": "npm run generate-requirejs-config && karma start",
-    "cover": "npm run test && istanbul check-coverage",
-    "check": "npm run lint && npm run cover",
-    "generate-requirejs-config": "requirejs-configurator --npm --include-dev-dependencies --exclude-peer-dependencies > test/browser/main.js",
-    "publish-to-npm": "npm install && npm run check && npm publish --access=public"
-  },
-  "dependencies": {
-    "marc-record-js": "^0.1.1",
-    "@natlibfi/es6-polyfills": "^2.0.0",
-    "@natlibfi/es6-shims": "^2.0.0"
-  },
-  "devDependencies": {
-    "chai": "^3.5.0",
-    "jshint": "^2.9.3",
-    "mocha": "^3.0.2",
-    "istanbul": "^0.4.5",
-    "karma": "^1.2.0",
-    "karma-mocha": "^1.1.1",
-    "karma-requirejs": "https://github.com/natlibfi-arlehiko/karma-requirejs#fix-npm3-dist",
-    "karma-requirejs-preprocessor": "^0.0.2",
-    "requirejs": "^2.3.2",
-    "requirejs-configurator": "https://github.com/natlibfi-arlehiko/requirejs-configurator#peer-deps",
-    "codeclimate-test-reporter": "^0.3.3"
-  }
+	"name": "@natlibfi/marc-record-merge",
+	"description": "Merge MARC records",
+	"author": {
+		"name": "The National Library of Finland"
+	},
+	"keywords": [],
+	"homepage": "https://github.com/natlibfi/marc-record-merge-js",
+	"bugs": {
+		"url": "https://github.com/natlibfi/marc-record-merge-js/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:natlibfi/marc-record-merge-js.git"
+	},
+	"license": "MIT",
+	"version": "7.0.0-alpha.4",
+	"main": "./dist/index.js",
+	"engines": {
+		"node": ">=18"
+	},
+	"type": "commonjs",
+	"scripts": {
+		"prepare": "npm run build",
+		"prepublishOnly": "npm run build:transpile",
+		"lint": "eslint ./src",
+		"lint:dev": "eslint ./src --fix",
+		"test:base": "cross-env NODE_ENV=test mocha --require @babel/register --reporter-option maxDiffSize=15000",
+		"test": "npm run lint && npm run test:base -- --recursive src",
+		"test:dev": "npm run lint:dev && npm run coverage",
+		"coverage": "npm run coverage:unit && npm run coverage:report",
+		"coverage:unit": "nyc --silent npm run test:base",
+		"coverage:report": "nyc report",
+		"build:transpile": "babel src --copy-files --source-maps --delete-dir-on-start --out-dir=dist",
+		"build": "npm run build:transpile",
+		"dev:test": "cross-env NODE_ENV=test nodemon -w src -w test-fixtures --exec 'clear && npm run test:dev'",
+		"dev:test:debug": "cross-env DEBUG=@natlibfi/* NODE_ENV=test nodemon -w src -w test-fixtures --exec 'clear && npm run test:dev'"
+	},
+	"dependencies": {
+		"@natlibfi/marc-record": "^7.2.4",
+		"debug": "^4.3.4",
+		"normalize-diacritics": "^2.13.2"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.22.9",
+		"@babel/core": "^7.22.9",
+		"@babel/eslint-parser": "^7.22.9",
+		"@babel/preset-env": "^7.22.9",
+		"@babel/register": "^7.22.5",
+		"@natlibfi/eslint-config-melinda-backend": "^3.0.1",
+		"babel-plugin-istanbul": "^6.1.1",
+		"babel-plugin-rewire": "^1.2.0",
+		"chai": "^4.3.7",
+		"cross-env": "^7.0.3",
+		"eslint": "^8.46.0",
+		"mocha": "^10.2.0",
+		"@natlibfi/fixugen": "2.0.1",
+		"@natlibfi/fixura": "^3.0.1",
+		"nodemon": "^3.0.1",
+		"nyc": "^15.1.0"
+	},
+	"eslintConfig": {
+		"extends": [
+			"@natlibfi/melinda-backend"
+		]
+	},
+	"babel": {
+		"presets": [
+			[
+				"@babel/preset-env",
+				{
+					"targets": "maintained node versions"
+				}
+			]
+		],
+		"env": {
+			"test": {
+				"plugins": [
+					"rewire",
+					"istanbul"
+				]
+			}
+		}
+	},
+	"nyc": {
+		"exclude": [
+			"*/*.spec.js",
+			"*/**/*.spec.js"
+		],
+		"reporter": [
+			"text"
+		],
+		"require": [
+			"@babel/register"
+		],
+		"sourceMap": false,
+		"instrument": false,
+		"lines": 80,
+		"statements": 80,
+		"functions": 80,
+		"branches": 80
+	}
 }

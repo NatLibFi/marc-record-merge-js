@@ -1,0 +1,40 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "001",
+      "value": "001_sorsa"
+    },
+    {
+      "tag": "010",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "010a_sorsa"
+        },
+        {
+          "code": "b",
+          "value": "010b_sorsa"
+        }
+      ]
+    },
+    {
+      "tag": "650",
+      "ind1": " ",
+      "ind2": "7",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "poista mut"
+        },
+        {
+          "code": "2",
+          "value": "ysa"
+        }
+      ]
+    }
+
+  ]
+}

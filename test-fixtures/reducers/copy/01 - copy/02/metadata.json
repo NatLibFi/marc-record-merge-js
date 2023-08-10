@@ -1,0 +1,4 @@
+{
+    "description": "Identical control fields are not copied",
+    "tagPatternRegExp": "^001$"
+}
