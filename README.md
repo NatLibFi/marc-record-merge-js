@@ -126,6 +126,6 @@ More info can be read here: https://github.com/NatLibFi/marc-record-js
 
 ## License and copyright
 
-Copyright (c) 2020-2023 **University Of Helsinki (The National Library Of Finland)**
+Copyright (c) 2020-2024 **University Of Helsinki (The National Library Of Finland)**
 
 This project's source code is licensed under the terms of **MIT** or any later version.
