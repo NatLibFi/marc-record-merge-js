@@ -14,7 +14,7 @@
 		"url": "git@github.com:natlibfi/marc-record-merge-js.git"
 	},
 	"license": "MIT",
-	"version": "7.0.7",
+	"version": "7.0.8-alpha.1",
 	"main": "./dist/index.js",
 	"engines": {
 		"node": ">=18"
@@ -39,12 +39,12 @@
 		"dev:debug": "cross-env LOG_LEVEL=debug DEBUG=@natlibfi/* NODE_ENV=test nodemon"
 	},
 	"dependencies": {
-		"@natlibfi/marc-record": "^9.1.1",
-		"debug": "^4.3.7",
+		"@natlibfi/marc-record": "^9.1.2",
+		"debug": "^4.4.0",
 		"normalize-diacritics": "^2.14.0"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.25.9",
+		"@babel/cli": "^7.26.4",
 		"@babel/core": "^7.26.0",
 		"@babel/preset-env": "^7.26.0",
 		"@babel/register": "^7.25.9",
@@ -56,8 +56,8 @@
 		"chai": "^4.5.0",
 		"cross-env": "^7.0.3",
 		"eslint": "^8.57.1",
-		"mocha": "^10.8.2",
-		"nodemon": "^3.1.7",
+		"mocha": "^11.0.1",
+		"nodemon": "^3.1.9",
 		"nyc": "^17.1.0"
 	},
 	"eslintConfig": {
