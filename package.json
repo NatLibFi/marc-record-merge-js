@@ -14,7 +14,7 @@
 		"url": "git@github.com:natlibfi/marc-record-merge-js.git"
 	},
 	"license": "MIT",
-	"version": "7.0.7",
+	"version": "7.0.8-alpha.1",
 	"main": "./dist/index.js",
 	"engines": {
 		"node": ">=18"
