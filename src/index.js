@@ -1,4 +1,4 @@
-import Reducers from './reducers';
+import Reducers from './reducers/index.js';
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge:index');

@@ -1,14 +1,14 @@
-import merger, {Reducers} from './index';
+import merger, {Reducers} from '../src/index.js';
 import {inspect} from 'util';
 import createDebugLogger from 'debug';
-import {expect} from 'chai';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'index'],
+  path: [import.meta.dirname, '..', 'test-fixtures', 'index'],
   recurse: false,
   useMetadataFile: true,
   fixura: {
@@ -39,7 +39,7 @@ function callback({getFixture, reducerConfigs = []}) {
   // It can also be a MarcRecord or a plain object
   const resultRecord = result.base || result;
   const resultRecordToRecord = new MarcRecord(resultRecord, {subfieldValues: false});
-  expect(resultRecordToRecord.toObject()).to.eql(expectedRecord);
+  assert.deepEqual(resultRecordToRecord.toObject(), expectedRecord);
 
 
 }

@@ -1,5 +1,9 @@
 {
   "description": "The field is a control field (contains 'value') --> error message",
   "tagPatternRegExp": "^010$",
-  "expectedError": "Invalid control field, expected data field"
+  "expectedToThrow": true,
+  "expectedError": "Record is invalid: instance.fields\\[1\\] is not any of \\[subschema 0\\],\\[subschema 1\\]",
+  "oldExpectedError": "Invalid control field, expected data field",
+  "skip": false,
+  "only": false
 }

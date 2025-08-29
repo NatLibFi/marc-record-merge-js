@@ -1,6 +1,3 @@
-/* eslint-disable max-statements */
-/* eslint-disable no-unused-vars */
-
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
@@ -109,7 +106,7 @@ export default ({
     return compareFields(rest, baseCompareFields, uniqFields);
 
     function checkCompareFields(baseCompareFields, sourceCompareField) {
-      let unique = true; // eslint-disable-line functional/no-let
+      let unique = true;
 
       baseCompareFields.forEach(baseCompareField => {
         debugCompare(`Comparing ${JSON.stringify(sourceCompareField)} to ${JSON.stringify(baseCompareField)}}`);

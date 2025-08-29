@@ -108,14 +108,14 @@ export default ({
 
   function replaceBasefieldWithSourcefield(base) {
     const index = base.fields.findIndex(field => field === baseField);
-    base.fields.splice(index, 1, sourceField); // eslint-disable-line functional/immutable-data
+    base.fields.splice(index, 1, sourceField);
     debug(`Source field is longer, replacing base with source`);
     return base;
   }
 
   function checkFieldType(fields) {
     const checkedFields = fields.map(field => {
-      if ('value' in field) { // eslint-disable-line functional/no-conditional-statements
+      if ('value' in field) {
         throw new Error('Invalid control field, expected data field');
       }
       return field;
