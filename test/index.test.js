@@ -41,5 +41,4 @@ function callback({getFixture, reducerConfigs = []}) {
   const resultRecordToRecord = new MarcRecord(resultRecord, {subfieldValues: false});
   assert.deepEqual(resultRecordToRecord.toObject(), expectedRecord);
 
-
 }
