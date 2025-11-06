@@ -5,13 +5,12 @@
 		"name": "The National Library of Finland"
 	},
 	"keywords": [],
-	"homepage": "https://github.com/natlibfi/marc-record-merge-js",
+	"homepage": "https://www.npmjs.com/package/@natlibfi/marc-record-merge-js",
 	"bugs": {
 		"url": "https://github.com/natlibfi/marc-record-merge-js/issues"
 	},
 	"repository": {
-		"type": "git",
-		"url": "git@github.com:natlibfi/marc-record-merge-js.git"
+		"url": "https://github.com/NatLibFi/marc-record-merge-js"
 	},
 	"license": "MIT",
 	"version": "8.0.0-alpha.1",
@@ -31,26 +30,16 @@
 		"test": "npm run lint && npm run test:base",
 		"test:dev": "npm run lint:dev && npm run test:base"
 	},
-	"old_scripts": {
-		"test:base": "cross-env NODE_ENV=test nyc mocha --package ./package.json",
-		"coverage": "npm run coverage:unit && npm run coverage:report",
-		"coverage:unit": "nyc --silent npm run test:base",
-		"coverage:report": "nyc report",
-		"dev:test": "cross-env NODE_ENV=test nodemon -w src -w test-fixtures --exec 'clear && npm run test:dev'",
-		"dev:test:debug": "cross-env DEBUG=@natlibfi/* NODE_ENV=test nodemon -w src -w test-fixtures --exec 'clear && npm run test:dev'",
-		"dev": "nodemon",
-		"dev:debug": "cross-env LOG_LEVEL=debug DEBUG=@natlibfi/* NODE_ENV=test nodemon"
-	},
 	"dependencies": {
-		"@natlibfi/marc-record": "^10.0.0-alpha.1",
+		"@natlibfi/marc-record": "^10.0.0",
 		"debug": "^4.4.1",
 		"normalize-diacritics": "^2.14.0"
 	},
 	"devDependencies": {
-		"@natlibfi/fixugen": "^3.0.0-alpha.6",
-		"@natlibfi/fixura": "^4.0.0-alpha.13",
-		"cross-env": "^10.0.0",
-		"esbuild": "^0.25.9",
-		"eslint": "^9.34.0"
+		"@natlibfi/fixugen": "^3.0.0",
+		"@natlibfi/fixura": "^4.0.0",
+		"cross-env": "^10.1.0",
+		"esbuild": "^0.25.12",
+		"eslint": "^9.39.1"
 	}
 }
