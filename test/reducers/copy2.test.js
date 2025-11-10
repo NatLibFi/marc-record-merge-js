@@ -1,6 +1,6 @@
-import {expect} from 'chai';
+import assert from 'node:assert';
 import {READERS} from '@natlibfi/fixura';
-import createReducer from './copy';
+import createReducer from '../../src/reducers/copy.js';
 import generateTests from '@natlibfi/fixugen';
 
 //import createDebugLogger from 'debug'; // <---
@@ -8,7 +8,7 @@ import generateTests from '@natlibfi/fixugen';
 
 generateTests({
   callback,
-  path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'copy'],
+  path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'copy'],
   useMetadataFile: true,
   recurse: true,
   fixura: {
@@ -16,6 +16,7 @@ generateTests({
     failWhenNotFound: false
   }
 });
+
 
 function callback({
   getFixture,
@@ -38,17 +39,18 @@ function callback({
   const tagPattern = new RegExp(tagPatternRegExp, 'u');
   const expectedRecord = getFixture('merged.json');
 
+  // copy2 test reducer where we have ({base, source}) object argument as input
   const merged = createReducer({
     tagPattern, compareTagsOnly, compareWithoutTag, compareWithoutIndicators, compareWithoutIndicator1, compareWithoutIndicator2,
     copyUnless, subfieldsMustBeIdentical, excludeSubfields,
     dropSubfields, swapSubfieldCode, swapTag,
     doNotCopyIfFieldPresent
-  })(base, source);
+  })({base, source});
   //debug(`***     mergedRecord: `, mergedRecord); //<--
   //debug(`***     mergedRecord,Strfy: `, JSON.stringify(mergedRecord)); //<--
   //debug(`***     expectedRecord: `, expectedRecord); //<--
   //debug(`***     expectedRecord,Strfy: `, JSON.stringify(expectedRecord)); //<--
-  expect(merged.constructor.name).not.to.eql('MarcRecord');
-  expect(merged.constructor.name).to.eql('Object');
-  expect(merged).to.eql(expectedRecord);
+  assert.notDeepEqual(merged.constructor.name, 'MarcRecord');
+  assert.deepEqual(merged.constructor.name, 'Object');
+  assert.deepEqual(merged, expectedRecord);
 }
