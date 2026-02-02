@@ -18,7 +18,6 @@ export default ({
   equalityFunction = strictEquality,
   baseValidators = {subfieldValues: false},
   sourceValidators = {subfieldValues: false}
-// eslint-disable-next-line max-statements
 }) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/marc-record-merge:select');
 
