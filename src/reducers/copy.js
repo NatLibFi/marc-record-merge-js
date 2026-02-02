@@ -237,7 +237,7 @@ export default ({
     return fields;
 
     function dropSubfieldsFunc(subfields) {
-      return subfields.filter(sub => { // eslint-disable-line
+      return subfields.filter(sub => {
         return !dropSubfields.some(({code, value = false, condition = false}) => {
           if (code !== sub.code) {
             return false;
